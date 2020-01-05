@@ -1,24 +1,19 @@
 # music
 
-## Project setup
-```
-npm install
-```
+# To start a development server:
+# If you use Yarn (strongly recommended):
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+yarn electron:serve
 
-### Compiles and minifies for production
-```
-npm run build
-```
+# or if you use NPM:
 
-### Lints and fixes files
-```
-npm run lint
-```
+npm run electron:serve
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+# To build your app:
+# With Yarn:
+
+yarn electron:build
+
+# or with NPM:
+
+npm run electron:build
