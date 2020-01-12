@@ -52,31 +52,31 @@ export default {
       licence: "K212EKJJKKKJW12"
     });
 
-    console.log(settings.get("configuration.folder"));
+    //console.log(settings.get("configuration.folder"));
     // => "Cosmo"
 
-    console.log(settings.has("configuration.licence"));
+    //console.log(settings.has("configuration.licence"));
     // => false
   },
 
   methods: {
     pause() {
-      console.log("Video paused!");
+     // console.log("Video paused!");
 
       // setTimeout( () => {
       //   this.$refs.player.play()
       // }, 2000)
     },
     ended() {
-      console.log("Video ended!", this.$refs.player);
+     // console.log("Video ended!", this.$refs.player);
 
       this.currentVideo = this.nextVideo();
     },
     waiting() {
-      console.log("Video waiting!");
+    //  console.log("Video waiting!");
     },
     stalled() {
-      console.log("Video stalled!");
+    //  console.log("Video stalled!");
     },
     nextVideo() {
       return this.videoQueue[
