@@ -9,11 +9,12 @@
                 <md-card-content>
                     <div class="md-layout md-gutter">
                         <div class="md-layout-item md-small-size-100">
-                            <md-field :class="getValidationClass('firstName')">
-                                <label for="first-name">First Name</label>
-                                <md-input name="first-name" id="first-name" autocomplete="given-name" v-model="form.firstName" :disabled="sending" />
-                                <span class="md-error" v-if="!$v.form.firstName.required">The first name is required</span>
-                                <span class="md-error" v-else-if="!$v.form.firstName.minlength">Invalid first name</span>
+                            <md-field :class="getValidationClass('barCode')">
+                                <label for="bar-code">Código del Bar</label>
+                                <md-input name="bar-code" id="bar-code upper" autocomplete="given-name" v-model="form.barCode" :disabled="sending" @input="barCodeChanged"/>
+                                <span class="md-error" v-if="!$v.form.barCode.required">Este código será solicitado para que los usuarios puedan poner música, aparecerá en las pantallas, es requerido.</span>
+                                <span class="md-error" v-else-if="!$v.form.barCode.alphaNum">El código contener solo números o letras sin espacios</span>
+                                <span class="md-error" v-else-if="!$v.form.barCode.minlength">El código debe tener al menos 3 carácteres</span>
                             </md-field>
                         </div>
     
@@ -76,7 +77,8 @@ import {
     required,
     email,
     minLength,
-    maxLength
+    maxLength,
+    alphaNum
 } from "vuelidate/lib/validators";
 
 export default {
@@ -84,7 +86,7 @@ export default {
     mixins: [validationMixin],
     data: () => ({
         form: {
-            firstName: null,
+            barCode: null,
             lastName: null,
             gender: null,
             age: null,
@@ -96,9 +98,10 @@ export default {
     }),
     validations: {
         form: {
-            firstName: {
+            barCode: {
                 required,
-                minLength: minLength(3)
+                minLength: minLength(3),
+                alphaNum
             },
             lastName: {
                 required,
@@ -129,7 +132,7 @@ export default {
         },
         clearForm() {
             this.$v.$reset();
-            this.form.firstName = null;
+            this.form.barCode = null;
             this.form.lastName = null;
             this.form.age = null;
             this.form.gender = null;
@@ -140,7 +143,7 @@ export default {
 
             // Instead of this timeout, here you can call your API
             window.setTimeout(() => {
-                this.lastUser = `${this.form.firstName} ${this.form.lastName}`;
+                this.lastUser = `${this.form.barCode} ${this.form.lastName}`;
                 this.userSaved = true;
                 this.sending = false;
                 this.clearForm();
@@ -152,15 +155,19 @@ export default {
             if (!this.$v.$invalid) {
                 this.saveUser();
             }
+        },
+        barCodeChanged(){
+           this.form.barCode =  String(this.form.barCode).toUpperCase();
         }
+
     }
 };
+
 </script>
 
 <style>
-
 .md-app {
-   height: 100vh;
+    height: 100vh;
 }
 
 .md-progress-bar {
