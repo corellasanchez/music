@@ -68,15 +68,15 @@ export default {
       // }, 2000)
     },
     ended() {
-     // console.log("Video ended!", this.$refs.player);
+     console.log("Video ended!", this.$refs.player);
 
       this.currentVideo = this.nextVideo();
     },
     waiting() {
-    //  console.log("Video waiting!");
+      console.log("Video waiting!");
     },
     stalled() {
-    //  console.log("Video stalled!");
+      console.log("Video stalled!");
     },
     nextVideo() {
       return this.videoQueue[
