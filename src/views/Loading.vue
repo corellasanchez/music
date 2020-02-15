@@ -11,78 +11,94 @@
         <div class="md-layout md-alignment-center-center">
             <span class="md-display-4">Bienvenido</span>
         </div>
-          <div class="md-layout md-alignment-center-center">
-            <span class="md-display-2">Verificando configuración del negocio...</span>
+        <div class="md-layout md-alignment-center-center">
+            <span class="md-display-2">{{loadingMessage}}</span>
         </div>
     </div>
 </template>
 
 <script>
 //const path = require('path');
-const find = require("find");
-const fs = require("fs");
+//const find = require("find");
+// const fs = require("fs");
+import { mixins } from "../helpers/mixins";
 const settings = require("electron-settings");
+const { dialog } = require("electron").remote;
+import { mapState } from "vuex";
+
 
 export default {
     name: "Loading",
+    mixins: [mixins],
+    computed: {
+        ...mapState(["musicFiles", "karaokeFiles", "ads"])
+    },
     data: () => ({
-        userSaved: false,
-        sending: false,
-        lastUser: null
+        loadingMessage: '',
+        configuration: null
     }),
     mounted() {
-      this.verifyConfiguration();
+        document.onreadystatechange = () => {
+            if (document.readyState == "complete") {
+                this.verifyConfiguration();
+            }
+        }
     },
     methods: {
-         verifyConfiguration() {
-          
-          // if(){
+        verifyConfiguration() {
+            this.loadingMessage = 'Verificando configuración del negocio...';
 
-          //  }
-      
-      console.log(settings.get("configuration"));
-      
-      },
+            if (settings.has('configuration')) {
+                console.log('Configuration', settings.get("configuration"));
+                this.configuration = settings.get("configuration");
+                this.loadingMessage = 'Se encontró configuración del local';
+                this.getFilesCache(this.configuration);
+            } else {
+                this.loadingMessage = 'No se encontró configuración del local';
+                dialog.showErrorBox("Bienvenido", "Debes llenar la configuración antes de usar la aplicación")
+                this.$router.replace({ path: 'config' })
+            }
+        },
+        async getFilesCache(configuration) {
 
-        folderWalk() {
-            console.log("inicio indexacion");
-            //new RegExp("m(a|á)n(a|á)", "i")
-            var cleanFiles;
-            var cleanFolders;
+            var cachedMusicFiles = null;
+            var cachedKaraokeFiles = null;
+            var cachedAdsFiles = null;
 
-            var dirname = "/Users/roy.corella/projects/mission-control/src";
+            if (configuration.karaokeFolder && configuration.licenceType !== "0") {
+                this.loadingMessage = "Actualizando canciones de Karaoke...";
+                cachedKaraokeFiles = await this.indexFolder(configuration.karaokeFolder);
+                this.$store.commit("setKaraokeFiles", cachedKaraokeFiles);
+                console.log('mus', this.karaokeFiles);
+                this.loadingMessage = "Canciones de Karaoke actualizadas";
+            }
 
-            find.dir(dirname, function(dirs) {
-                cleanFolders = dirs.map(function(x) {
-                    return x.replace(dirname, "");
-                });
-                console.log(cleanFolders);
-            });
+            if (configuration.adsFolder && configuration.licenceType !== "2") {
+                this.loadingMessage = "Actualizando anuncios...";
+                cachedAdsFiles = await this.indexFolder(configuration.adsFolder);
+                this.$store.commit("setAds", cachedAdsFiles);
+                console.log('cachedAdsFiles', this.ads);
+                this.loadingMessage = "Anuncios actualizados";
+            }
 
-            find
-                .file(new RegExp(/\.ts$/), dirname, function(files) {
-                    // console.log(files.length,files);
-                    cleanFiles = files.map(function(x) {
-                        return x.replace(dirname, "");
-                    });
-                    fs.writeFile(
-                        "./library.json",
-                        JSON.stringify(cleanFiles),
-                        function() {
-                            console.log("done");
-                        }
-                    );
+            if (configuration.musicFolder) {
+                this.loadingMessage = "Actualizando canciones...";
+                cachedMusicFiles = await this.indexFolder(configuration.musicFolder);
+                this.$store.commit("setMusicFiles", cachedMusicFiles);
+               // console.log(cachedMusicFiles);
+                if (this.musicFiles.length === 0) {
+                    dialog.showErrorBox("No se encontraron canciones", "Debes elegir una carpeta que tenga canciones en video .mp4 o .mp3")
+                    this.$router.replace({ path: 'config' })
+                } else {
+                    this.loadingMessage = "Canciones actualizadas";
+                    this.$router.replace({ path: 'player' });
+                }
+            }
 
-                    console.log(cleanFiles);
-                })
-                .error(function(err) {
-                    if (err) {
-                        console.log(err);
-                    }
-                });
+
         }
     }
-};
+}
 </script>
 
 <style>

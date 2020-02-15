@@ -7,7 +7,7 @@ import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default-dark.css' // This line here
 
 Vue.config.productionTip = false;
-Vue.use(VueMaterial)
+Vue.use(VueMaterial);
 
 new Vue({
   router,
