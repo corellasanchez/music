@@ -62,36 +62,36 @@ export default {
 
     methods: {
         pause() {
-             console.log("Video paused!");
+             // console.log("Video paused!");
             // setTimeout( () => {
             //   this.$refs.player.play()
             // }, 2000)
         },
         ended() {
-            console.log("Video ended!", this.$refs.player);
+            // console.log("Video ended!", this.$refs.player);
 
             this.currentVideo = this.nextVideo();
         },
         waiting() {
-            console.log("Video waiting!");
+            // console.log("Video waiting!");
         },
         stalled() {
-            console.log("Video stalled!");
+            // console.log("Video stalled!");
         },
         empitied() {
-           console.log("Video empitied!");
+           // console.log("Video empitied!");
         },
         suspend(){
-          console.log("Video suspend!"); 
+          // console.log("Video suspend!"); 
         },
          playing(){
-          console.log("Video suspend!"); 
+          // console.log("Video suspend!"); 
         },
         nextVideo() {
            
             var randomVideo = this.musicFiles[Math.floor(Math.random() * this.musicFiles.length)];
           //  var randomVideo = "/The Cribs - I'm a Realist.mp4";
-            console.log(this.fileProtocol + this.configuration.musicFolder +  randomVideo);
+            // console.log(this.fileProtocol + this.configuration.musicFolder +  randomVideo);
             return this.fileProtocol + this.configuration.musicFolder + randomVideo;
         }
     }

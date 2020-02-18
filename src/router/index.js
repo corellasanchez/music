@@ -30,14 +30,14 @@ const routes = [
 ]
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: process.env.IS_ELECTRON ? 'hash' : 'history',
   base: process.env.BASE_URL,
   routes
 })
 
 // navigate from electron menu bar
 electron.ipcRenderer.on('navigate', (event, url) => {
-  console.log(url)
+  // console.log(url)
   router.push(url)
 })
 

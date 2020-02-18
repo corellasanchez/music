@@ -38,18 +38,14 @@ export default {
         configuration: null
     }),
     mounted() {
-        document.onreadystatechange = () => {
-            if (document.readyState == "complete") {
-                this.verifyConfiguration();
-            }
-        }
+          this.verifyConfiguration();
     },
     methods: {
         verifyConfiguration() {
             this.loadingMessage = 'Verificando configuración del negocio...';
 
             if (settings.has('configuration')) {
-                console.log('Configuration', settings.get("configuration"));
+                // console.log('Configuration', settings.get("configuration"));
                 this.configuration = settings.get("configuration");
                 this.loadingMessage = 'Se encontró configuración del local';
                 this.getFilesCache(this.configuration);
@@ -69,7 +65,7 @@ export default {
                 this.loadingMessage = "Actualizando canciones de Karaoke...";
                 cachedKaraokeFiles = await this.indexFolder(configuration.karaokeFolder);
                 this.$store.commit("setKaraokeFiles", cachedKaraokeFiles);
-                console.log('mus', this.karaokeFiles);
+                // console.log('mus', this.karaokeFiles);
                 this.loadingMessage = "Canciones de Karaoke actualizadas";
             }
 
@@ -77,7 +73,7 @@ export default {
                 this.loadingMessage = "Actualizando anuncios...";
                 cachedAdsFiles = await this.indexFolder(configuration.adsFolder);
                 this.$store.commit("setAds", cachedAdsFiles);
-                console.log('cachedAdsFiles', this.ads);
+                // console.log('cachedAdsFiles', this.ads);
                 this.loadingMessage = "Anuncios actualizados";
             }
 
@@ -85,7 +81,7 @@ export default {
                 this.loadingMessage = "Actualizando canciones...";
                 cachedMusicFiles = await this.indexFolder(configuration.musicFolder);
                 this.$store.commit("setMusicFiles", cachedMusicFiles);
-               // console.log(cachedMusicFiles);
+               // // console.log(cachedMusicFiles);
                 if (this.musicFiles.length === 0) {
                     dialog.showErrorBox("No se encontraron canciones", "Debes elegir una carpeta que tenga canciones en video .mp4 o .mp3")
                     this.$router.replace({ path: 'config' })

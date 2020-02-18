@@ -37,11 +37,24 @@ function createWindow() {
           }
         },
         {
+          label: "Editar",
+          submenu: [
+              { label: "Deshacer", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+              { label: "Rehacer", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+              { type: "separator" },
+              { label: "Cortar", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+              { label: "Copiar", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+              { label: "Pegar", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+              { label: "Seleccionar Todo", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+          ]
+        },
+        {
           label: 'Exit',
           click() {
             app.quit()
           }
-        }
+        },
+       
       ]
     }
   ]);
@@ -66,7 +79,8 @@ function createWindow() {
   } else {
     createProtocol('app')
     // Load the index.html when not in development
-    win.loadURL('app://./index.html')
+   win.loadURL('app://./index.html') // no carga
+   win.webContents.send('navigate', '/');
   }
 
   win.on('closed', () => {

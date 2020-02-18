@@ -2,9 +2,7 @@
     <md-content>
         <form novalidate class="md-layout md-app config-form" @submit.prevent="validateForm">
             <md-card class="md-layout-item md-size-100 md-small-size-100">
-    
                 <md-card-content>
-    
                     <md-card-header>
                         <div class="md-title">Licencia del Programa</div>
                     </md-card-header>
@@ -70,7 +68,6 @@
                     <md-card-header>
                         <div class="md-title">Datos del establecimento</div>
                     </md-card-header>
-    
     
                     <div class="md-layout md-gutter">
                         <div class="md-layout-item md-small-size-100">
@@ -271,8 +268,6 @@
                             <md-checkbox v-model="form.creditSale">Activar venta de créditos</md-checkbox>
                         </div>
                     </div>
-    
-    
                 </md-card-content>
                 <md-divider></md-divider>
     
@@ -307,8 +302,6 @@ import { mapState } from "vuex";
 const { shell } = require("electron");
 const { dialog } = require("electron").remote;
 const settings = require("electron-settings");
-
-
 
 export default {
     name: "FormValidation",
@@ -390,17 +383,131 @@ export default {
             }
         },
         async saveConfiguration() {
-
             this.sending = true;
             this.configurationSaved = false;
             this.savedMessage = "Guardando la configuracíon";
 
+            var verifiedLicence = this.form.licenceType === "0" ? true : false;
+
+            if (!verifiedLicence) {
+                // Licence verification
+
+                try {
+                    var licence = await this.getLicenseFs(this.form);
+                    if (licence.exists) {
+                        if (licence.data().customer !== this.form.barCode) {
+                            dialog.showErrorBox(
+                                "Error de licencias",
+                                "Esta licencia pertenece a otro usuario, verifique su codigo del bar"
+                            );
+                            this.sending = false;
+                            return false;
+                        }
+
+                        if (licence.data().type !== this.form.licenceType) {
+                            dialog.showErrorBox(
+                                "Error de licencias",
+                                "Esta licencia no corresponde con el tipo de licencia seleccionado"
+                            );
+                            this.sending = false;
+                            return false;
+                        }
+
+                        if (
+                            licence.data().expiration_date.seconds <
+                            this.timestamp().seconds
+                        ) {
+                            dialog.showErrorBox(
+                                "Error de licencias",
+                                "Esta licencia ha expirado, por favor compre una nueva o cambie el tipo de licencia a básico"
+                            );
+                            this.openLicenceSite();
+                            this.sending = false;
+                            return false;
+                        }
+                    } else {
+                        dialog.showErrorBox(
+                            "Licencia inválida",
+                            "Esta licencia no es valida. Puede comprar una licencia en nuestro sitio web."
+                        );
+                        this.openLicenceSite();
+                        this.sending = false;
+                        return false;
+                    }
+                } catch (error) {
+                    dialog.showErrorBox(
+                        "Error al obtener información de la licencia",
+                        "Verifica tu conexión a Internet"
+                    );
+                    this.sending = false;
+                    return false;
+                }
+            }
+
+            try {
+                var customerFs = await this.getCustomerFs(this.form);
+            } catch (error) {
+                dialog.showErrorBox(
+                    "Error al obtener información del cliente",
+                    "Verifica tu conexión a Internet"
+                );
+                this.sending = false;
+                return false;
+            }
+
+            if (customerFs.exists) {
+                // the customer exists
+
+                if (
+                    this.verifyPassword(this.form.password, customerFs.data().password)
+                ) {
+                    // save the configuration to the local settings
+                    settings.set("configuration", this.form);
+
+                    // save the customer in the db
+                    this.saveCustomerFs(this.form);
+
+                    await this.indexFolders();
+
+                    this.savedMessage = "Configuración guardada";
+                    this.sending = false;
+                    this.configurationSaved = true;
+                    this.$router.replace({ path: "player" });
+                } else {
+                    // Wrong password
+                    dialog.showErrorBox(
+                        "Contraseña incorrecta",
+                        "No se guardo la configuración, verifique su contraseña o utilice la función para restablecer su contraseña"
+                    );
+                    this.sending = false;
+                    return false;
+                }
+            } else {
+                // New costumer
+                // save the configuration to the local settings
+                settings.set("configuration", this.form);
+
+                // save the customer in the db
+                this.saveCustomerFs(this.form);
+
+                await this.indexFolders();
+
+                this.savedMessage = "Nuevo establecimiento registrado";
+                this.sending = false;
+                this.configurationSaved = true;
+                this.$router.replace({ path: "player" });
+            }
+        },
+        async indexFolders() {
             if (this.form.musicFolder) {
                 this.savedMessage = "Actualizando canciones...";
                 var cachedMusicFiles = await this.indexFolder(this.form.musicFolder);
                 this.$store.commit("setMusicFiles", cachedMusicFiles);
                 if (this.musicFiles.length === 0) {
-                    dialog.showErrorBox("No se encontraron canciones", "Debes elegir una carpeta que tenga canciones en video .mp4 o .mp3")
+                    dialog.showErrorBox(
+                        "No se encontraron canciones",
+                        "Debes elegir una carpeta que tenga canciones en video .mp4 o .mp3"
+                    );
                     this.form.musicFolder = "";
                     this.sending = false;
                     return;
@@ -410,11 +517,12 @@ export default {
 
             if (this.form.karaokeFolder && this.form.licenceType !== "0") {
                 this.savedMessage = "Actualizando canciones de Karaoke...";
-                var cachedKaraokeFiles = await this.indexFolder(this.form.karaokeFolder);
+                var cachedKaraokeFiles = await this.indexFolder(
+                    this.form.karaokeFolder
+                );
                 this.$store.commit("setKaraokeFiles", cachedKaraokeFiles);
                 this.savedMessage = "Canciones de Karaoke actualizadas";
             }
-
 
             if (this.form.adsFolder && this.form.licenceType === "2") {
                 this.savedMessage = "Actualizando anuncios...";
@@ -422,15 +530,8 @@ export default {
                 this.$store.commit("setAds", cachedAds);
                 this.savedMessage = "Anuncios actualizados";
             }
-
-            settings.set("configuration", this.form);
-            this.savedMessage = "Configuración guardada";
-
-            this.sending = false;
-            this.configurationSaved = true;
-            this.$router.replace({ path: 'player' })
-
         },
+
         validateForm() {
             this.$v.$touch();
             if (this.$v.$invalid) {
@@ -451,8 +552,8 @@ export default {
                     properties: ["openFile", "openDirectory"]
                 })
                 .then(result => {
-                    console.log(result.canceled);
-                    console.log(result.filePaths);
+                    // console.log(result.canceled);
+                    // console.log(result.filePaths);
 
                     switch (type) {
                         case "music":
@@ -473,7 +574,11 @@ export default {
                     }
                 })
                 .catch(err => {
-                    console.log(err);
+                    dialog.showErrorBox(
+                        "No se pudo seleccionar un folder, verifica que el folder tenga pemisos de lectura ",
+                        "error " + err
+                    );
+                    // console.log(err);
                 });
         },
         disableKeys: function(evt) {
@@ -493,9 +598,7 @@ export default {
                 this.form.creditSale = false;
                 this.form.karaokeMode = false;
             }
-            if (
-                (event !== '0') && this.form.licence == "NO-LICENCE"
-            ) {
+            if (event !== "0" && this.form.licence == "NO-LICENCE") {
                 this.form.licence = "";
             }
         }
