@@ -12,6 +12,12 @@ Vue.config.productionTip = false;
 Vue.use(VueFirestore)
 Vue.use(VueMaterial);
 Vue.use(VueFirestore);
+const moment = require('moment')
+require('moment/locale/es')
+ 
+Vue.use(require('vue-moment'), {
+    moment
+})
 
 
 new Vue({

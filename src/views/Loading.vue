@@ -18,10 +18,8 @@
 </template>
 
 <script>
-//const path = require('path');
-//const find = require("find");
-// const fs = require("fs");
 import { mixins } from "../helpers/mixins";
+import { mixinsFb } from "../helpers/firebaseMixins";
 const settings = require("electron-settings");
 const { dialog } = require("electron").remote;
 import { mapState } from "vuex";
@@ -29,7 +27,7 @@ import { mapState } from "vuex";
 
 export default {
     name: "Loading",
-    mixins: [mixins],
+    mixins: [mixins, mixinsFb],
     computed: {
         ...mapState(["musicFiles", "karaokeFiles", "ads"])
     },
@@ -38,16 +36,15 @@ export default {
         configuration: null
     }),
     mounted() {
-          this.verifyConfiguration();
+        this.verifyConfiguration();
     },
     methods: {
         verifyConfiguration() {
             this.loadingMessage = 'Verificando configuración del negocio...';
-
             if (settings.has('configuration')) {
-                // console.log('Configuration', settings.get("configuration"));
                 this.configuration = settings.get("configuration");
                 this.loadingMessage = 'Se encontró configuración del local';
+                this.verifyLicence(this.configuration) ;
                 this.getFilesCache(this.configuration);
             } else {
                 this.loadingMessage = 'No se encontró configuración del local';
@@ -65,7 +62,6 @@ export default {
                 this.loadingMessage = "Actualizando canciones de Karaoke...";
                 cachedKaraokeFiles = await this.indexFolder(configuration.karaokeFolder);
                 this.$store.commit("setKaraokeFiles", cachedKaraokeFiles);
-                // console.log('mus', this.karaokeFiles);
                 this.loadingMessage = "Canciones de Karaoke actualizadas";
             }
 
@@ -73,7 +69,6 @@ export default {
                 this.loadingMessage = "Actualizando anuncios...";
                 cachedAdsFiles = await this.indexFolder(configuration.adsFolder);
                 this.$store.commit("setAds", cachedAdsFiles);
-                // console.log('cachedAdsFiles', this.ads);
                 this.loadingMessage = "Anuncios actualizados";
             }
 
@@ -81,18 +76,77 @@ export default {
                 this.loadingMessage = "Actualizando canciones...";
                 cachedMusicFiles = await this.indexFolder(configuration.musicFolder);
                 this.$store.commit("setMusicFiles", cachedMusicFiles);
-               // // console.log(cachedMusicFiles);
                 if (this.musicFiles.length === 0) {
                     dialog.showErrorBox("No se encontraron canciones", "Debes elegir una carpeta que tenga canciones en video .mp4 o .mp3")
                     this.$router.replace({ path: 'config' })
                 } else {
                     this.loadingMessage = "Canciones actualizadas";
-                    this.$router.replace({ path: 'player' });
                 }
             }
+        },
+       async verifyLicence(configuration) {
 
+            this.loadingMessage = 'Verificando Licencia';
+            var verifiedLicence = configuration.licenceType === "0" ? true : false;
 
-        }
+            if (!verifiedLicence) {
+                // Licence verification
+                try {
+                    var licence = await this.getLicenseFs(configuration);
+                    if (licence.exists) {
+                        if (licence.data().customer !== configuration.barCode) {
+                            dialog.showErrorBox(
+                                "Error de licencias",
+                                "Esta licencia pertenece a otro usuario, verifique su codigo del bar"
+                            );
+                            this.$router.replace({ path: 'config' })
+                            return false;
+                        }
+
+                        if (licence.data().type !== configuration.licenceType) {
+                            dialog.showErrorBox(
+                                "Error de licencias",
+                                "Esta licencia no corresponde con el tipo de licencia seleccionado"
+                            );
+                            this.$router.replace({ path: 'config' })
+                            return false;
+                        }
+
+                        if (
+                            licence.data().expiration_date.seconds <
+                            this.timestamp().seconds
+                        ) {
+                           
+                          var fechaExpiracion = this.$moment.unix(licence.data().expiration_date.seconds).format('DD MMMM YYYY, h:mm:ss a') 
+                        
+                           dialog.showErrorBox(
+                                "La licencia a expirado !!!",
+                                "Esta licencia expiró el " + fechaExpiracion + ", por favor compre una nueva ó cambie el tipo de licencia a Basico"
+                            );
+                            this.openLicenceSite();
+                            this.$router.replace({ path: 'config' })
+                            return false;
+                        }
+                    } else {
+                        dialog.showErrorBox(
+                            "Licencia inválida",
+                            "Esta licencia no es valida. Puede comprar una licencia en nuestro sitio web."
+                        );
+                        this.openLicenceSite();
+                        this.$router.replace({ path: 'config' })
+                        return false;
+                    }
+                } catch (error) {
+                    dialog.showErrorBox(
+                        "Error al obtener información de la licencia",
+                        "Verifica tu conexión a Internet"
+                    );
+                    return false;
+                }
+            }
+          this.loadingMessage = 'Licencia Correcta';
+          this.$router.replace({ path: 'player' });
+       }
     }
 }
 </script>

@@ -290,6 +290,7 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { mixins } from "../helpers/mixins";
+import { mixinsFb } from "../helpers/firebaseMixins";
 import {
     required,
     email,
@@ -299,13 +300,12 @@ import {
 } from "vuelidate/lib/validators";
 import { mapState } from "vuex";
 
-const { shell } = require("electron");
 const { dialog } = require("electron").remote;
 const settings = require("electron-settings");
 
 export default {
     name: "FormValidation",
-    mixins: [validationMixin, mixins],
+    mixins: [validationMixin, mixins, mixinsFb],
     data: () => ({
         form: {
             address: null,
@@ -391,7 +391,6 @@ export default {
 
             if (!verifiedLicence) {
                 // Licence verification
-
                 try {
                     var licence = await this.getLicenseFs(this.form);
                     if (licence.exists) {
@@ -583,12 +582,6 @@ export default {
         },
         disableKeys: function(evt) {
             evt.preventDefault();
-        },
-
-        openLicenceSite() {
-            shell.openExternal(
-                "https://www.nationalsoft.store/Producto/Ver/2819?formato=comparativa_sr_pro&sversion=Professional&_ga=2.84586201.198998045.1581195617-1196481179.1581195617"
-            );
         },
         licenceChange(event) {
             if (event == "0") {
