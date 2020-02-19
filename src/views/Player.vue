@@ -1,26 +1,13 @@
 <template>
-    <Media
-    id="player" 
-    :kind="'video'"
-    :isMuted="(true)"
-    :src="currentVideo"
-    :autoplay="true"
-    :controls="true"
-    :loop="false"
-    :ref="'player'"
-    @pause="pause()"
-    @ended="ended()"
-    @waiting="waiting()"
-    @emptied="empitied()"
-    @stalled="stalled()"
-    @suspend="suspend()"
-    @playing="playing()"	>
+    <Media id="player" :kind="'video'" :isMuted="(true)" :src="currentVideo" :autoplay="true" :controls="true" :loop="false" :ref="'player'" @pause="pause()" @ended="ended()" @waiting="waiting()" @emptied="empitied()" @stalled="stalled()" @suspend="suspend()"
+        @playing="playing()">
     </Media>
 </template>
 
 <script>
-import Media from "@dongido/vue-viaudio";
 import { mapState } from "vuex";
+import Media from "@dongido/vue-viaudio";
+import { mixins } from "../helpers/mixins";
 
 const settings = require("electron-settings");
 
@@ -29,6 +16,7 @@ export default {
     components: {
         Media
     },
+    mixins: [mixins],
     data: function() {
         return {
             fileProtocol: "file:///",
@@ -38,8 +26,9 @@ export default {
         };
     },
     mounted() {
+        this.searchSongs('jacks');
         this.configuration = this.configuration = settings.get("configuration");
-      
+
         this.videoQueue = [
             // "https://www.w3schools.com/html/mov_bbb.mp4",
             // "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
@@ -62,7 +51,7 @@ export default {
 
     methods: {
         pause() {
-             // console.log("Video paused!");
+            // console.log("Video paused!");
             // setTimeout( () => {
             //   this.$refs.player.play()
             // }, 2000)
@@ -79,18 +68,18 @@ export default {
             // console.log("Video stalled!");
         },
         empitied() {
-           // console.log("Video empitied!");
+            // console.log("Video empitied!");
         },
-        suspend(){
-          // console.log("Video suspend!"); 
+        suspend() {
+            // console.log("Video suspend!"); 
         },
-         playing(){
-          // console.log("Video suspend!"); 
+        playing() {
+            // console.log("Video suspend!"); 
         },
         nextVideo() {
-           
+
             var randomVideo = this.musicFiles[Math.floor(Math.random() * this.musicFiles.length)];
-          //  var randomVideo = "/The Cribs - I'm a Realist.mp4";
+            //  var randomVideo = "/The Cribs - I'm a Realist.mp4";
             // console.log(this.fileProtocol + this.configuration.musicFolder +  randomVideo);
             return this.fileProtocol + this.configuration.musicFolder + randomVideo;
         }

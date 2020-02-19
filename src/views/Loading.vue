@@ -7,7 +7,6 @@
             </div>
             <div class="md-layout-item"></div>
         </div>
-    
         <div class="md-layout md-alignment-center-center">
             <span class="md-display-4">Bienvenido</span>
         </div>
@@ -16,14 +15,14 @@
         </div>
     </div>
 </template>
-
 <script>
+
 import { mixins } from "../helpers/mixins";
 import { mixinsFb } from "../helpers/firebaseMixins";
-const settings = require("electron-settings");
-const { dialog } = require("electron").remote;
 import { mapState } from "vuex";
 
+const settings = require("electron-settings");
+const { dialog } = require("electron").remote;
 
 export default {
     name: "Loading",
@@ -44,7 +43,7 @@ export default {
             if (settings.has('configuration')) {
                 this.configuration = settings.get("configuration");
                 this.loadingMessage = 'Se encontró configuración del local';
-                this.verifyLicence(this.configuration) ;
+                this.verifyLicence(this.configuration);
                 this.getFilesCache(this.configuration);
             } else {
                 this.loadingMessage = 'No se encontró configuración del local';
@@ -84,7 +83,7 @@ export default {
                 }
             }
         },
-       async verifyLicence(configuration) {
+        async verifyLicence(configuration) {
 
             this.loadingMessage = 'Verificando Licencia';
             var verifiedLicence = configuration.licenceType === "0" ? true : false;
@@ -116,10 +115,10 @@ export default {
                             licence.data().expiration_date.seconds <
                             this.timestamp().seconds
                         ) {
-                           
-                          var fechaExpiracion = this.$moment.unix(licence.data().expiration_date.seconds).format('DD MMMM YYYY, h:mm:ss a') 
-                        
-                           dialog.showErrorBox(
+
+                            var fechaExpiracion = this.$moment.unix(licence.data().expiration_date.seconds).format('DD MMMM YYYY, h:mm:ss a')
+
+                            dialog.showErrorBox(
                                 "La licencia a expirado !!!",
                                 "Esta licencia expiró el " + fechaExpiracion + ", por favor compre una nueva ó cambie el tipo de licencia a Basico"
                             );
@@ -144,9 +143,9 @@ export default {
                     return false;
                 }
             }
-          this.loadingMessage = 'Licencia Correcta';
-          this.$router.replace({ path: 'player' });
-       }
+            this.loadingMessage = 'Licencia Correcta';
+            this.$router.replace({ path: 'player' });
+        }
     }
 }
 </script>

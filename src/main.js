@@ -7,18 +7,15 @@ import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default-dark.css' 
 import VueFirestore from 'vue-firestore'
   
-
 Vue.config.productionTip = false;
+
+const moment = require('moment');
+require('moment/locale/es');
+ 
+Vue.use(require('vue-moment'), {moment})
 Vue.use(VueFirestore)
 Vue.use(VueMaterial);
 Vue.use(VueFirestore);
-const moment = require('moment')
-require('moment/locale/es')
- 
-Vue.use(require('vue-moment'), {
-    moment
-})
-
 
 new Vue({
   router,

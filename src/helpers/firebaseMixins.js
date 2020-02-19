@@ -32,19 +32,18 @@ export const mixinsFb = {
       var customerRef = this.firestore().customers.doc(customer.barCode);
       return customerRef.get();
     },
-    getLicenseFs(customer){
+    getLicenseFs(customer) {
       var licenceRef = this.firestore().licences.doc(customer.licence);
       return licenceRef.get();
     },
-
-    encrypt(word){
-     return encryptor.encrypt(word);
+    encrypt(word) {
+      return encryptor.encrypt(word);
     },
-    verifyPassword(unencryptedPassword, encryptedPassword ){
+    verifyPassword(unencryptedPassword, encryptedPassword) {
       return unencryptedPassword === encryptor.decrypt(encryptedPassword);
     },
-    verifyLicence(customer){
-      if(customer.licenceType === "0"){ // Free version
+    verifyLicence(customer) {
+      if (customer.licenceType === "0") { // Free version
         return true;
       }
     }
