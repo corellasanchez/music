@@ -8,6 +8,7 @@
 import { mapState } from "vuex";
 import Media from "@dongido/vue-viaudio";
 import { mixins } from "../helpers/mixins";
+import { mixinsFb } from "../helpers/firebaseMixins";
 
 const settings = require("electron-settings");
 
@@ -16,7 +17,7 @@ export default {
     components: {
         Media
     },
-    mixins: [mixins],
+    mixins: [mixins, mixinsFb],
     data: function() {
         return {
             fileProtocol: "file:///",
@@ -26,8 +27,8 @@ export default {
         };
     },
     mounted() {
-        this.searchSongs('jacks');
         this.configuration = this.configuration = settings.get("configuration");
+        this.getSearchQueries(this.configuration);
 
         this.videoQueue = [
             // "https://www.w3schools.com/html/mov_bbb.mp4",

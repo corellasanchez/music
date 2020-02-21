@@ -1,15 +1,9 @@
-import { mapState } from "vuex";
 const fs = require("fs");
 const find = require("find");
 const { shell } = require("electron");
-const fuzz = require('fuzzball');
-
 
 
 export const mixins = {
-  computed: {
-    ...mapState(["musicFiles", "karaokeFiles", "ads"])
-  },
   methods: {
     async indexFolder(folder) {
       var files = await this.getDirectoryFiles(folder);
@@ -49,30 +43,6 @@ export const mixins = {
             }
           });
       })
-    },
-    searchSongs(keyword) {
-      console.log(this.musicFiles);
-      var results = [];
-
-      this.musicFiles.forEach((element, index) => {
-        var ratio = fuzz.partial_ratio(element, keyword);
-        if (ratio > 70) {
-          results.push({ i: index, e: this.clearSongName(element), r: ratio });
-        }
-      });
-
-      results.sort((a, b) => { return Number(b.r) - Number(a.r) });
-
-      if (results.length > 100) {
-        results.length = 100;
-      }
-
-      console.log(results);
-    },
-    clearSongName(name) {
-      var clearedName = name.substring(name.lastIndexOf('/') + 1);
-      clearedName = clearedName.substr(0, clearedName.lastIndexOf('.'));
-      return clearedName;
     },
     writeCacheFile(files, folder) {
       return new Promise((resolve, reject) => {
