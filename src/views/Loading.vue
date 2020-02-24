@@ -39,6 +39,7 @@ export default {
     },
     methods: {
         verifyConfiguration() {
+           //settings.delete("configuration");
             this.loadingMessage = 'Verificando configuración del negocio...';
             if (settings.has('configuration')) {
                 this.configuration = settings.get("configuration");

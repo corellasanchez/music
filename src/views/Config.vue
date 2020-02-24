@@ -196,6 +196,17 @@
                                 <span class="md-error">Número de canciones es requerido</span>
                             </md-field>
                         </div>
+
+                        <div class="md-layout-item md-small-size-100">
+                            <md-field>
+                                <label for="songsOrder">Ordenar las canciones</label>
+                                <md-select name="songsOrder" id="songsOrder" v-model="form.songsOrder" md-dense :disabled="sending">
+                                    <md-option value="1">La primera en entrar primera en sonar</md-option>
+                                    <md-option value="2">Según los votos de los clientes</md-option>
+                                </md-select>
+                                <span class="md-error">En el modo votación la cancion mas votada sonará primero</span>
+                            </md-field>
+                        </div>
     
                         <div class="md-layout-item md-small-size-100" v-if="form.licenceType !=='0'">
                             <md-field>
@@ -321,11 +332,12 @@ export default {
             karaokeTime: 0,
             licence: "NO-LICENCE",
             licenceType: "0",
-            maxSongs: 0,
+            maxSongs: 3,
             musicFolder: null,
             name: null,
             password: null,
-            phone: null
+            phone: null,
+            songsOrder: 1
         },
         configurationSaved: false,
         sending: false,

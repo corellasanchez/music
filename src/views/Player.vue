@@ -1,7 +1,24 @@
 <template>
-    <Media id="player" :kind="'video'" :isMuted="(true)" :src="currentVideo" :autoplay="true" :controls="true" :loop="false" :ref="'player'" @pause="pause()" @ended="ended()" @waiting="waiting()" @emptied="empitied()" @stalled="stalled()" @suspend="suspend()"
-        @playing="playing()">
-    </Media>
+    <div class="container">
+    
+    
+
+        <div class="super" >
+            <h1 class="user-name" v-if="currentUserName && showSuper" v-animate-css="superTransition">{{currentUserName}}</h1>    
+            <h1 class="song-name" v-if="currentSongName && showSuper" v-animate-css="superTransition">{{currentSongName}}</h1>
+        </div>
+    
+    
+        <Media id="player" :kind="'video'" :isMuted="(true)" :src="currentVideo" :autoplay="true" :controls="true" :loop="false" :ref="'player'" @pause="pause()" @ended="ended()" @waiting="waiting()" @emptied="empitied()" @stalled="stalled()" @suspend="suspend()"
+            @playing="playing()">
+        </Media>
+    
+    
+    
+    
+    
+    
+    </div>
 </template>
 
 <script>
@@ -23,31 +40,25 @@ export default {
             fileProtocol: "file:///",
             configuration: null,
             currentVideo: [],
-            videoQueue: []
+            videoQueue: [],
+            showSuper: false,
+            currentUserName: "",
+            currentSongName: "",
+            superTransition: 'slideInLeft'
         };
     },
     mounted() {
         this.configuration = this.configuration = settings.get("configuration");
         this.getSearchQueries(this.configuration);
-
-        this.videoQueue = [
-            // "https://www.w3schools.com/html/mov_bbb.mp4",
-            // "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-            // "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-            // "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-            // "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-            // "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-            // "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
-            // "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
-            // "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
-            // "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4",
-            // // "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
-            // "file:///Users/roy.corella/Downloads/Bombshell.2019.720P.DVDScr.X264.AC3.HQ.Hive-CM8/Bombshell.2019.720P.DVDScr.X264.AC3.HQ.Hive-CM8.mkv"
-        ];
-        this.currentVideo = this.nextVideo();
+        this.getSongsQueue(this.configuration);
+        setTimeout(() => { this.currentVideo = this.nextVideo(); }, 1000);
+        this.$vue.transition('bounce', {
+  enterClass: 'bounceInLeft',
+  leaveClass: 'bounceOutRight'
+})
     },
     computed: {
-        ...mapState(["musicFiles", "karaokeFiles", "ads"])
+        ...mapState(["musicFiles", "karaokeFiles", "ads", "musicQueue"])
     },
 
     methods: {
@@ -72,17 +83,76 @@ export default {
             // console.log("Video empitied!");
         },
         suspend() {
-            // console.log("Video suspend!"); 
+            // console.log("Video suspend!");
         },
         playing() {
-            // console.log("Video suspend!"); 
+            // console.log("Video suspend!");
         },
         nextVideo() {
+            var nextVideoFile = "";
+            var nextSong = {};
 
-            var randomVideo = this.musicFiles[Math.floor(Math.random() * this.musicFiles.length)];
-            //  var randomVideo = "/The Cribs - I'm a Realist.mp4";
-            // console.log(this.fileProtocol + this.configuration.musicFolder +  randomVideo);
-            return this.fileProtocol + this.configuration.musicFolder + randomVideo;
+            if (this.musicQueue.length > 0) {
+                if (this.configuration.songsOrder == 1) {
+                    nextSong = this.getLowerIndexSong();
+                    nextVideoFile = this.musicFiles[nextSong.s];
+                    console.log('index ', nextVideoFile);
+                } else {
+                    nextSong = this.getSongByVotes();
+                    nextVideoFile = this.musicFiles[nextSong.s];
+                    console.log('votes ', nextVideoFile);
+                }
+                this.moveToNext(nextSong);
+            } else {
+                nextVideoFile = this.musicFiles[
+                    Math.floor(Math.random() * this.musicFiles.length)
+                ];
+
+                this.currentUserName = '';
+                this.currentSongName = this.clearSongName(nextVideoFile);
+                this.showSongInfo();
+                console.log('random', nextVideoFile);
+            }
+            return this.fileProtocol + this.configuration.musicFolder + nextVideoFile;
+        },
+        moveToNext(nextSong) {
+            //fid = firbaseId
+            // s = song index on musicFiles
+            // u = user name
+            // v = votes
+            // index = order index
+
+            var songName = this.clearSongName(this.musicFiles[nextSong.s]);
+            var userName = nextSong.u
+
+            this.currentUserName = userName;
+            this.currentSongName = songName;
+
+
+            this.removeSongFromQueue(nextSong.fid)
+                .then(() => {
+                    console.log("Document successfully deleted!");
+                    this.setNowPlaying(this.configuration, { n: songName, u: userName });
+                    this.showSongInfo();
+                }).catch(function(error) {
+                    console.error("Error removing document: ", error);
+                });
+        },
+        showSongInfo() {
+            this.showSuper = true;
+            setTimeout(() => { this.showSuper = false;}, 10000);
+        },
+        getLowerIndexSong() {
+            this.musicQueue.sort((a, b) => {
+                return Number(a.index) - Number(b.index);
+            });
+            return this.musicQueue[0];
+        },
+        getSongByVotes() {
+            this.musicQueue.sort((a, b) => {
+                return Number(b.v) - Number(a.v);
+            });
+            return this.musicQueue[0];
         }
     }
 };
@@ -103,6 +173,12 @@ body {
     background-color: black;
 }
 
+.cn {
+    position: relative;
+    width: 100%;
+    height: auto;
+}
+
 #player {
     position: absolute;
     top: 50%;
@@ -115,6 +191,31 @@ body {
     height: auto;
     z-index: 1;
     overflow: hidden;
+}
+
+.super {
+    position: absolute;
+    top: 81%;
+    left: 27%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+    z-index: 3;
+    color: white;
+    font-size: 0.7vw;
+    text-align: justify;
+    text-overflow: ellipsis;
+    line-height: normal;
+    text-transform: uppercase;
+}
+
+.user-name {
+    background-color: black;
+    padding: 10px 20px;
+}
+
+.song-name {
+    background-color: blueviolet;
+    padding: 10px 20px;
 }
 
 #player:focus {

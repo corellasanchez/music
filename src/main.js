@@ -4,8 +4,13 @@ import router from './router'
 import store from './store'
 import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.min.css'
-import 'vue-material/dist/theme/default-dark.css' 
+import 'vue-material/dist/theme/default-dark.css'
 import VueFirestore from 'vue-firestore'
+import VAnimateCss from 'v-animate-css';
+ 
+
+
+
   
 Vue.config.productionTip = false;
 
@@ -16,6 +21,7 @@ Vue.use(require('vue-moment'), {moment})
 Vue.use(VueFirestore)
 Vue.use(VueMaterial);
 Vue.use(VueFirestore);
+Vue.use(VAnimateCss);
 
 new Vue({
   router,
