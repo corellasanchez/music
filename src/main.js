@@ -7,6 +7,8 @@ import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default-dark.css'
 import VueFirestore from 'vue-firestore'
 import VAnimateCss from 'v-animate-css';
+import VueTimers from 'vue-timers'
+Vue.use(VueTimers)
  
 
 

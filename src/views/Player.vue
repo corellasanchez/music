@@ -1,22 +1,24 @@
 <template>
     <div class="container">
     
-    
-
-        <div class="super" >
-            <h1 class="user-name" v-if="currentUserName && showSuper" v-animate-css="superTransition">{{currentUserName}}</h1>    
+        <div class="super">
+            <h1 class="user-name" v-if="currentUserName && showSuper" v-animate-css="superTransition">{{currentUserName}}</h1>
             <h1 class="song-name" v-if="currentSongName && showSuper" v-animate-css="superTransition">{{currentSongName}}</h1>
         </div>
     
+        <div class="super-left-logo" v-if="configuration && !showSuper && (superAppInfo || superAppInfo2)">
+            <div class="left-logo"><img src="../assets/images/logo.svg" /> </div>
+            <div class="left-text">
+                <h1 class="left-logo-text" v-if="superAppInfo" v-animate-css="'zoomIn'"> Descarga Gratis <span class="accent">Pongala Music </span> <img src="../assets/images/google-play-store.svg" /> <img src="../assets/images/apple-logo.svg" /></h1>
+                <h1 class="left-logo-text" v-if="superAppInfo2" v-animate-css="'fadeIn'"> Ingresa con el código:<span class="accent"> {{configuration.barCode}} </span></h1>
+                <h1 class="left-logo-text" v-if="superAppInfo2">Para programar la música aquí en <span class="accent"> {{configuration.name}}</span></h1>
+            </div>
+        </div>
     
-        <Media id="player" :kind="'video'" :isMuted="(true)" :src="currentVideo" :autoplay="true" :controls="true" :loop="false" :ref="'player'" @pause="pause()" @ended="ended()" @waiting="waiting()" @emptied="empitied()" @stalled="stalled()" @suspend="suspend()"
+    
+        <Media id="player" :kind="'video'" :isMuted="true" :src="currentVideo" :autoplay="true" :controls="true" :loop="false" :ref="'player'" @pause="pause()" @ended="ended()" @waiting="waiting()" @emptied="empitied()" @stalled="stalled()" @suspend="suspend()"
             @playing="playing()">
         </Media>
-    
-    
-    
-    
-    
     
     </div>
 </template>
@@ -42,6 +44,8 @@ export default {
             currentVideo: [],
             videoQueue: [],
             showSuper: false,
+            superAppInfo: false,
+            superAppInfo2: false,
             currentUserName: "",
             currentSongName: "",
             superTransition: 'slideInLeft'
@@ -52,10 +56,6 @@ export default {
         this.getSearchQueries(this.configuration);
         this.getSongsQueue(this.configuration);
         setTimeout(() => { this.currentVideo = this.nextVideo(); }, 1000);
-        this.$vue.transition('bounce', {
-  enterClass: 'bounceInLeft',
-  leaveClass: 'bounceOutRight'
-})
     },
     computed: {
         ...mapState(["musicFiles", "karaokeFiles", "ads", "musicQueue"])
@@ -138,9 +138,27 @@ export default {
                     console.error("Error removing document: ", error);
                 });
         },
+        appInfoTransition() {
+
+            if (this.superAppInfo) {
+                this.superAppInfo = false;
+                this.superAppInfo2 = true;
+            } else {
+                this.superAppInfo = true;
+                this.superAppInfo2 = false;
+            }
+
+        },
         showSongInfo() {
             this.showSuper = true;
-            setTimeout(() => { this.showSuper = false;}, 10000);
+            setTimeout(() => {
+                this.showSuper = false;
+                this.superAppInfo = true;
+                if (!this.timers.appInfoTransition.isRunning) {
+                    this.$timer.start('appInfoTransition');
+                }
+            }, 10000);
+
         },
         getLowerIndexSong() {
             this.musicQueue.sort((a, b) => {
@@ -154,7 +172,10 @@ export default {
             });
             return this.musicQueue[0];
         }
-    }
+    },
+    timers: {
+        appInfoTransition: { time: 7000, repeat: true }
+    },
 };
 </script>
 
@@ -220,5 +241,51 @@ body {
 
 #player:focus {
     outline: none !important;
+}
+
+.super-left-logo {
+    position: absolute;
+    bottom: 35px;
+    left: 5%;
+    width: 90%;
+    z-index: 3;
+    color: white;
+    font-size: 0.8vw;
+    text-align: left;
+    text-overflow: ellipsis;
+    line-height: normal;
+    text-transform: uppercase;
+}
+
+.left-logo {
+    float: left;
+    width: 135px;
+}
+
+.left-text {
+    margin-top: 0;
+    margin-left: 1%;
+    padding-top: 26px;
+    padding-bottom: 1%;
+    background-color: #181818		;
+    border-radius: 100px;
+    height: 130px;
+}
+
+.left-logo-text {
+    margin-left: 10%;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.left-logo-text img {
+    max-width: 250px;
+    padding-top: 11px;
+    padding-left: 25px;
+}
+
+.accent {
+    color: #F0B022;
+    font-size: 1.6vw !important;
 }
 </style>
