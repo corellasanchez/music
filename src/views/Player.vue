@@ -154,10 +154,11 @@ export default {
             setTimeout(() => {
                 this.showSuper = false;
                 this.superAppInfo = true;
+                this.superAppInfo2 = false;
                 if (!this.timers.appInfoTransition.isRunning) {
                     this.$timer.start('appInfoTransition');
                 }
-            }, 10000);
+            }, 20000);
 
         },
         getLowerIndexSong() {
