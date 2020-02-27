@@ -9,8 +9,8 @@ var encryptor = require('simple-encryptor')(key);
 
 export const mixinsFb = {
   computed: {
-    ...mapState(["musicFiles", "karaokeFiles", "ads", "musicQueue", "queueSubscription", "searchSubscription"]),
-    ...mapMutations(['addSongToQueue', 'setMusicQueue']),
+    ...mapState(["musicFiles", "karaokeFiles", "ads", "musicQueue", "messageQueue", "queueSubscription", "searchSubscription", "messageQueueSubscription"]),
+    ...mapMutations(['addSongToQueue', 'setMusicQueue', 'subscribeMessages']),
   },
   methods: {
     firestore() {
@@ -19,7 +19,8 @@ export const mixinsFb = {
         licences: db.collection("licences"),
         search_queries: db.collection("search_queries"),
         pending_songs: db.collection("pending_songs"),
-        now_playing: db.collection("now_playing")
+        now_playing: db.collection("now_playing"),
+        messages: db.collection("messages")
       };
     },
     searchSongs(id, data) {
@@ -87,13 +88,13 @@ export const mixinsFb = {
         return true;
       }
     },
-    removeSongFromQueue(fid) {
-      var updatedSongs = this.musicQueue.filter(function (song) {
-        return song.fid !== fid;
+    removeMessageFromQueue(fid) {
+      var updatedMessages = this.musicQueue.filter(function (message) {
+        return message.fid !== fid;
       });
-      this.$store.commit('setMusicQueue', updatedSongs);
-      console.log(this.musicQueue);
-      return this.firestore().pending_songs.doc(fid).delete();
+      this.$store.commit('setMessageQueue', updatedMessages);
+      console.log(this.messageQueue);
+      return this.firestore().messages.doc(fid).delete();
     },
     setNowPlaying(customer, song) {
       this.firestore().now_playing.doc(customer.barCode).set(song);
@@ -131,6 +132,7 @@ export const mixinsFb = {
           // s = song index in the array
           // u = user name
           // v = votes
+          // n = song name
           querySnapshot.docChanges().forEach((change) => {
             if (change.type === "added") {
               this.queueSong(change.doc.id, change.doc.data());
@@ -145,6 +147,31 @@ export const mixinsFb = {
         });
       }
     },
+    async getMessageQueue(customer) {
+
+      if (!this.messageQueueSubscription) {
+        this.$store.commit('subscribeMessages');
+        console.log("messageQueue");
+
+        this.firestore().messages.where("c", "==", customer.barCode).onSnapshot((querySnapshot) => {
+          // c = customer
+          // m = message
+          // u = user name
+          // p = user photo
+          querySnapshot.docChanges().forEach((change) => {
+            if (change.type === "added") {
+              this.queueMessage(change.doc.id, change.doc.data());
+            }
+            if (change.type === "modified") {
+              console.log("M modified: ", change.doc.data());
+            }
+            if (change.type === "removed") {
+              console.log("M removed: ", change.doc.data());
+            }
+          });
+        });
+      }
+    },
     queueSong(id, data) {
       // c = customer
       // s = song index in musicFiles Array
@@ -154,6 +181,16 @@ export const mixinsFb = {
       var song = data;
       song.fid = id;
       this.$store.commit('addSongToQueue', song);
+    },
+    queueMessage(id, data) {
+      // c = customer
+      // m = message
+      // u = user name
+      // p = user photo
+      var message = data;
+      message.fid = id;
+      this.$store.commit('addMessageToQueue', message);
+      this.firestore().messages.doc(message.fid).delete();
     },
   }
 }

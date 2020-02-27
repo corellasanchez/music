@@ -9,8 +9,10 @@ export default new Vuex.Store({
     musicQueue: [],
     karaokeFiles: {},
     ads:{},
+    messageQueue: [],
     queueSubscription: false,
-    searchSubscription: false
+    searchSubscription: false,
+    messageQueueSubscription: false
   },
   mutations: {
     setMusicFiles(state, musicFiles){
@@ -25,6 +27,9 @@ export default new Vuex.Store({
     setMusicQueue(state, musicQueue){
       state.musicQueue = musicQueue;
     },
+    setMessageQueue(state, messageQueue){
+      state.messageQueue = messageQueue;
+    },
     addSongToQueue(state, song){
       const result = state.musicQueue.filter(x => x.fid ==  song.fid);
      if(result.length === 0){
@@ -33,11 +38,19 @@ export default new Vuex.Store({
       console.log('song added', song)
      }
     },
+    addMessageToQueue(state, message){
+      message.index = state.musicQueue.length + 1;
+      state.messageQueue.push(message);
+      console.log('message added', message)
+    },
     subscribeQueue(state){
       state.queueSubscription = true;
     },
     subscribeQueries(state){
       state.searchSubscription = true;
+    },
+    subscribeMessages(state){
+      state.messageQueueSubscription = true;
     }
   },
   actions: {

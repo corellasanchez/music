@@ -1,25 +1,34 @@
 <template>
     <div class="container">
-    
         <div class="super">
             <h1 class="user-name" v-if="currentUserName && showSuper" v-animate-css="superTransition">{{currentUserName}}</h1>
             <h1 class="song-name" v-if="currentSongName && showSuper" v-animate-css="superTransition">{{currentSongName}}</h1>
         </div>
     
         <div class="super-left-logo" v-if="configuration && !showSuper && (superAppInfo || superAppInfo2)">
-            <div class="left-logo"><img src="../assets/images/logo.svg" /> </div>
+            <div class="left-logo">
+                <img src="../assets/images/logo.svg" />
+            </div>
             <div class="left-text">
-                <h1 class="left-logo-text" v-if="superAppInfo" v-animate-css="'zoomIn'"> Descarga Gratis <span class="accent">Pongala Music </span> <img src="../assets/images/google-play-store.svg" /> <img src="../assets/images/apple-logo.svg" /></h1>
-                <h1 class="left-logo-text" v-if="superAppInfo2" v-animate-css="'fadeIn'"> Ingresa con el código:<span class="accent"> {{configuration.barCode}} </span></h1>
-                <h1 class="left-logo-text" v-if="superAppInfo2">Para programar la música aquí en <span class="accent"> {{configuration.name}}</span></h1>
+                <h1 class="left-logo-text" v-if="superAppInfo" v-animate-css="'zoomIn'">
+                    Descarga Gratis
+                    <span class="accent">Pongala Music</span>
+                    <img src="../assets/images/google-play-store.svg" />
+                    <img src="../assets/images/apple-logo.svg" />
+                </h1>
+                <h1 class="left-logo-text" v-if="superAppInfo2" v-animate-css="'fadeIn'">
+                    Ingresa con el código:
+                    <span class="accent">{{configuration.barCode}}</span>
+                </h1>
+                <h1 class="left-logo-text" v-if="superAppInfo2">
+                    Para programar la música aquí en
+                    <span class="accent">{{configuration.name}}</span>
+                </h1>
             </div>
         </div>
     
-    
         <Media id="player" :kind="'video'" :isMuted="true" :src="currentVideo" :autoplay="true" :controls="true" :loop="false" :ref="'player'" @pause="pause()" @ended="ended()" @waiting="waiting()" @emptied="empitied()" @stalled="stalled()" @suspend="suspend()"
-            @playing="playing()">
-        </Media>
-    
+            @playing="playing()"></Media>
     </div>
 </template>
 
@@ -48,17 +57,28 @@ export default {
             superAppInfo2: false,
             currentUserName: "",
             currentSongName: "",
-            superTransition: 'slideInLeft'
+            currentMessageName: "",
+            currentMessage: "",
+            superTransition: "slideInLeft"
         };
     },
     mounted() {
         this.configuration = this.configuration = settings.get("configuration");
         this.getSearchQueries(this.configuration);
         this.getSongsQueue(this.configuration);
-        setTimeout(() => { this.currentVideo = this.nextVideo(); }, 1000);
+        this.getMessageQueue(this.configuration);
+        setTimeout(() => {
+            this.currentVideo = this.nextVideo();
+        }, 1000);
     },
     computed: {
-        ...mapState(["musicFiles", "karaokeFiles", "ads", "musicQueue"])
+        ...mapState([
+            "musicFiles",
+            "karaokeFiles",
+            "ads",
+            "musicQueue",
+            "messageQueue"
+        ])
     },
 
     methods: {
@@ -96,11 +116,11 @@ export default {
                 if (this.configuration.songsOrder == 1) {
                     nextSong = this.getLowerIndexSong();
                     nextVideoFile = this.musicFiles[nextSong.s];
-                    console.log('index ', nextVideoFile);
+                    console.log("index ", nextVideoFile);
                 } else {
                     nextSong = this.getSongByVotes();
                     nextVideoFile = this.musicFiles[nextSong.s];
-                    console.log('votes ', nextVideoFile);
+                    console.log("votes ", nextVideoFile);
                 }
                 this.moveToNext(nextSong);
             } else {
@@ -108,10 +128,10 @@ export default {
                     Math.floor(Math.random() * this.musicFiles.length)
                 ];
 
-                this.currentUserName = '';
+                this.currentUserName = "";
                 this.currentSongName = this.clearSongName(nextVideoFile);
                 this.showSongInfo();
-                console.log('random', nextVideoFile);
+                console.log("random", nextVideoFile);
             }
             return this.fileProtocol + this.configuration.musicFolder + nextVideoFile;
         },
@@ -123,23 +143,22 @@ export default {
             // index = order index
 
             var songName = this.clearSongName(this.musicFiles[nextSong.s]);
-            var userName = nextSong.u
+            var userName = nextSong.u;
 
             this.currentUserName = userName;
             this.currentSongName = songName;
-
 
             this.removeSongFromQueue(nextSong.fid)
                 .then(() => {
                     console.log("Document successfully deleted!");
                     this.setNowPlaying(this.configuration, { n: songName, u: userName });
                     this.showSongInfo();
-                }).catch(function(error) {
+                })
+                .catch(function(error) {
                     console.error("Error removing document: ", error);
                 });
         },
         appInfoTransition() {
-
             if (this.superAppInfo) {
                 this.superAppInfo = false;
                 this.superAppInfo2 = true;
@@ -147,7 +166,6 @@ export default {
                 this.superAppInfo = true;
                 this.superAppInfo2 = false;
             }
-
         },
         showSongInfo() {
             this.showSuper = true;
@@ -156,16 +174,28 @@ export default {
                 this.superAppInfo = true;
                 this.superAppInfo2 = false;
                 if (!this.timers.appInfoTransition.isRunning) {
-                    this.$timer.start('appInfoTransition');
+                    this.$timer.start("appInfoTransition");
                 }
             }, 20000);
-
         },
         getLowerIndexSong() {
             this.musicQueue.sort((a, b) => {
                 return Number(a.index) - Number(b.index);
             });
             return this.musicQueue[0];
+        },
+        getNextMessage() {
+            if (this.messageQueue.length > 0) {
+                this.messageQueue.sort((a, b) => {
+                    return Number(a.index) - Number(b.index);
+                });
+                this.currentMessageName = this.musicQueue[0].u;
+                this.currentMessage = this.musicQueue[0].m;
+                this.messageQueue.shift();
+            } else {
+                this.currentMessageName = '';
+                this.currentMessage = '';
+            }
         },
         getSongByVotes() {
             this.musicQueue.sort((a, b) => {
@@ -176,7 +206,7 @@ export default {
     },
     timers: {
         appInfoTransition: { time: 7000, repeat: true }
-    },
+    }
 };
 </script>
 
@@ -268,7 +298,7 @@ body {
     margin-left: 1%;
     padding-top: 26px;
     padding-bottom: 1%;
-    background-color: #181818		;
+    background-color: #181818;
     border-radius: 100px;
     height: 130px;
 }
@@ -286,7 +316,7 @@ body {
 }
 
 .accent {
-    color: #F0B022;
+    color: #f0b022;
     font-size: 1.6vw !important;
 }
 </style>
