@@ -37,6 +37,12 @@ function createWindow() {
           }
         },
         {
+          label: 'Anuncios de texto',
+          click() {
+            win.webContents.send('navigate', '/messages');
+          }
+        },
+        {
           label: "Editar",
           submenu: [
               { label: "Deshacer", accelerator: "CmdOrCtrl+Z", selector: "undo:" },

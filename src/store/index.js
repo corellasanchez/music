@@ -10,9 +10,10 @@ export default new Vuex.Store({
     karaokeFiles: {},
     ads:{},
     messageQueue: [],
+    localTextAds: [],
     queueSubscription: false,
     searchSubscription: false,
-    messageQueueSubscription: false
+    messageQueueSubscription: false,
   },
   mutations: {
     setMusicFiles(state, musicFiles){
@@ -29,6 +30,19 @@ export default new Vuex.Store({
     },
     setMessageQueue(state, messageQueue){
       state.messageQueue = messageQueue;
+    },
+    setLocalTextAds(state,localTextAds){
+      state.localTextAds = localTextAds;
+    },
+    addLocalTextAd(state,localTextAd){
+      if(!state.localTextAds){
+        state.localTextAds = [];
+      }
+      state.localTextAds.push(localTextAd);
+    },
+    removeLocalTextAd(state,localTextAd){
+      const result = state.localTextAds.filter(x => x.index !=  localTextAd.index);
+      state.localTextAds = result;
     },
     addSongToQueue(state, song){
       const result = state.musicQueue.filter(x => x.fid ==  song.fid);

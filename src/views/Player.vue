@@ -5,24 +5,22 @@
             <h1 class="song-name" v-if="currentSongName && showSuper" v-animate-css="superTransition">{{currentSongName}}</h1>
         </div>
     
-        <div class="super-left-logo" v-if="configuration && !showSuper && (superAppInfo || superAppInfo2)">
+        <div class="super-left-logo" v-if="configuration && (superAppInfo || superAppInfo2 || superAppInfo3)">
             <div class="left-logo">
                 <img src="../assets/images/logo.svg" />
             </div>
             <div class="left-text">
-                <h1 class="left-logo-text" v-if="superAppInfo" v-animate-css="'zoomIn'">
+                <h1 class="left-logo-text" v-show="superAppInfo">
+                    {{configuration.name}}
+                </h1>
+                <h1 class="left-logo-text" v-show="superAppInfo2">
                     Descarga Gratis
                     <span class="accent">Pongala Music</span>
                     <img src="../assets/images/google-play-store.svg" />
                     <img src="../assets/images/apple-logo.svg" />
                 </h1>
-                <h1 class="left-logo-text" v-if="superAppInfo2" v-animate-css="'fadeIn'">
-                    Ingresa con el código:
-                    <span class="accent">{{configuration.barCode}}</span>
-                </h1>
-                <h1 class="left-logo-text" v-if="superAppInfo2">
-                    Para programar la música aquí en
-                    <span class="accent">{{configuration.name}}</span>
+                <h1 class="left-logo-text" v-show="superAppInfo3">
+                    Ingrese el Código: <span class="accent">{{configuration.barCode}}</span>
                 </h1>
             </div>
         </div>
@@ -33,7 +31,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 import Media from "@dongido/vue-viaudio";
 import { mixins } from "../helpers/mixins";
 import { mixinsFb } from "../helpers/firebaseMixins";
@@ -53,17 +51,19 @@ export default {
             currentVideo: [],
             videoQueue: [],
             showSuper: false,
-            superAppInfo: false,
+            superAppInfo: true,
             superAppInfo2: false,
+            superAppInfo3: false,
             currentUserName: "",
             currentSongName: "",
             currentMessageName: "",
             currentMessage: "",
-            superTransition: "slideInLeft"
+            superTransition: "slideInLeft",
+            markeeText: '🦁 <strong>Lorem ipsum dolor sit amet</strong>, consetetur sadipscing elitr,🦁%3Cstrong%3Epetete%3C%2Fstrong%3E sed diam nonumy eirmod tempor invidunt ut labore et dolore magna.'
         };
     },
     mounted() {
-        this.configuration = this.configuration = settings.get("configuration");
+        this.configuration = settings.get("configuration");
         this.getSearchQueries(this.configuration);
         this.getSongsQueue(this.configuration);
         this.getMessageQueue(this.configuration);
@@ -77,8 +77,10 @@ export default {
             "karaokeFiles",
             "ads",
             "musicQueue",
-            "messageQueue"
-        ])
+            "messageQueue",
+            "localTextAds"
+        ]),
+        ...mapMutations(["addLocalTextAd"])
     },
 
     methods: {
@@ -159,23 +161,30 @@ export default {
                 });
         },
         appInfoTransition() {
+
             if (this.superAppInfo) {
                 this.superAppInfo = false;
                 this.superAppInfo2 = true;
-            } else {
+                this.superAppInfo3 = false;
+                return;
+            }
+            if (this.superAppInfo2) {
+                this.superAppInfo = false;
+                this.superAppInfo2 = false;
+                this.superAppInfo3 = true;
+                return;
+            }
+            if (this.superAppInfo3) {
                 this.superAppInfo = true;
                 this.superAppInfo2 = false;
+                this.superAppInfo3 = false;
+                return;
             }
         },
         showSongInfo() {
             this.showSuper = true;
             setTimeout(() => {
                 this.showSuper = false;
-                this.superAppInfo = true;
-                this.superAppInfo2 = false;
-                if (!this.timers.appInfoTransition.isRunning) {
-                    this.$timer.start("appInfoTransition");
-                }
             }, 20000);
         },
         getLowerIndexSong() {
@@ -205,7 +214,7 @@ export default {
         }
     },
     timers: {
-        appInfoTransition: { time: 7000, repeat: true }
+        appInfoTransition: { time: 6000, autostart: true, repeat: true }
     }
 };
 </script>
@@ -276,12 +285,11 @@ body {
 
 .super-left-logo {
     position: absolute;
-    bottom: 35px;
-    left: 5%;
-    width: 90%;
+    top: 50px;
+    left: 50px;
     z-index: 3;
     color: white;
-    font-size: 0.8vw;
+    font-size: 15px;
     text-align: left;
     text-overflow: ellipsis;
     line-height: normal;
@@ -290,33 +298,38 @@ body {
 
 .left-logo {
     float: left;
-    width: 135px;
+    width: 65px;
 }
 
 .left-text {
     margin-top: 0;
-    margin-left: 1%;
-    padding-top: 26px;
-    padding-bottom: 1%;
+    margin-left: 10px;
+    padding-top: 6px;
+    padding-bottom: 6px;
     background-color: #181818;
     border-radius: 100px;
-    height: 130px;
+    height: 64px;
+    padding-right: 40px;
+    width: max-content;
 }
 
 .left-logo-text {
-    margin-left: 10%;
-    margin-top: 0px;
+    margin-left: 68px;
+    margin-top: 6px;
     margin-bottom: 0px;
 }
 
 .left-logo-text img {
-    max-width: 250px;
-    padding-top: 11px;
+    max-width: 181px;
+    margin-top: -9px;
     padding-left: 25px;
 }
 
 .accent {
     color: #f0b022;
-    font-size: 1.6vw !important;
+}
+
+.badge-danger{
+  color: red;
 }
 </style>

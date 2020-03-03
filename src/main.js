@@ -8,22 +8,26 @@ import 'vue-material/dist/theme/default-dark.css'
 import VueFirestore from 'vue-firestore'
 import VAnimateCss from 'v-animate-css';
 import VueTimers from 'vue-timers'
-Vue.use(VueTimers)
- 
-
-
+import MarqueeText from 'vue-marquee-text-component'
+import { EmojiPickerPlugin } from 'vue-emoji-picker'
+import *  as material_icons from './assets/css/material_icons.css';
 
   
 Vue.config.productionTip = false;
 
 const moment = require('moment');
 require('moment/locale/es');
- 
-Vue.use(require('vue-moment'), {moment})
-Vue.use(VueFirestore)
+
+
+Vue.component('marquee-text', MarqueeText);
+Vue.use(require('vue-moment'), {moment});
+Vue.use(VueFirestore);
 Vue.use(VueMaterial);
 Vue.use(VueFirestore);
 Vue.use(VAnimateCss);
+Vue.use(VueTimers);
+Vue.use(EmojiPickerPlugin);
+Vue.use(material_icons);
 
 new Vue({
   router,
