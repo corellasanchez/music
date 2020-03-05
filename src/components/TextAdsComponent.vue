@@ -1,13 +1,13 @@
 <template>
     <div class="footer">
-        <marquee-text :key="0" :duration="100">
-            <span class="marqueeSpan" v-for="textAd in localTextAds" :key="textAd.index" :style="{color: textAd.color}"> {{textAd.text}}</span>
-            <span class="marqueeSpan" v-if="localTextAds.length == 0"> No hay mensajes que mostrar 🙇🙇🙇🙇🙇🙇</span>
-            <span class="marqueeSpan" v-if="localTextAds.length == 0"> Arega algunos arriba</span>
-            <span class="marqueeSpan" v-if="localTextAds.length == 0" :style="{color: '#FF851B'}"> Puedes</span>
-            <span class="marqueeSpan" v-if="localTextAds.length == 0" :style="{color: '#2ECC40'}"> ponerles</span>
-            <span class="marqueeSpan" v-if="localTextAds.length == 0" :style="{color: '#FFFF00'}"> colores</span>
-            <span class="marqueeSpan" v-if="localTextAds.length == 0"> y emoticones 🎉🎉🎉🎉🎉</span>
+        <marquee-text :key="0" :duration="duration">
+            <span class="marqueeSpan" v-for="textAd in localTextAds" :key="textAd.index + 2000" :style="{color: textAd.color}"> {{textAd.text}}</span>
+            <span class="marqueeSpan" v-if="localTextAds.length == 0" :key="3001"> No hay mensajes que mostrar 🙇🙇🙇🙇🙇🙇</span>
+            <span class="marqueeSpan" v-if="localTextAds.length == 0" :key="3002">> Arega algunos arriba</span>
+            <span class="marqueeSpan" v-if="localTextAds.length == 0" :style="{color: '#FF851B'}" :key="3003">> Puedes</span>
+            <span class="marqueeSpan" v-if="localTextAds.length == 0" :style="{color: '#2ECC40'}" :key="3004">> ponerles</span>
+            <span class="marqueeSpan" v-if="localTextAds.length == 0" :style="{color: '#FFFF00'}" :key="3005">> colores</span>
+            <span class="marqueeSpan" v-if="localTextAds.length == 0" :key="3006">> y emoticones 🎉🎉🎉🎉🎉</span>
         </marquee-text>
     </div>
 </template>
@@ -19,13 +19,11 @@ const settings = require("electron-settings");
 
 export default {
     name: "text-ads-component",
-    data() {
-        return {
-            isInputActive: false
-        };
+    props: {
+    duration: Number  
     },
     methods: {
-        getLocalTextAds() {
+        getConfig() {
             if (settings.has("localTextAds")) {
                 this.$store.commit("setLocalTextAds", settings.get("localTextAds"));
             }
@@ -37,7 +35,7 @@ export default {
         ])
     },
     mounted() {
-        this.getLocalTextAds();
+        this.getConfig();
     }
 };
 </script>
@@ -59,5 +57,6 @@ export default {
 
 .marqueeSpan {
     padding-left: 10px;
+        font-weight: bolder;
 }
 </style>

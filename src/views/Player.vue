@@ -10,9 +10,7 @@
                 <img src="../assets/images/logo.svg" />
             </div>
             <div class="left-text">
-                <h1 class="left-logo-text" v-show="superAppInfo">
-                    {{configuration.name}}
-                </h1>
+                <h1 class="left-logo-text" v-show="superAppInfo">{{configuration.name}}</h1>
                 <h1 class="left-logo-text" v-show="superAppInfo2">
                     Descarga Gratis
                     <span class="accent">Pongala Music</span>
@@ -20,13 +18,15 @@
                     <img src="../assets/images/apple-logo.svg" />
                 </h1>
                 <h1 class="left-logo-text" v-show="superAppInfo3">
-                    Ingrese el Código: <span class="accent">{{configuration.barCode}}</span>
+                    Ingrese el Código:
+                    <span class="accent">{{configuration.barCode}}</span>
                 </h1>
             </div>
         </div>
     
         <Media id="player" :kind="'video'" :isMuted="true" :src="currentVideo" :autoplay="true" :controls="true" :loop="false" :ref="'player'" @pause="pause()" @ended="ended()" @waiting="waiting()" @emptied="empitied()" @stalled="stalled()" @suspend="suspend()"
             @playing="playing()"></Media>
+        <text-ads-component :duration="Number(duration)"></text-ads-component>
     </div>
 </template>
 
@@ -35,13 +35,15 @@ import { mapState, mapMutations } from "vuex";
 import Media from "@dongido/vue-viaudio";
 import { mixins } from "../helpers/mixins";
 import { mixinsFb } from "../helpers/firebaseMixins";
+import { TextAdsComponent } from "../components";
 
 const settings = require("electron-settings");
 
 export default {
     name: "app",
     components: {
-        Media
+        Media,
+        TextAdsComponent
     },
     mixins: [mixins, mixinsFb],
     data: function() {
@@ -59,11 +61,16 @@ export default {
             currentMessageName: "",
             currentMessage: "",
             superTransition: "slideInLeft",
-            markeeText: '🦁 <strong>Lorem ipsum dolor sit amet</strong>, consetetur sadipscing elitr,🦁%3Cstrong%3Epetete%3C%2Fstrong%3E sed diam nonumy eirmod tempor invidunt ut labore et dolore magna.'
+            duration: 15
         };
     },
     mounted() {
         this.configuration = settings.get("configuration");
+        if (settings.has("configuration.markeeDuration")) {
+            this.duration = settings.get("configuration.markeeDuration");
+        } else {
+            this.duration = 15;
+        }
         this.getSearchQueries(this.configuration);
         this.getSongsQueue(this.configuration);
         this.getMessageQueue(this.configuration);
@@ -161,7 +168,6 @@ export default {
                 });
         },
         appInfoTransition() {
-
             if (this.superAppInfo) {
                 this.superAppInfo = false;
                 this.superAppInfo2 = true;
@@ -202,8 +208,8 @@ export default {
                 this.currentMessage = this.musicQueue[0].m;
                 this.messageQueue.shift();
             } else {
-                this.currentMessageName = '';
-                this.currentMessage = '';
+                this.currentMessageName = "";
+                this.currentMessage = "";
             }
         },
         getSongByVotes() {
@@ -329,7 +335,7 @@ body {
     color: #f0b022;
 }
 
-.badge-danger{
-  color: red;
+.badge-danger {
+    color: red;
 }
 </style>
