@@ -1,8 +1,17 @@
 <template>
     <div class="container">
         <div class="super">
-            <h1 class="user-name" v-if="currentUserName && showSuper" v-animate-css="superTransition">{{currentUserName}}</h1>
-            <h1 class="song-name" v-if="currentSongName && showSuper" v-animate-css="superTransition">{{currentSongName}}</h1>
+            <!-- <h1  v-if="currentUserName && showSuper" v-animate-css="superTransition">
+                <md-icon>face</md-icon>
+                {{currentUserName}}
+            </h1> -->
+            <h1 class="song-name" v-if="currentSongName && showSuper" v-animate-css="superTransition">
+               <strong class="user-name" v-show="currentUserName">
+                {{currentUserName}}: <br> 
+              </strong>
+              {{currentSongName}}
+              </h1>
+       
         </div>
     
         <div class="super-left-logo" v-if="configuration && (superAppInfo || superAppInfo2 || superAppInfo3)">
@@ -23,10 +32,13 @@
                 </h1>
             </div>
         </div>
-    
-        <Media id="player" :kind="'video'" :isMuted="true" :src="currentVideo" :autoplay="true" :controls="true" :loop="false" :ref="'player'" @pause="pause()" @ended="ended()" @waiting="waiting()" @emptied="empitied()" @stalled="stalled()" @suspend="suspend()"
+    <!-- :controls="true" -->
+        <Media id="player" :kind="'video'" :isMuted="true" :src="currentVideo" :autoplay="true"  :loop="false" :ref="'player'" @pause="pause()" @ended="ended()" @waiting="waiting()" @emptied="empitied()" @stalled="stalled()" @suspend="suspend()"
             @playing="playing()"></Media>
-        <text-ads-component :duration="Number(duration)"></text-ads-component>
+    
+        <notifications group="user-messages" position="bottom left" :duration="Number(15000)" :max="Number(9)" />
+    
+        <text-ads-component :duration="Number(duration)" :showDemo="false"></text-ads-component>
     </div>
 </template>
 
@@ -61,8 +73,17 @@ export default {
             currentMessageName: "",
             currentMessage: "",
             superTransition: "slideInLeft",
-            duration: 15
+            duration: 15,
+            messageTest: 0
         };
+    },
+    created() {
+        this.$store.watch(
+            (state, getters) => getters.messageQueue,
+            () => {
+                this.getNextMessage();
+            }
+        );
     },
     mounted() {
         this.configuration = settings.get("configuration");
@@ -87,9 +108,8 @@ export default {
             "messageQueue",
             "localTextAds"
         ]),
-        ...mapMutations(["addLocalTextAd"])
+        ...mapMutations(["addLocalTextAd", "addMessageToQueue"])
     },
-
     methods: {
         pause() {
             // console.log("Video paused!");
@@ -137,7 +157,7 @@ export default {
                     Math.floor(Math.random() * this.musicFiles.length)
                 ];
 
-                this.currentUserName = "";
+                this.currentUserName = "Pongala Music";
                 this.currentSongName = this.clearSongName(nextVideoFile);
                 this.showSongInfo();
                 console.log("random", nextVideoFile);
@@ -204,12 +224,17 @@ export default {
                 this.messageQueue.sort((a, b) => {
                     return Number(a.index) - Number(b.index);
                 });
-                this.currentMessageName = this.musicQueue[0].u;
-                this.currentMessage = this.musicQueue[0].m;
+                console.log(this.messageQueue[0]);
+
+                this.$notify({
+                    group: "user-messages",
+                    text: "<strong>" +
+                        this.messageQueue[0].u +
+                        ": </strong> " +
+                        this.messageQueue[0].m,
+                    position: "bottom left"
+                });
                 this.messageQueue.shift();
-            } else {
-                this.currentMessageName = "";
-                this.currentMessage = "";
             }
         },
         getSongByVotes() {
@@ -217,10 +242,71 @@ export default {
                 return Number(b.v) - Number(a.v);
             });
             return this.musicQueue[0];
+        },
+        sendTestMessages() {
+            var names = ["Hellen Brooks",
+                "Rachel Varquero",
+                "Edwards Ramirez",
+                "Christopher Sanchez",
+                "Jorge Perez",
+                "Michael Thomas",
+                "Hanz Baker",
+                "Sara Connor",
+                "Henri Moore",
+                "Chris Angels",
+                "Bailey de la Cruz",
+                "Roger Smith",
+                "Ellen Johnson",
+                "Marilyn Manson",
+                "Marcos Thompson",
+                "Anthony Hopkings",
+                "Evans Fruits",
+                "Julie Roberts",
+                "Hall Bomber",
+                "Paula Abdul",
+                "Jhon Phillips",
+                "Annie Natacha",
+                "Enrique Hernandez",
+                "Dorothy Palacios",
+                "Murphy Loras",
+                "Alice Anderson",
+                "Howard Smith"
+            ];
+            var messages = [
+                "What’s happening?! 😄😄☠✊ ",
+                "Acabo de ponerme la tercera y final dosis de la vacuna contra el virus de papiloma humano. Logro logrado.😃",
+                "YA ME LLAMÓ EL MEP 🤡",
+                "Quiero mas chelas 🍻🍻🍻🍻",
+                "Que nadie te diga que no podés 🌈",
+                "Pueden poner el corrido del Chapo 💰💰💰💰",
+                "Madison Square Garden is my 💣",
+                "GAAAAAAAAAAAAAALLLLLL!!!!!!!! Vamoooooooooo Carajooooo 💪💪💪",
+                "Mucha vergüenza el arbitraje en Tucumán de Losteau 🤮🤮🤮",
+                "No paramos de reír con esto. 👏👏",
+                "Solo les puedo decir que la raza  estábamos ahí gozamos el show 😈😈",
+                "FELIZ DOMINGO PARA TODOS 🎊🎊🎊",
+                "Hoy es juernes!! ❤❤❤",
+                "A días de firmar mi divorcio 💦💦🦄",
+                "Ahí fui al karaoke a cantar I will survive, empoderada. 👾👾👾 ",
+                "Silvana Flores, con una jugada de auténtica crack ⚽⚽",
+                "hola mutuals, recuerden que mañana no se usan redes sociales para nada 🙅‍♀️🙅‍♀️",
+                "¡FELIZ CUMPLEAÑOS MIN YOONGI! Cañón de serpentina 🥊 ",
+                "Gracias por ser un genio 🍄"
+            ];
+
+            if (this.messageTest < 20) {
+                this.messageTest += 1;
+                this.$store.commit("addMessageToQueue", {
+                    u: names[ Math.floor(Math.random() * names.length)],
+                    m: messages[ Math.floor(Math.random() * messages.length)]
+                });
+            }
         }
     },
+
     timers: {
-        appInfoTransition: { time: 6000, autostart: true, repeat: true }
+        appInfoTransition: { time: 6000, autostart: true, repeat: true },
+        sendTestMessages: { time: 1000, autostart: true, repeat: true }
     }
 };
 </script>
@@ -262,13 +348,12 @@ body {
 
 .super {
     position: absolute;
-    top: 81%;
-    left: 27%;
-    transform: translate(-50%, -50%);
-    width: 50%;
+    top: 120px;
+    left: 55px;
+    width: fit-content;
     z-index: 3;
     color: white;
-    font-size: 0.7vw;
+    font-size: 10px;
     text-align: justify;
     text-overflow: ellipsis;
     line-height: normal;
@@ -276,13 +361,14 @@ body {
 }
 
 .user-name {
-    background-color: black;
-    padding: 10px 20px;
+   color:  #f0b022 ;
+   font-weight: bold;
 }
 
 .song-name {
-    background-color: blueviolet;
+    background-color: black;
     padding: 10px 20px;
+    border-left: 6px solid #f0b022 !important;
 }
 
 #player:focus {
@@ -312,7 +398,7 @@ body {
     margin-left: 10px;
     padding-top: 6px;
     padding-bottom: 6px;
-    background-color: #181818;
+    background: rgba(0, 0, 0, 0.8);
     border-radius: 100px;
     height: 64px;
     padding-right: 40px;
@@ -337,5 +423,18 @@ body {
 
 .badge-danger {
     color: red;
+}
+
+.vue-notification {
+    font-size: 1.2em !important;
+    background: rgba(0, 0, 0, 0.9) !important;
+    padding-left: 50px;
+    border-color: #f0b022 !important;
+}
+
+.vue-notification-group {
+    bottom: 70px !important;
+    left: 50px !important;
+    width: fit-content !important;
 }
 </style>

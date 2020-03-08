@@ -129,7 +129,7 @@
     
             <md-snackbar :md-active.sync="configurationSaved">"Configuración guardada correctamente"</md-snackbar>
         </form>
-        <text-ads-component :duration="Number(duration)"></text-ads-component>
+        <text-ads-component :duration="Number(duration)" :showDemo="true"></text-ads-component>
         <md-dialog :md-active.sync="sending" :md-close-on-esc="false" :md-click-outside-to-close="false">
             <md-dialog-title>{{savedMessage}}</md-dialog-title>
         </md-dialog>

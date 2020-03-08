@@ -11,13 +11,15 @@ import VueTimers from 'vue-timers'
 import MarqueeText from 'vue-marquee-text-component'
 import { EmojiPickerPlugin } from 'vue-emoji-picker'
 import *  as material_icons from './assets/css/material_icons.css';
+import Notifications from 'vue-notification'
 
-  
+
+
+
 Vue.config.productionTip = false;
 
 const moment = require('moment');
 require('moment/locale/es');
-
 
 Vue.component('marquee-text', MarqueeText);
 Vue.use(require('vue-moment'), {moment});
@@ -28,6 +30,9 @@ Vue.use(VAnimateCss);
 Vue.use(VueTimers);
 Vue.use(EmojiPickerPlugin);
 Vue.use(material_icons);
+Vue.use(Notifications);
+
+
 
 new Vue({
   router,

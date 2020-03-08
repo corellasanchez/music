@@ -96,6 +96,13 @@ export const mixinsFb = {
       console.log(this.messageQueue);
       return this.firestore().messages.doc(fid).delete();
     },
+    removeSongFromQueue(fid) {
+      var updatedSongs = this.musicQueue.filter(function (song) {
+        return song.fid !== fid;
+      });
+      this.$store.commit('setMusicQueue', updatedSongs);
+     return this.firestore().pending_songs.doc(fid).delete();
+    },
     setNowPlaying(customer, song) {
       this.firestore().now_playing.doc(customer.barCode).set(song);
     },

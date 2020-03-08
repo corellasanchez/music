@@ -67,6 +67,9 @@ export default new Vuex.Store({
       state.messageQueueSubscription = true;
     }
   },
+  getters: {
+    messageQueue: state => state.messageQueue,
+  },
   actions: {
   },
   modules: {

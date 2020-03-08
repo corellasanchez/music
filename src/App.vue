@@ -4,6 +4,7 @@
 <script src="../node_modules/firebase/firebase-firestore.js"></script>
 
 <template>
+
     <div id="app">
         <router-view/>
     </div>
