@@ -1,6 +1,8 @@
 const fs = require("fs");
 const find = require("find");
 const { shell } = require("electron");
+const axios = require('axios');
+const ipstackKey = '473380cc64a454c9e5d5c6377eeb6bc7';
 
 
 export const mixins = {
@@ -61,8 +63,11 @@ export const mixins = {
     },
     openLicenceSite() {
       shell.openExternal(
-        "https://www.dropbox.com/business/plans-comparison"
+        "http://pongalamusic.com"
       );
     },
+    getIpInfo() {
+     return axios.get('http://api.ipstack.com/check?access_key=' + ipstackKey );
+    }
   }
 }

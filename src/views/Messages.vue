@@ -3,9 +3,14 @@
         <form novalidate class="md-layout md-app config-form" @submit.prevent="validateForm">
             <md-card class="md-layout-item md-size-100 md-small-size-100">
                 <md-card-content>
+                    
+                    <md-toolbar class="md-accent" v-if="configuration.licenceType == '0'">
+                        <p class="md-title">Sólo las licencias Plus y Profesional pueden activar la barra de anuncios de texto actualiza tu licencia.</p>
+                    </md-toolbar>
                     <md-card-header>
                         <div class="md-title">Anuncios de texto</div>
                     </md-card-header>
+  
     
                     <div class="md-layout md-gutter">
                         <div class="md-layout-item md-small-size-100">
@@ -17,11 +22,11 @@
                                 <emoji-picker @emoji="append" :search="search">
                                     <div class="emoji-invoker" slot="emoji-invoker" slot-scope="{ events: { click: clickEvent } }" @click.stop="clickEvent">
                                         <svg height="48" viewBox="0 0 48 48" width="48" xmlns="http://www.w3.org/2000/svg">
-                                      <path d="M0 0h24v24H0z" fill="none" />
-                                      <path
-                                        d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"
-                                      />
-                                    </svg>
+                          <path d="M0 0h24v24H0z" fill="none" />
+                          <path
+                            d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"
+                          />
+                        </svg>
                                     </div>
     
                                     <div slot="emoji-picker" slot-scope="{ emojis, insert }">
@@ -158,7 +163,8 @@ export default {
         sending: false,
         savedMessage: ".",
         selectedColor: "",
-        duration: 15
+        duration: 15,
+        configuration: {}
     }),
     validations: {
         form: {
@@ -199,10 +205,13 @@ export default {
                 this.$store.commit("setLocalTextAds", settings.get("localTextAds"));
             }
 
-            if (settings.has("configuration.markeeDuration")) {
-                this.duration = settings.get("configuration.markeeDuration");
-            } else {
-                this.duration = 15;
+            if (settings.has("configuration")) {
+                this.configuration = settings.get("configuration");
+                if (this.configuration.markeeDuration) {
+                    this.duration = this.configuration.markeeDuration;
+                } else {
+                    this.duration = 15;
+                }
             }
         },
 

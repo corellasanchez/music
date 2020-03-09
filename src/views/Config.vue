@@ -25,7 +25,9 @@
                             <p class="md-subheading success">- Los clientes pueden enviarse mensajes con el chat</p>
                             <p class="md-subheading fail">- Aparecerá publicidad de nuestros anunciantes</p>
                             <p class="md-subheading fail">- Modo Karaoke desactivado</p>
-                            <p class="md-subheading fail">- No puedes poner tu propia publicidad en las pantallas</p>
+                            <p class="md-subheading fail">- No puedes poner publicidad de texto pantallas</p>
+                            <p class="md-subheading fail">- No puedes poner imagenes publicitarias en pantallas</p>
+                            <p class="md-subheading fail">- No puedes publicidad en video las pantallas</p>
                             <p class="md-subheading fail">- No puedes vender créditos a los clientes</p>
                             <p class="md-subheading fail">- No puedes enviar mensajes a tus clientes</p>
                         </div>
@@ -35,7 +37,9 @@
                             <p class="md-subheading success">- Los clientes pueden enviarse mensajes con el chat</p>
                             <p class="md-subheading success">- Libre de publicidad de terceros</p>
                             <p class="md-subheading success">- Se puede activar el modo KARAOKE</p>
-                            <p class="md-subheading success">- Puedes poner tu propia publicidad en las pantallas</p>
+                            <p class="md-subheading success">- Puedes poner publicidad de texto en las pantallas</p>
+                            <p class="md-subheading fail">- No puedes poner imagenes publicitarias en pantallas</p>
+                            <p class="md-subheading fail">- No puedes publicidad en video las pantallas</p>
                             <p class="md-subheading fail">- No puedes vender créditos a los clientes</p>
                             <p class="md-subheading fail">- No puedes enviar mensajes a tus clientes</p>
                             <md-button v-if="!form.licence" @click="openLicenceSite()" class="md-raised md-primary">Comprar una licencia ahora</md-button>
@@ -46,7 +50,9 @@
                             <p class="md-subheading success">- Los clientes pueden enviarse mensajes con el chat</p>
                             <p class="md-subheading success">- Libre de publicidad de terceros</p>
                             <p class="md-subheading success">- Se puede activar el modo KARAOKE</p>
-                            <p class="md-subheading success">- Puedes poner tu propia publicidad en las pantallas</p>
+                            <p class="md-subheading success">- Puedes poner publicidad de texto en las pantallas</p>
+                            <p class="md-subheading success">- Puedes poner imagenes publicitarias en pantallas</p>
+                            <p class="md-subheading success">- Puedes publicidad en video las pantallas</p>
                             <p class="md-subheading success">- Puedes vender créditos a los clientes</p>
                             <p class="md-subheading success">- Puedes enviar mensajes a tus clientes una vez por semana</p>
                             <md-button v-if="!form.licence" @click="openLicenceSite()" class="md-raised md-primary">Comprar una licencia ahora</md-button>
@@ -196,7 +202,7 @@
                                 <span class="md-error">Número de canciones es requerido</span>
                             </md-field>
                         </div>
-
+    
                         <div class="md-layout-item md-small-size-100">
                             <md-field>
                                 <label for="songsOrder">Ordenar las canciones</label>
@@ -326,7 +332,9 @@ export default {
             barCode: null,
             chatActive: false,
             creditSale: false,
+            country_code: null,
             email: null,
+            ip: null,
             karaokeFolder: null,
             karaokeMode: false,
             karaokeTime: 0,
@@ -337,6 +345,7 @@ export default {
             name: null,
             password: null,
             phone: null,
+            region_name: null,
             songsOrder: 1
         },
         configurationSaved: false,
@@ -392,6 +401,21 @@ export default {
         getConfiguration() {
             if (settings.has("configuration")) {
                 this.form = settings.get("configuration");
+
+                if (!this.form.ip) {
+                    this.getIpInfo()
+                        .then(response => {
+                            this.form.ip = response.data.ip;
+                            this.form.country_code = response.data.country_code;
+                            this.form.region_name = response.data.region_name;
+                        })
+                        .catch(error => {
+                            dialog.showErrorBox(
+                                "Error localizacion",
+                                "No se pudo obtener su localizacion" + error
+                            );
+                        });
+                }
             }
         },
         async saveConfiguration() {
@@ -425,8 +449,7 @@ export default {
                         }
 
                         if (
-                            licence.data().expiration_date.seconds <
-                            this.timestamp().seconds
+                            licence.data().expiration_date.seconds < this.timestamp().seconds
                         ) {
                             dialog.showErrorBox(
                                 "Error de licencias",

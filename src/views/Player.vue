@@ -1,17 +1,11 @@
 <template>
     <div class="container">
         <div class="super">
-            <!-- <h1  v-if="currentUserName && showSuper" v-animate-css="superTransition">
-                <md-icon>face</md-icon>
-                {{currentUserName}}
-            </h1> -->
             <h1 class="song-name" v-if="currentSongName && showSuper" v-animate-css="superTransition">
-               <strong class="user-name" v-show="currentUserName">
-                {{currentUserName}}: <br> 
-              </strong>
-              {{currentSongName}}
-              </h1>
-       
+                <strong class="user-name" v-show="currentUserName">
+                            {{currentUserName}}: <br> 
+                          </strong> {{currentSongName}}
+            </h1>
         </div>
     
         <div class="super-left-logo" v-if="configuration && (superAppInfo || superAppInfo2 || superAppInfo3)">
@@ -32,13 +26,12 @@
                 </h1>
             </div>
         </div>
-    <!-- :controls="true" -->
-        <Media id="player" :kind="'video'" :isMuted="true" :src="currentVideo" :autoplay="true"  :loop="false" :ref="'player'" @pause="pause()" @ended="ended()" @waiting="waiting()" @emptied="empitied()" @stalled="stalled()" @suspend="suspend()"
-            @playing="playing()"></Media>
+        <!-- :controls="true" -->
+        <Media id="player" :kind="'video'" :isMuted="true" :src="currentVideo" :autoplay="true" :loop="false" :ref="'player'" @pause="pause()" @ended="ended()" @waiting="waiting()" @emptied="empitied()" @stalled="stalled()" @suspend="suspend()" @playing="playing()"></Media>
     
         <notifications group="user-messages" position="bottom left" :duration="Number(15000)" :max="Number(9)" />
     
-        <text-ads-component :duration="Number(duration)" :showDemo="false"></text-ads-component>
+        <text-ads-component :duration="Number(duration)" :showDemo="false"  v-if="configuration && configuration.licenceType != '0'"></text-ads-component>
     </div>
 </template>
 
@@ -78,12 +71,7 @@ export default {
         };
     },
     created() {
-        this.$store.watch(
-            (state, getters) => getters.messageQueue,
-            () => {
-                this.getNextMessage();
-            }
-        );
+
     },
     mounted() {
         this.configuration = settings.get("configuration");
@@ -92,6 +80,16 @@ export default {
         } else {
             this.duration = 15;
         }
+
+        if (this.configuration.chatActive) {
+            this.$store.watch(
+                (state, getters) => getters.messageQueue,
+                () => {
+                    this.getNextMessage();
+                }
+            );
+        }
+
         this.getSearchQueries(this.configuration);
         this.getSongsQueue(this.configuration);
         this.getMessageQueue(this.configuration);
@@ -224,8 +222,6 @@ export default {
                 this.messageQueue.sort((a, b) => {
                     return Number(a.index) - Number(b.index);
                 });
-                console.log(this.messageQueue[0]);
-
                 this.$notify({
                     group: "user-messages",
                     text: "<strong>" +
@@ -294,11 +290,11 @@ export default {
                 "Gracias por ser un genio 🍄"
             ];
 
-            if (this.messageTest < 20) {
+            if (this.messageTest < 20 && this.configuration.chatActive) {
                 this.messageTest += 1;
                 this.$store.commit("addMessageToQueue", {
-                    u: names[ Math.floor(Math.random() * names.length)],
-                    m: messages[ Math.floor(Math.random() * messages.length)]
+                    u: names[Math.floor(Math.random() * names.length)],
+                    m: messages[Math.floor(Math.random() * messages.length)]
                 });
             }
         }
@@ -361,8 +357,8 @@ body {
 }
 
 .user-name {
-   color:  #f0b022 ;
-   font-weight: bold;
+    color: #f0b022;
+    font-weight: bold;
 }
 
 .song-name {
