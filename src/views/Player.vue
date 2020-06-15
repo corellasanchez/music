@@ -2,9 +2,7 @@
     <div class="container">
         <div class="super">
             <h1 class="song-name" v-if="currentSongName && showSuper" v-animate-css="superTransition">
-                <strong class="user-name" v-show="currentUserName">
-                            {{currentUserName}}: <br> 
-                          </strong> {{currentSongName}}
+                <strong class="user-name" v-show="currentUserName"> {{currentUserName}}: <br></strong> {{currentSongName}}
             </h1>
         </div>
     
@@ -31,7 +29,10 @@
     
         <notifications group="user-messages" position="bottom left" :duration="Number(15000)" :max="Number(9)" />
     
-        <text-ads-component :duration="Number(duration)" :showDemo="false"  v-if="configuration && configuration.licenceType != '0'"></text-ads-component>
+        <text-ads-component :duration="Number(duration)" :showDemo="false" v-if="configuration && configuration.licenceType != '0'"></text-ads-component>
+   
+           <image-ads-component :duration="Number(duration)" :showDemo="false"></image-ads-component>
+
     </div>
 </template>
 
@@ -40,7 +41,7 @@ import { mapState, mapMutations } from "vuex";
 import Media from "@dongido/vue-viaudio";
 import { mixins } from "../helpers/mixins";
 import { mixinsFb } from "../helpers/firebaseMixins";
-import { TextAdsComponent } from "../components";
+import { TextAdsComponent, ImageAdsComponent } from "../components";
 
 const settings = require("electron-settings");
 
@@ -48,7 +49,8 @@ export default {
     name: "app",
     components: {
         Media,
-        TextAdsComponent
+        TextAdsComponent,
+        ImageAdsComponent
     },
     mixins: [mixins, mixinsFb],
     data: function() {
