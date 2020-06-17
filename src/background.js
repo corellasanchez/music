@@ -43,33 +43,58 @@ function createWindow() {
           }
         },
         {
-          label: "Editar",
-          submenu: [
-              { label: "Deshacer", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
-              { label: "Rehacer", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
-              { type: "separator" },
-              { label: "Cortar", accelerator: "CmdOrCtrl+X", selector: "cut:" },
-              { label: "Copiar", accelerator: "CmdOrCtrl+C", selector: "copy:" },
-              { label: "Pegar", accelerator: "CmdOrCtrl+V", selector: "paste:" },
-              { label: "Seleccionar Todo", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
-          ]
-        },
-        {
-          label: 'Exit',
+          label: 'Salir',
           click() {
             app.quit()
           }
         },
-       
+      ],
+    }, {
+      label: "Editar",
+      submenu: [
+        { label: "Deshacer", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+        { label: "Rehacer", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+        { type: "separator" },
+        { label: "Cortar", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+        { label: "Copiar", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+        { label: "Pegar", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+        { label: "Seleccionar Todo", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+      ]
+    },
+    {
+      label: "Ventana",
+      submenu: [
+        {
+          label: 'Mover ventana',
+          click() {
+            win.setFullScreen(false);
+          }
+        },
+        {
+          label: 'Pantalla Completa',
+          click() {
+            win.maximize();
+            win.setFullScreen(true);
+          }
+        },
+        {
+          label: 'Mostrar / Ocultar este menu - (Tecla ALT)',
+          click() {
+            win.maximize();
+            win.setFullScreen(true);
+          }
+        }
       ]
     }
+
   ]);
 
   Menu.setApplicationMenu(menu);
 
   // Create the browser window.
   win = new BrowserWindow({
-    width: 800, height: 600, webPreferences: {
+    width: 800, height: 600, autoHideMenuBar: true,
+    webPreferences: {
       nodeIntegration: true,
       webSecurity: false
     },
@@ -79,6 +104,8 @@ function createWindow() {
   win.maximize();
   win.setFullScreen(true);
 
+
+
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
@@ -86,8 +113,8 @@ function createWindow() {
   } else {
     createProtocol('app')
     // Load the index.html when not in development
-   win.loadURL('app://./index.html') // no carga
-   win.webContents.send('navigate', '/');
+    win.loadURL('app://./index.html') // no carga
+    win.webContents.send('navigate', '/');
   }
 
   win.on('closed', () => {
