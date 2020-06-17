@@ -50,7 +50,7 @@ export const mixinsFb = {
 
     },
     clearSongName(name) {
-      var clearedName = name.substring(name.lastIndexOf('/') + 1);
+      var clearedName = name.substring(name.lastIndexOf('\\') + 1);
       clearedName = clearedName.substr(0, clearedName.lastIndexOf('.'));
       return clearedName;
     },
@@ -101,7 +101,7 @@ export const mixinsFb = {
         return song.fid !== fid;
       });
       this.$store.commit('setMusicQueue', updatedSongs);
-     return this.firestore().pending_songs.doc(fid).delete();
+      return this.firestore().pending_songs.doc(fid).delete();
     },
     setNowPlaying(customer, song) {
       this.firestore().now_playing.doc(customer.barCode).set(song);
