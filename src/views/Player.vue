@@ -1,47 +1,57 @@
 <template>
-    <div class="container">
-        <div class="super">
-            <h1 class="song-name" v-if="currentSongName && showSuper" v-animate-css="superTransition">
-                <strong class="user-name" v-show="currentUserName"> {{currentUserName}}: <br></strong> {{currentSongName}}
+<div class="container">
+    <div class="super">
+        <h1 class="song-name" v-if="currentSongName && showSuper" v-animate-css="superTransition">
+            <strong class="user-name" v-show="currentUserName"> {{currentUserName}}: <br></strong> {{currentSongName}}
+        </h1>
+    </div>
+
+    <div class="super-left-logo" v-if="configuration && (superAppInfo || superAppInfo2 || superAppInfo3)">
+        <div class="left-logo">
+            <img src="../assets/images/logo.svg" />
+        </div>
+        <div class="left-text">
+            <h1 class="left-logo-text" v-show="superAppInfo">{{configuration.name}}</h1>
+            <h1 class="left-logo-text" v-show="superAppInfo2">
+                Descarga Gratis
+                <span class="accent">Pongala Music</span>
+                <img src="../assets/images/google-play-store.svg" />
+                <img src="../assets/images/apple-logo.svg" />
+            </h1>
+            <h1 class="left-logo-text" v-show="superAppInfo3">
+                Ingrese el Código:
+                <span class="accent">{{configuration.barCode}}</span>
             </h1>
         </div>
-    
-        <div class="super-left-logo" v-if="configuration && (superAppInfo || superAppInfo2 || superAppInfo3)">
-            <div class="left-logo">
-                <img src="../assets/images/logo.svg" />
-            </div>
-            <div class="left-text">
-                <h1 class="left-logo-text" v-show="superAppInfo">{{configuration.name}}</h1>
-                <h1 class="left-logo-text" v-show="superAppInfo2">
-                    Descarga Gratis
-                    <span class="accent">Pongala Music</span>
-                    <img src="../assets/images/google-play-store.svg" />
-                    <img src="../assets/images/apple-logo.svg" />
-                </h1>
-                <h1 class="left-logo-text" v-show="superAppInfo3">
-                    Ingrese el Código:
-                    <span class="accent">{{configuration.barCode}}</span>
-                </h1>
-            </div>
-        </div>
-        <!-- :controls="true" -->
-        <Media id="player" :kind="'video'" :isMuted="true" :src="currentVideo" :autoplay="true" :loop="false" :ref="'player'" @pause="pause()" @ended="ended()" @waiting="waiting()" @emptied="empitied()" @stalled="stalled()" @suspend="suspend()" @playing="playing()"></Media>
-    
-        <notifications group="user-messages" position="bottom left" :duration="Number(15000)" :max="Number(9)" />
-    
-        <text-ads-component :duration="Number(duration)" :showDemo="false" v-if="configuration && configuration.licenceType != '0'"></text-ads-component>
-   
-           <image-ads-component :duration="Number(duration)" :showDemo="false"></image-ads-component>
-
     </div>
+    <!-- :controls="true" -->
+    <Media id="player" :kind="'video'" :isMuted="true" :src="currentVideo" :autoplay="true" :loop="false" :ref="'player'" @pause="pause()" @ended="ended()" @waiting="waiting()" @emptied="empitied()" @stalled="stalled()" @suspend="suspend()" @playing="playing()"></Media>
+
+    <notifications group="user-messages" position="bottom left" :duration="Number(15000)" :max="Number(9)" />
+
+    <!-- <text-ads-component :duration="Number(duration)" :showDemo="false" v-if="configuration && configuration.licenceType != '0'"></text-ads-component> -->
+
+    <image-ads-component :duration="Number(duration)" :showDemo="false"></image-ads-component>
+
+</div>
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import {
+    mapState,
+    mapMutations
+} from "vuex";
 import Media from "@dongido/vue-viaudio";
-import { mixins } from "../helpers/mixins";
-import { mixinsFb } from "../helpers/firebaseMixins";
-import { TextAdsComponent, ImageAdsComponent } from "../components";
+import {
+    mixins
+} from "../helpers/mixins";
+import {
+    mixinsFb
+} from "../helpers/firebaseMixins";
+import {
+    // TextAdsComponent,
+    ImageAdsComponent
+} from "../components";
 
 const settings = require("electron-settings");
 
@@ -49,11 +59,11 @@ export default {
     name: "app",
     components: {
         Media,
-        TextAdsComponent,
+      //  TextAdsComponent,
         ImageAdsComponent
     },
     mixins: [mixins, mixinsFb],
-    data: function() {
+    data: function () {
         return {
             fileProtocol: "file:///",
             configuration: null,
@@ -98,6 +108,7 @@ export default {
         setTimeout(() => {
             this.currentVideo = this.nextVideo();
         }, 1000);
+        this.sendTestMessages();
     },
     computed: {
         ...mapState([
@@ -180,10 +191,13 @@ export default {
             this.removeSongFromQueue(nextSong.fid)
                 .then(() => {
                     console.log("Document successfully deleted!");
-                    this.setNowPlaying(this.configuration, { n: songName, u: userName });
+                    this.setNowPlaying(this.configuration, {
+                        n: songName,
+                        u: userName
+                    });
                     this.showSongInfo();
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     console.error("Error removing document: ", error);
                 });
         },
@@ -303,8 +317,16 @@ export default {
     },
 
     timers: {
-        appInfoTransition: { time: 6000, autostart: true, repeat: true },
-        sendTestMessages: { time: 1000, autostart: true, repeat: true }
+        appInfoTransition: {
+            time: 6000,
+            autostart: true,
+            repeat: true
+        },
+        sendTestMessages: {
+            time: 1000,
+            autostart: true,
+            repeat: true
+        }
     }
 };
 </script>
@@ -431,7 +453,7 @@ body {
 }
 
 .vue-notification-group {
-    bottom: 70px !important;
+    bottom: 200px !important;
     left: 50px !important;
     width: fit-content !important;
 }

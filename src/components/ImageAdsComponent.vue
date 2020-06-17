@@ -1,15 +1,15 @@
 <template>
-    <div class="footer">
-        <!-- <transition name="slide-fade" mode="out-in">
-            <div :key="images[0].index">
-                 <img :src="images[0].file" style="width:100%;" alt="">
-            </div>
-        </transition>  -->
+<transition name="slide-fade" mode="out-in">
+    <div :key="images[0].index" class="footer">
+        <img :src="images[0].file" class="image-banner" alt="Image banner">
     </div>
+</transition>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import {
+    mapState
+} from "vuex";
 
 const settings = require("electron-settings");
 
@@ -19,12 +19,14 @@ export default {
         duration: Number,
         showDemo: Boolean
     },
-    data: function() {
+    data: function () {
         return {
-            images: [
-                {file:'file:///Users/roy.corella/Downloads/banners/banner9.png', index: 1},
-                {file:'https://as.com/meristation/imagenes/2019/06/13/noticias/1560407057_696857_1560407184_noticia_normal.jpg',index: 2},
-                {file:'file:///Users/roy.corella/Downloads/banners/banner3.png', index: 3}
+            images: [{
+                    file: 'file:///D:/banners/banner-1.png',
+                    index: 1
+                },
+                // {file:'https://as.com/meristation/imagenes/2019/06/13/noticias/1560407057_696857_1560407184_noticia_normal.jpg',index: 2},
+                // {file:'file:///Users/roy.corella/Downloads/banners/banner3.png', index: 3}
             ],
         };
     },
@@ -50,16 +52,18 @@ export default {
 <style>
 .footer {
     position: absolute;
-    bottom: 10px;
-    z-index: 3;
-    color: white;
-    font-size: 1.5vw;
-    text-align: left;
-    text-overflow: ellipsis;
-    line-height: normal;
-    text-transform: uppercase;
-    background: rgba(0, 0, 0, 0.8);
-    padding: 9px 0;
+    bottom: 0px;
+    z-index: 3; 
+    padding:50px;
+    width: 100%;
+    text-align: center;
+    background-color: transparent !important;
+}
+
+.image-banner {
+    max-height: 150px !important;
+    width: auto;
+
 }
 
 .slide-fade-enter-active {
