@@ -1,15 +1,20 @@
 <template>
-<transition name="slide-fade" mode="out-in">
-    <div :key="images[0].index" class="footer">
-        <img :src="images[0].file" class="image-banner" alt="Image banner">
+<agile class="footer" :dots="false" :navButtons="false" :autoplay="true" :autoplay-speed="5000">
+    <div class="slide" v-for="image in images" :key="image.index">
+        <img :src="image.file" class="image-banner" alt="Image banner">
     </div>
-</transition>
+</agile>
 </template>
 
 <script>
 import {
     mapState
 } from "vuex";
+
+// YourComponent.vue
+import {
+    VueAgile
+} from 'vue-agile'
 
 const settings = require("electron-settings");
 
@@ -25,8 +30,14 @@ export default {
                     file: 'file:///D:/banners/banner-1.png',
                     index: 1
                 },
-                // {file:'https://as.com/meristation/imagenes/2019/06/13/noticias/1560407057_696857_1560407184_noticia_normal.jpg',index: 2},
-                // {file:'file:///Users/roy.corella/Downloads/banners/banner3.png', index: 3}
+                {
+                    file: 'file:///D:/banners/banner-11.png',
+                    index: 2
+                },
+                {
+                    file: 'file:///D:/banners/banner-15.png',
+                    index: 3
+                }
             ],
         };
     },
@@ -45,6 +56,9 @@ export default {
     mounted() {
         this.getConfig();
     },
+    components: {
+        agile: VueAgile
+    }
 
 };
 </script>
@@ -53,8 +67,8 @@ export default {
 .footer {
     position: absolute;
     bottom: 0px;
-    z-index: 3; 
-    padding:50px;
+    z-index: 3;
+    padding: 50px;
     width: 100%;
     text-align: center;
     background-color: transparent !important;
@@ -63,23 +77,9 @@ export default {
 .image-banner {
     max-height: 150px !important;
     width: auto;
-
 }
 
-.slide-fade-enter-active {
-    transition: all .3s ease;
-}
-
-.slide-fade-leave-active {
-    transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-}
-
-.slide-fade-enter,
-.slide-fade-leave-to
-/* .slide-fade-leave-active for <2.1.8 */
-
-    {
-    transform: translateX(10px);
-    opacity: 0;
+.agile {
+    position: absolute;
 }
 </style>
