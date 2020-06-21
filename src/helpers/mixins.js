@@ -37,6 +37,7 @@ export const mixins = {
             cleanFiles = files.map(function (x) {
               return x.replace(folder, "");
             });
+            cleanFiles = cleanFiles.filter(file => !file.startsWith("\\.")); // remove hidden files
             resolve(cleanFiles);
           })
           .error(function (err) {
@@ -67,7 +68,7 @@ export const mixins = {
       );
     },
     getIpInfo() {
-     return axios.get('http://api.ipstack.com/check?access_key=' + ipstackKey );
+      return axios.get('http://api.ipstack.com/check?access_key=' + ipstackKey);
     }
   }
 }
