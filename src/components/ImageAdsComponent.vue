@@ -1,7 +1,7 @@
 <template>
 <agile class="footer" :dots="false" :navButtons="false" :autoplay="true" :autoplay-speed="5000">
     <div class="slide" v-for="image in images" :key="image.index">
-        <img :src="image.file" class="image-banner" alt="Image banner">
+        <img :src="image.file" class="image-banner" alt="NO SE ENCONTRO LA IMAGEN">
     </div>
 </agile>
 </template>
@@ -31,11 +31,15 @@ export default {
                     index: 1
                 },
                 {
-                    file: 'file:///D:/banners/banner-11.png',
+                    file: 'file:///D:/banners/banner-2.png',
                     index: 2
                 },
                 {
-                    file: 'file:///D:/banners/banner-15.png',
+                    file: 'file:///D:/banners/banner-3.png',
+                    index: 3
+                },
+                 {
+                    file: 'file:///D:/banners/banner-4.png',
                     index: 3
                 }
             ],
