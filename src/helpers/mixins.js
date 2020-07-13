@@ -7,8 +7,8 @@ const ipstackKey = '473380cc64a454c9e5d5c6377eeb6bc7';
 
 export const mixins = {
   methods: {
-    async indexFolder(folder) {
-      var files = await this.getDirectoryFiles(folder);
+    async indexFolder(folder, type) {
+      var files = await this.getDirectoryFiles(folder, type);
       //var fileWrited = await this.writeCacheFile(musicFiles, folder);
       return files;
     },
@@ -19,14 +19,13 @@ export const mixins = {
         }
       });
     },
-    getDirectoryFiles(folder, includeImages) {
+    getDirectoryFiles(folder, type) {
       return new Promise((resolve, reject) => {
-        // console.log("Buscando archivos");
         var filesToInclude = '';
         var cleanFiles;
 
-        if (includeImages) {
-          filesToInclude = /^.*\.(mp4|mp3|webm|ogg|3gp|mpeg|jpeg|png|gif|jpg|svg)$/i;
+        if (type === 'images') {
+          filesToInclude = /^.*\.(jpeg|png|gif|jpg|svg)$/i;
         }
         else {
           filesToInclude = /^.*\.(mp4|mp3|webm|ogg|3gp|mpeg|mkv)$/i;
@@ -37,7 +36,7 @@ export const mixins = {
             cleanFiles = files.map(function (x) {
               return x.replace(folder, "");
             });
-            cleanFiles = cleanFiles.filter(file => !file.startsWith("\\.")); // remove hidden files
+            cleanFiles = cleanFiles.filter(file => !(file.substring(file.lastIndexOf('\\') + 1)).startsWith('.'));// remove hidden files
             resolve(cleanFiles);
           })
           .error(function (err) {

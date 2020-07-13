@@ -43,6 +43,12 @@ function createWindow() {
           }
         },
         {
+          label: 'Publicidad',
+          click() {
+            win.webContents.send('navigate', '/banners');
+          }
+        },
+        {
           label: 'Salir',
           click() {
             app.quit()

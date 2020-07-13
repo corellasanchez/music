@@ -8,7 +8,8 @@ export default new Vuex.Store({
     musicFiles: {},
     musicQueue: [],
     karaokeFiles: {},
-    ads:{},
+    banners: {},
+    videoAds: {},
     messageQueue: [],
     localTextAds: [],
     queueSubscription: false,
@@ -16,54 +17,57 @@ export default new Vuex.Store({
     messageQueueSubscription: false,
   },
   mutations: {
-    setMusicFiles(state, musicFiles){
+    setMusicFiles(state, musicFiles) {
       state.musicFiles = musicFiles;
     },
-    setKaraokeFiles(state, karaokeFiles){
+    setKaraokeFiles(state, karaokeFiles) {
       state.karaokeFiles = karaokeFiles;
     },
-    setAds(state, ads){
-      state.ads = ads;
+    setBanners(state, banners) {
+      state.banners = banners;
     },
-    setMusicQueue(state, musicQueue){
+    setVideoAds(state, videoAds) {
+      state.videoAds = videoAds;
+    },
+    setMusicQueue(state, musicQueue) {
       state.musicQueue = musicQueue;
     },
-    setMessageQueue(state, messageQueue){
+    setMessageQueue(state, messageQueue) {
       state.messageQueue = messageQueue;
     },
-    setLocalTextAds(state,localTextAds){
+    setLocalTextAds(state, localTextAds) {
       state.localTextAds = localTextAds;
     },
-    addLocalTextAd(state,localTextAd){
-      if(!state.localTextAds){
+    addLocalTextAd(state, localTextAd) {
+      if (!state.localTextAds) {
         state.localTextAds = [];
       }
       state.localTextAds.push(localTextAd);
     },
-    removeLocalTextAd(state,localTextAd){
-      const result = state.localTextAds.filter(x => x.index !=  localTextAd.index);
+    removeLocalTextAd(state, localTextAd) {
+      const result = state.localTextAds.filter(x => x.index != localTextAd.index);
       state.localTextAds = result;
     },
-    addSongToQueue(state, song){
-      const result = state.musicQueue.filter(x => x.fid ==  song.fid);
-     if(result.length === 0){
-      song.index = state.musicQueue.length + 1;
-      state.musicQueue.push(song);
-      console.log('song added', song)
-     }
+    addSongToQueue(state, song) {
+      const result = state.musicQueue.filter(x => x.fid == song.fid);
+      if (result.length === 0) {
+        song.index = state.musicQueue.length + 1;
+        state.musicQueue.push(song);
+        console.log('song added', song)
+      }
     },
-    addMessageToQueue(state, message){
+    addMessageToQueue(state, message) {
       message.index = state.musicQueue.length + 1;
       state.messageQueue.push(message);
       console.log('message added', message)
     },
-    subscribeQueue(state){
+    subscribeQueue(state) {
       state.queueSubscription = true;
     },
-    subscribeQueries(state){
+    subscribeQueries(state) {
       state.searchSubscription = true;
     },
-    subscribeMessages(state){
+    subscribeMessages(state) {
       state.messageQueueSubscription = true;
     }
   },

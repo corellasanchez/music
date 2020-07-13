@@ -114,7 +114,6 @@ export default {
         ...mapState([
             "musicFiles",
             "karaokeFiles",
-            "ads",
             "musicQueue",
             "messageQueue",
             "localTextAds"

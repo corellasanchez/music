@@ -32,6 +32,11 @@ const routes = [
     path: '/messages',
     name: 'messages',
     component: () => import('../views/Messages.vue')
+  },
+  {
+    path: '/banners',
+    name: 'banners',
+    component: () => import('../views/Banners.vue')
   }
 ]
 

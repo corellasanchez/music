@@ -160,17 +160,6 @@
                     </div>
                 </div>
 
-                <div class="md-layout md-gutter" v-if="form.licenceType ==='2'">
-                    <div class="md-layout-item md-small-size-100">
-                        <md-field md-clearable>
-                            <label for="adsFolder">Directorio para los ANUNCIOS</label>
-                            <md-input name="adsFolder" id="adsFolder" v-model="form.adsFolder" @keydown="disableKeys($event)" @click="selectFolder('ads')" />
-                            <span class="md-helper-text">*Pueden ser videos o imágenes.</span>
-                            <span class="md-error" @click="selectFolder('ads')">Click aquí para seleccionar el directorio</span>
-                        </md-field>
-                    </div>
-                </div>
-
                 <md-divider></md-divider>
 
                 <md-card-header>
@@ -240,35 +229,7 @@
                             </md-select>
                         </md-field>
                     </div>
-
-                    <div class="md-layout-item md-small-size-100" v-if="form.licenceType === '2'">
-                        <md-field>
-                            <label for="adsEach">Poner uno de mis anuncios después de:</label>
-                            <md-select name="adsEach" id="adsEach" v-model="form.adsEach" md-dense :disabled="sending">
-                                <md-option value="1">cada canción</md-option>
-                                <md-option value="2">2 canciones</md-option>
-                                <md-option value="3">3 canciones</md-option>
-                                <md-option value="4">4 canciones</md-option>
-                                <md-option value="5">5 canciones</md-option>
-                                <md-option value="6">6 canciones</md-option>
-                                <md-option value="7">7 canciones</md-option>
-                                <md-option value="8">8 canciones</md-option>
-                                <md-option value="9">9 canciones</md-option>
-                                <md-option value="10">10 canciones</md-option>
-                                <md-option value="11">11 canciones</md-option>
-                                <md-option value="12">12 canciones</md-option>
-                                <md-option value="13">13 canciones</md-option>
-                                <md-option value="14">14 canciones</md-option>
-                                <md-option value="15">15 canciones</md-option>
-                                <md-option value="20">20 canciones</md-option>
-                                <md-option value="30">20 canciones</md-option>
-                                <md-option value="40">40 canciones</md-option>
-                                <md-option value="50">50 canciones</md-option>
-                            </md-select>
-                        </md-field>
-                    </div>
                 </div>
-
                 <div class="md-layout md-gutter md-size-100">
                     <div class="md-layout-item md-small-size-100 left" v-if="form.licenceType !=='0'">
                         <md-checkbox v-model="form.karaokeMode">Activar modo KARAOKE</md-checkbox>
@@ -336,9 +297,9 @@ export default {
     mixins: [validationMixin, mixins, mixinsFb],
     data: () => ({
         form: {
-            address: null,
-            adsEach: 1,
             adsFolder: null,
+            adsEach: 1,
+            address: null,
             badWordsFilter: false,
             barCode: null,
             chatActive: false,
@@ -576,13 +537,6 @@ export default {
                 );
                 this.$store.commit("setKaraokeFiles", cachedKaraokeFiles);
                 this.savedMessage = "Canciones de Karaoke actualizadas";
-            }
-
-            if (this.form.adsFolder && this.form.licenceType === "2") {
-                this.savedMessage = "Actualizando anuncios...";
-                var cachedAds = await this.indexFolder(this.form.adsFolder);
-                this.$store.commit("setAds", cachedAds);
-                this.savedMessage = "Anuncios actualizados";
             }
         },
 

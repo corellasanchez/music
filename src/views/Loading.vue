@@ -68,14 +68,13 @@ export default {
         async getFilesCache(configuration) {
             var cachedMusicFiles = null;
             var cachedKaraokeFiles = null;
-            var cachedAdsFiles = null;
+            var cachedBannerFiles = null;
+            var cachedVideoAdsFiles = null;
 
             if (configuration.karaokeFolder && configuration.licenceType !== "0") {
                 this.loadingMessage = "Actualizando canciones de Karaoke...";
                 try {
-                    cachedKaraokeFiles = await this.indexFolder(
-                        configuration.karaokeFolder
-                    );
+                    cachedKaraokeFiles = await this.indexFolder(configuration.karaokeFolder, "videos");
                     this.$store.commit("setKaraokeFiles", cachedKaraokeFiles);
                     this.loadingMessage = "Canciones de Karaoke actualizadas";
                 } catch (error) {
@@ -85,7 +84,7 @@ export default {
                         configuration.karaokeFolder +
                         " no existe o no tiene los permisos de lectura adecuados, por favor actualice la informacion"
                     );
-                     // save the configuration to the local settings
+                    // save the configuration to the local settings
                     configuration.karaokeFolder = "";
                     settings.set("configuration", configuration);
                     this.$router.replace({
@@ -95,11 +94,15 @@ export default {
                 }
             }
 
-            if (configuration.adsFolder && configuration.licenceType !== "2") {
+            if (configuration.adsFolder && configuration.licenceType == "2") {
                 this.loadingMessage = "Actualizando anuncios...";
                 try {
-                    cachedAdsFiles = await this.indexFolder(configuration.adsFolder);
-                    this.$store.commit("setAds", cachedAdsFiles);
+                    cachedBannerFiles = await this.indexFolder(configuration.adsFolder, "images");
+                    this.$store.commit("setBanners", cachedBannerFiles);
+                    
+                    cachedVideoAdsFiles = await this.indexFolder(configuration.adsFolder, "videos");
+                    this.$store.commit("setVideoAds", cachedVideoAdsFiles);
+          
                     this.loadingMessage = "Anuncios actualizados";
                 } catch (error) {
                     dialog.showErrorBox(
@@ -108,7 +111,7 @@ export default {
                         configuration.adsFolder +
                         " no existe o no tiene los permisos de lectura adecuados, por favor actualice la informacion"
                     );
-                     // save the configuration to the local settings
+                    // save the configuration to the local settings
                     configuration.adsFolder = "";
                     settings.set("configuration", configuration);
                     this.$router.replace({
@@ -121,7 +124,7 @@ export default {
             if (configuration.musicFolder) {
                 this.loadingMessage = "Actualizando canciones...";
                 try {
-                    cachedMusicFiles = await this.indexFolder(configuration.musicFolder);
+                    cachedMusicFiles = await this.indexFolder(configuration.musicFolder, "videos");
                     this.$store.commit("setMusicFiles", cachedMusicFiles);
                     if (this.musicFiles.length === 0) {
                         dialog.showErrorBox(
@@ -141,7 +144,7 @@ export default {
                         configuration.musicFolder +
                         " no existe o no tiene los permisos de lectura adecuados, por favor actualice la informacion"
                     );
-                     // save the configuration to the local settings
+                    // save the configuration to the local settings
                     configuration.musicFolder = "";
                     settings.set("configuration", configuration);
                     this.$router.replace({
@@ -224,7 +227,6 @@ export default {
                 }
             }
             this.loadingMessage = "Licencia Correcta";
-
         }
     }
 };

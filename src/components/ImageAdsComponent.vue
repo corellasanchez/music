@@ -1,7 +1,7 @@
 <template>
 <agile class="footer" :dots="false" :navButtons="false" :autoplay="true" :autoplay-speed="5000">
-    <div class="slide" v-for="image in images" :key="image.index">
-        <img :src="image.file" class="image-banner" alt="NO SE ENCONTRO LA IMAGEN">
+    <div class="slide" v-for="(banner, index) in banners" :key="index">
+        <img :src="'file:///' + configuration.adsFolder + banner" class="image-banner" alt="NO SE ENCONTRO LA IMAGEN" />
     </div>
 </agile>
 </template>
@@ -14,7 +14,7 @@ import {
 // YourComponent.vue
 import {
     VueAgile
-} from 'vue-agile'
+} from "vue-agile";
 
 const settings = require("electron-settings");
 
@@ -24,46 +24,28 @@ export default {
         duration: Number,
         showDemo: Boolean
     },
-    data: function () {
-        return {
-            images: [{
-                    file: 'file:///D:/banners/banner-1.png',
-                    index: 1
-                },
-                {
-                    file: 'file:///D:/banners/banner-2.png',
-                    index: 2
-                },
-                {
-                    file: 'file:///D:/banners/banner-3.png',
-                    index: 3
-                },
-                 {
-                    file: 'file:///D:/banners/banner-4.png',
-                    index: 3
-                }
-            ],
-        };
-    },
-    methods: {
-        getConfig() {
-            if (settings.has("localTextAds")) {
-                this.$store.commit("setLocalTextAds", settings.get("localTextAds"));
-            }
-        }
-    },
     computed: {
-        ...mapState([
-            "localTextAds"
-        ])
+        ...mapState(["banners"])
     },
     mounted() {
         this.getConfig();
     },
+    data: function () {
+        return {
+            configuration: {},
+            images: []
+        };
+    },
+    methods: {
+        getConfig() {
+            if (settings.has("configuration")) {
+                this.configuration = settings.get("configuration");
+            }
+        },
+    },
     components: {
         agile: VueAgile
     }
-
 };
 </script>
 
