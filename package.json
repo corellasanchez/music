@@ -1,5 +1,11 @@
 {
   "name": "pongala_music",
+  "description": "A social music jukebox",
+  "author": {
+    "name": "Roy Corella",
+    "email": "corellasanchez@gmail.com",
+    "url": "http://pongalamusic.com"
+  },
   "version": "2.0.0",
   "private": true,
   "scripts": {
@@ -32,14 +38,14 @@
     "vue-router": "^3.1.6",
     "vue-timers": "^2.0.4",
     "vuelidate": "^0.7.4",
-    "vuex": "^3.1.2"
+    "vuex": "^3.5.1"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.2.3",
-    "@vue/cli-plugin-eslint": "^4.2.3",
-    "@vue/cli-plugin-router": "^4.2.3",
-    "@vue/cli-plugin-vuex": "^4.2.3",
-    "@vue/cli-service": "^4.2.3",
+    "@vue/cli-plugin-babel": "^4.4.6",
+    "@vue/cli-plugin-eslint": "^4.4.6",
+    "@vue/cli-plugin-router": "^4.4.6",
+    "@vue/cli-plugin-vuex": "^4.4.6",
+    "@vue/cli-service": "^4.4.6",
     "babel-eslint": "^10.1.0",
     "electron": "^6.1.9",
     "eslint": "^6.8.0",
