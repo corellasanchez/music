@@ -216,7 +216,7 @@ export default {
                         "No se pudo seleccionar un folder, verifica que el folder tenga pemisos de lectura ",
                         "error " + err
                     );
-                    // console.log(err);
+                    // //console.log(err);
                 });
         },
         disableKeys: function (evt) {

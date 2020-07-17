@@ -53,13 +53,13 @@ export default new Vuex.Store({
       if (result.length === 0) {
         song.index = state.musicQueue.length + 1;
         state.musicQueue.push(song);
-        console.log('song added', song)
+        //console.log('song added', song)
       }
     },
     addMessageToQueue(state, message) {
       message.index = state.musicQueue.length + 1;
       state.messageQueue.push(message);
-      console.log('message added', message)
+      // //console.log('message added', message)
     },
     subscribeQueue(state) {
       state.queueSubscription = true;

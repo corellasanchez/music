@@ -48,7 +48,7 @@ const router = new VueRouter({
 
 // navigate from electron menu bar
 electron.ipcRenderer.on('navigate', (event, url) => {
-  // console.log(url)
+  // //console.log(url)
   router.push(url)
 })
 

@@ -1,13 +1,23 @@
-import { db } from "../firebase.js";
-import { firebase } from "@firebase/app";
+// import { db, firebase } from "../this.fb.js";
+
+
+
 import { mapState, mapMutations } from "vuex";
 
 const fuzz = require('fuzzball');
 const key = '4vPmH5s3KomcZH4A90Gm7vPHk7sDTYQl';
 
+
 var encryptor = require('simple-encryptor')(key);
 
 export const mixinsFb = {
+  data: function () {
+    return {
+        db: this.$firebase.firestore(),
+        fb: this.$firebase,
+        configuration: null,
+        currentVideo: [],
+        videoQueue: [],}},
   computed: {
     ...mapState(["musicFiles", "karaokeFiles", "ads", "musicQueue", "messageQueue", "queueSubscription", "searchSubscription", "messageQueueSubscription"]),
     ...mapMutations(['addSongToQueue', 'setMusicQueue', 'subscribeMessages']),
@@ -15,12 +25,12 @@ export const mixinsFb = {
   methods: {
     firestore() {
       return {
-        customers: db.collection("customers"),
-        licences: db.collection("licences"),
-        search_queries: db.collection("search_queries"),
-        pending_songs: db.collection("pending_songs"),
-        now_playing: db.collection("now_playing"),
-        messages: db.collection("messages")
+        customers: this.db.collection("customers"),
+        licences: this.db.collection("licences"),
+        search_queries: this.db.collection("search_queries"),
+        pending_songs: this.db.collection("pending_songs"),
+        now_playing: this.db.collection("now_playing"),
+        messages: this.db.collection("messages")
       };
     },
     searchSongs(id, data) {
@@ -56,13 +66,13 @@ export const mixinsFb = {
     },
     // FIREBASE OPERATIONS
     timestamp() {
-      return firebase.firestore.Timestamp.now();
+      return this.fb.firestore.Timestamp.now();
     },
     timestampFormat(date) {
-      return firebase.firestore.Timestamp.fromDate(date);
+      return this.fb.firestore.Timestamp.fromDate(date);
     },
     timestampFromMillis(millis) {
-      return firebase.firestore.Timestamp.fromMillis(millis);
+      return this.fb.firestore.Timestamp.fromMillis(millis);
     },
     async saveCustomerFs(customer) {
       var customerToSave = Object.assign({}, customer);
@@ -93,7 +103,7 @@ export const mixinsFb = {
         return message.fid !== fid;
       });
       this.$store.commit('setMessageQueue', updatedMessages);
-      console.log(this.messageQueue);
+      //console.log(this.messageQueue);
       return this.firestore().messages.doc(fid).delete();
     },
     removeSongFromQueue(fid) {
@@ -118,10 +128,10 @@ export const mixinsFb = {
               this.searchSongs(change.doc.id, change.doc.data().q);
             }
             if (change.type === "modified") {
-              console.log("s modified: ", change.doc.data());
+              //console.log("s modified: ", change.doc.data());
             }
             if (change.type === "removed") {
-              console.log("s removed: ", change.doc.data());
+              //console.log("s removed: ", change.doc.data());
             }
           });
         });
@@ -132,7 +142,7 @@ export const mixinsFb = {
 
       if (!this.queueSubscription) {
         this.$store.commit('subscribeQueue');
-        console.log("songsQueue");
+        //console.log("songsQueue");
 
         this.firestore().pending_songs.where("c", "==", customer.barCode).onSnapshot((querySnapshot) => {
           // c = customer
@@ -145,10 +155,10 @@ export const mixinsFb = {
               this.queueSong(change.doc.id, change.doc.data());
             }
             if (change.type === "modified") {
-              console.log("Q modified: ", change.doc.data());
+              //console.log("Q modified: ", change.doc.data());
             }
             if (change.type === "removed") {
-              console.log("Q removed: ", change.doc.data());
+              //console.log("Q removed: ", change.doc.data());
             }
           });
         });
@@ -158,7 +168,7 @@ export const mixinsFb = {
 
       if (!this.messageQueueSubscription) {
         this.$store.commit('subscribeMessages');
-        console.log("messageQueue");
+        //console.log("messageQueue");
 
         this.firestore().messages.where("c", "==", customer.barCode).onSnapshot((querySnapshot) => {
           // c = customer
@@ -170,10 +180,10 @@ export const mixinsFb = {
               this.queueMessage(change.doc.id, change.doc.data());
             }
             if (change.type === "modified") {
-              console.log("M modified: ", change.doc.data());
+              //console.log("M modified: ", change.doc.data());
             }
             if (change.type === "removed") {
-              console.log("M removed: ", change.doc.data());
+              //console.log("M removed: ", change.doc.data());
             }
           });
         });

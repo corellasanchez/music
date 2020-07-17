@@ -1,5 +1,5 @@
 {
-  "name": "pongala_music",
+  "name": "pongalamusic",
   "description": "A social music jukebox",
   "author": {
     "name": "Roy Corella",
@@ -21,16 +21,17 @@
   "dependencies": {
     "@dongido/vue-viaudio": "^0.3.5",
     "axios": "^0.19.2",
-    "core-js": "^3.4.4",
+    "core-js": "^3.6.5",
     "electron-settings": "^3.2.0",
     "find": "^0.3.0",
+    "firebase": "^7.16.0",
     "fuzzball": "^1.3.0",
+    "google-auth-library": "^6.0.5",
     "simple-encryptor": "^3.0.0",
     "v-animate-css": "0.0.3",
-    "vue": "^2.6.10",
+    "vue": "^2.6.11",
     "vue-agile": "^1.1.3",
     "vue-emoji-picker": "^1.0.1",
-    "vue-firestore": "^0.3.30",
     "vue-marquee-text-component": "^1.1.1",
     "vue-material": "^1.0.0-beta-11",
     "vue-moment": "^4.1.0",
@@ -41,21 +42,34 @@
     "vuex": "^3.5.1"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.4.6",
-    "@vue/cli-plugin-eslint": "^4.4.6",
-    "@vue/cli-plugin-router": "^4.4.6",
-    "@vue/cli-plugin-vuex": "^4.4.6",
-    "@vue/cli-service": "^4.4.6",
+    "@vue/cli-plugin-babel": "~4.4.0",
+    "@vue/cli-plugin-eslint": "~4.4.0",
+    "@vue/cli-service": "~4.4.0",
     "babel-eslint": "^10.1.0",
-    "electron": "^6.1.9",
-    "eslint": "^6.8.0",
+    "electron": "^9.0.0",
+    "electron-devtools-installer": "^3.1.0",
+    "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
-    "vue-cli-plugin-electron-builder": "^1.4.6",
-    "vue-template-compiler": "^2.6.10"
+    "vue-cli-plugin-electron-builder": "~2.0.0-rc.4",
+    "vue-template-compiler": "^2.6.11"
   },
-  "build": {
-    "appId": "com.pongalamusic.app",
-    "productName": "Pongala Music",
-    "copyright": "Copyright © year ${author}"
-  }
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
 }

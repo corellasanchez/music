@@ -1,10 +1,4 @@
-<script src="../node_modules/firebase/firebase-app.js"></script>
-<script src="../node_modules/firebase/firebase-auth.js"></script>
-<script src="../node_modules/firebase/firebase-storage.js"></script>
-<script src="../node_modules/firebase/firebase-firestore.js"></script>
-
 <template>
-
     <div id="app">
         <router-view/>
     </div>

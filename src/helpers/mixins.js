@@ -15,7 +15,7 @@ export const mixins = {
     getFolderStats(folder) {
       fs.stat(folder, (err, stat) => {
         if (stat) {
-          // console.log(stat["mtimeMs"]);
+          // //console.log(stat["mtimeMs"]);
         }
       });
     },

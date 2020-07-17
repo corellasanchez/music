@@ -52,6 +52,9 @@ import {
     // TextAdsComponent,
     ImageAdsComponent
 } from "../components";
+const {
+    dialog
+} = require("electron").remote;
 
 const settings = require("electron-settings");
 
@@ -59,7 +62,7 @@ export default {
     name: "app",
     components: {
         Media,
-      //  TextAdsComponent,
+        //  TextAdsComponent,
         ImageAdsComponent
     },
     mixins: [mixins, mixinsFb],
@@ -122,30 +125,30 @@ export default {
     },
     methods: {
         pause() {
-            // console.log("Video paused!");
+            // ////console.log("Video paused!");
             // setTimeout( () => {
             //   this.$refs.player.play()
             // }, 2000)
         },
         ended() {
-            // console.log("Video ended!", this.$refs.player);
+            // ////console.log("Video ended!", this.$refs.player);
 
             this.currentVideo = this.nextVideo();
         },
         waiting() {
-            // console.log("Video waiting!");
+            // ////console.log("Video waiting!");
         },
         stalled() {
-            // console.log("Video stalled!");
+            // ////console.log("Video stalled!");
         },
         empitied() {
-            // console.log("Video empitied!");
+            // ////console.log("Video empitied!");
         },
         suspend() {
-            // console.log("Video suspend!");
+            // ////console.log("Video suspend!");
         },
         playing() {
-            // console.log("Video suspend!");
+            // ////console.log("Video suspend!");
         },
         nextVideo() {
             var nextVideoFile = "";
@@ -155,11 +158,11 @@ export default {
                 if (this.configuration.songsOrder == 1) {
                     nextSong = this.getLowerIndexSong();
                     nextVideoFile = this.musicFiles[nextSong.s];
-                    console.log("index ", nextVideoFile);
+                    ////console.log("index ", nextVideoFile);
                 } else {
                     nextSong = this.getSongByVotes();
                     nextVideoFile = this.musicFiles[nextSong.s];
-                    console.log("votes ", nextVideoFile);
+                    ////console.log("votes ", nextVideoFile);
                 }
                 this.moveToNext(nextSong);
             } else {
@@ -170,7 +173,7 @@ export default {
                 this.currentUserName = "Pongala Music";
                 this.currentSongName = this.clearSongName(nextVideoFile);
                 this.showSongInfo();
-                console.log("random", nextVideoFile);
+                ////console.log("random", nextVideoFile);
             }
             return this.fileProtocol + this.configuration.musicFolder + nextVideoFile;
         },
@@ -189,7 +192,7 @@ export default {
 
             this.removeSongFromQueue(nextSong.fid)
                 .then(() => {
-                    console.log("Document successfully deleted!");
+                    ////console.log("Document successfully deleted!");
                     this.setNowPlaying(this.configuration, {
                         n: songName,
                         u: userName
@@ -197,7 +200,11 @@ export default {
                     this.showSongInfo();
                 })
                 .catch(function (error) {
-                    console.error("Error removing document: ", error);
+                    //console.error("Error removing document: ", error);
+                    dialog.showErrorBox(
+                        "Error eliminando la cancion",
+                        " " + error
+                    );
                 });
         },
         appInfoTransition() {

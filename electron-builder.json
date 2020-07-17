@@ -1,0 +1,31 @@
+{
+    "productName": "Pongala_Music",
+    "appId": "com.pongalamusic",
+    "asar": true,
+    "protocols": {
+        "name": "PongalaMusic",
+        "schemes": [
+            "PongalaMusic"
+        ]
+    },
+    "mac": {
+        "target": [
+            "default"
+        ]
+    },
+    "win": {
+        "target": [
+            "portable"
+        ]
+    },
+    "portable": {
+        "artifactName": "PongalaMusic.exe"
+    },
+    "files": [
+        "dist/**/*",
+        "package.json",
+        "background.js"
+      ],
+    "extends": null 
+
+}
