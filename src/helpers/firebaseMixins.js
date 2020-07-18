@@ -1,7 +1,3 @@
-// import { db, firebase } from "../this.fb.js";
-
-
-
 import { mapState, mapMutations } from "vuex";
 
 const fuzz = require('fuzzball');

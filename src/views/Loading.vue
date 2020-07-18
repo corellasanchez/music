@@ -27,10 +27,6 @@ import {
     mapState
 } from "vuex";
 
-const settings = require("electron-settings");
-const {
-    dialog
-} = require("electron").remote;
 
 export default {
     name: "Loading",
@@ -47,18 +43,19 @@ export default {
     },
     methods: {
         verifyConfiguration() {
-            //settings.delete("configuration");
+            //this.$settings.delete("configuration");
             this.loadingMessage = "Verificando configuración del negocio...";
-            if (settings.has("configuration")) {
-                this.configuration = settings.get("configuration");
+            if (this.$settings.has("configuration")) {
+                this.configuration = this.$settings.get("configuration");
                 this.loadingMessage = "Se encontró configuración del local";
                 this.verifyLicence(this.configuration);
                 this.getFilesCache(this.configuration);
             } else {
                 this.loadingMessage = "No se encontró configuración del local";
-                dialog.showErrorBox(
+                this.$alert(
+                    "Debes llenar la configuración antes de usar la aplicación",
                     "Bienvenido",
-                    "Debes llenar la configuración antes de usar la aplicación"
+                    "info"
                 );
                 this.$router.replace({
                     path: "config"
@@ -74,19 +71,24 @@ export default {
             if (configuration.karaokeFolder && configuration.licenceType !== "0") {
                 this.loadingMessage = "Actualizando canciones de Karaoke...";
                 try {
-                    cachedKaraokeFiles = await this.indexFolder(configuration.karaokeFolder, "videos");
+                    cachedKaraokeFiles = await this.indexFolder(
+                        configuration.karaokeFolder,
+                        "videos"
+                    );
                     this.$store.commit("setKaraokeFiles", cachedKaraokeFiles);
                     this.loadingMessage = "Canciones de Karaoke actualizadas";
                 } catch (error) {
-                    dialog.showErrorBox(
-                        "No se encontro la carpeta de karaoke",
+                    this.$alert(
                         "Esta carpeta " +
                         configuration.karaokeFolder +
-                        " no existe o no tiene los permisos de lectura adecuados, por favor actualice la informacion"
+                        " no existe o no tiene los permisos de lectura adecuados, por favor actualice la informacion",
+                        "No se encontro la carpeta de karaoke",
+                        "error"
                     );
+
                     // save the configuration to the local settings
                     configuration.karaokeFolder = "";
-                    settings.set("configuration", configuration);
+                    this.$settings.set("configuration", configuration);
                     this.$router.replace({
                         path: "config"
                     });
@@ -97,23 +99,31 @@ export default {
             if (configuration.adsFolder && configuration.licenceType == "2") {
                 this.loadingMessage = "Actualizando anuncios...";
                 try {
-                    cachedBannerFiles = await this.indexFolder(configuration.adsFolder, "images");
+                    cachedBannerFiles = await this.indexFolder(
+                        configuration.adsFolder,
+                        "images"
+                    );
                     this.$store.commit("setBanners", cachedBannerFiles);
-                    
-                    cachedVideoAdsFiles = await this.indexFolder(configuration.adsFolder, "videos");
+
+                    cachedVideoAdsFiles = await this.indexFolder(
+                        configuration.adsFolder,
+                        "videos"
+                    );
                     this.$store.commit("setVideoAds", cachedVideoAdsFiles);
-          
+
                     this.loadingMessage = "Anuncios actualizados";
                 } catch (error) {
-                    dialog.showErrorBox(
-                        "No se encontro la carpeta de anuncios",
+                    this.$alert(
                         "Esta carpeta " +
                         configuration.adsFolder +
-                        " no existe o no tiene los permisos de lectura adecuados, por favor actualice la informacion"
+                        " no existe o no tiene los permisos de lectura adecuados, por favor actualice la informacion",
+                        "No se encontro la carpeta de anuncios",
+                        "error"
                     );
+
                     // save the configuration to the local settings
                     configuration.adsFolder = "";
-                    settings.set("configuration", configuration);
+                    this.$settings.set("configuration", configuration);
                     this.$router.replace({
                         path: "config"
                     });
@@ -124,12 +134,16 @@ export default {
             if (configuration.musicFolder) {
                 this.loadingMessage = "Actualizando canciones...";
                 try {
-                    cachedMusicFiles = await this.indexFolder(configuration.musicFolder, "videos");
+                    cachedMusicFiles = await this.indexFolder(
+                        configuration.musicFolder,
+                        "videos"
+                    );
                     this.$store.commit("setMusicFiles", cachedMusicFiles);
                     if (this.musicFiles.length === 0) {
-                        dialog.showErrorBox(
+                        this.$alert(
+                            "Debes elegir una carpeta que tenga canciones en video .mp4 o .mp3",
                             "No se encontraron canciones",
-                            "Debes elegir una carpeta que tenga canciones en video .mp4 o .mp3"
+                            "error"
                         );
                         this.$router.replace({
                             path: "config"
@@ -138,15 +152,18 @@ export default {
                         this.loadingMessage = "Canciones actualizadas";
                     }
                 } catch (error) {
-                    dialog.showErrorBox(
-                        "No se encontro la carpeta de musica",
+
+                    this.$alert(
                         "Esta carpeta " +
                         configuration.musicFolder +
-                        " no existe o no tiene los permisos de lectura adecuados, por favor actualice la informacion"
+                        " no existe o no tiene los permisos de lectura adecuados, por favor actualice la informacion",
+                        "No se encontro la carpeta de musica",
+                        "error"
                     );
+
                     // save the configuration to the local settings
                     configuration.musicFolder = "";
-                    settings.set("configuration", configuration);
+                    this.$settings.set("configuration", configuration);
                     this.$router.replace({
                         path: "config"
                     });
@@ -167,10 +184,13 @@ export default {
                     var licence = await this.getLicenseFs(configuration);
                     if (licence.exists) {
                         if (licence.data().customer !== configuration.barCode) {
-                            dialog.showErrorBox(
+
+                            this.$alert(
+                                "Esta licencia pertenece a otro usuario, verifique su codigo del bar",
                                 "Error de licencias",
-                                "Esta licencia pertenece a otro usuario, verifique su codigo del bar"
+                                "error"
                             );
+
                             this.$router.replace({
                                 path: "config"
                             });
@@ -178,10 +198,12 @@ export default {
                         }
 
                         if (licence.data().type !== configuration.licenceType) {
-                            dialog.showErrorBox(
+                            this.$alert(
+                                "Esta licencia no corresponde con el tipo de licencia seleccionado",
                                 "Error de licencias",
-                                "Esta licencia no corresponde con el tipo de licencia seleccionado"
+                                "error"
                             );
+
                             this.$router.replace({
                                 path: "config"
                             });
@@ -195,12 +217,14 @@ export default {
                                 .unix(licence.data().expiration_date.seconds)
                                 .format("DD MMMM YYYY, h:mm:ss a");
 
-                            dialog.showErrorBox(
-                                "La licencia a expirado !!!",
+                            this.$alert(
                                 "Esta licencia expiró el " +
                                 fechaExpiracion +
-                                ", por favor compre una nueva ó cambie el tipo de licencia a Basico"
+                                ", por favor compre una nueva ó cambie el tipo de licencia a Basico",
+                                "La licencia a expirado !!!",
+                                "warning"
                             );
+
                             this.openLicenceSite();
                             this.$router.replace({
                                 path: "config"
@@ -208,10 +232,12 @@ export default {
                             return false;
                         }
                     } else {
-                        dialog.showErrorBox(
-                            "Licencia inválida",
-                            "Esta licencia no es valida. Puede comprar una licencia en nuestro sitio web."
-                        );
+                         this.$alert(
+                                "Esta licencia no es valida. Puede comprar una licencia en nuestro sitio web.",
+                                "Licencia inválida",
+                                "warning"
+                            );
+                            
                         this.openLicenceSite();
                         this.$router.replace({
                             path: "config"
@@ -219,10 +245,11 @@ export default {
                         return false;
                     }
                 } catch (error) {
-                    dialog.showErrorBox(
-                        "Error al obtener información de la licencia",
-                        "Verifica tu conexión a Internet"
-                    );
+                     this.$alert(
+                                "Error al obtener información de la licencia",
+                                "Verifica tu conexión a Internet",
+                                "warning"
+                            );
                     return false;
                 }
             }

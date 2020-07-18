@@ -287,10 +287,6 @@ import {
     mapState
 } from "vuex";
 
-const {
-    dialog
-} = require("electron").remote;
-const settings = require("electron-settings");
 
 export default {
     name: "FormValidation",
@@ -313,7 +309,7 @@ export default {
             licence: "NO-LICENCE",
             licenceType: "0",
             maxSongs: 3,
-            musicFolder: null,
+            musicFolder: "",
             name: null,
             password: null,
             phone: null,
@@ -376,8 +372,8 @@ export default {
             }
         },
         getConfiguration() {
-            if (settings.has("configuration")) {
-                this.form = settings.get("configuration");
+            if (this.$settings.has("configuration")) {
+                this.form = this.$settings.get("configuration");
 
                 if (!this.form.ip) {
                     this.getIpInfo()
@@ -387,9 +383,10 @@ export default {
                             this.form.region_name = response.data.region_name;
                         })
                         .catch(error => {
-                            dialog.showErrorBox(
+                            this.$alert(
                                 "Error localizacion",
-                                "No se pudo obtener su localizacion" + error
+                                "No se pudo obtener su localizacion" + error,
+                                "error"
                             );
                         });
                 }
@@ -408,18 +405,20 @@ export default {
                     var licence = await this.getLicenseFs(this.form);
                     if (licence.exists) {
                         if (licence.data().customer !== this.form.barCode) {
-                            dialog.showErrorBox(
+                            this.$alert(
+                                "Esta licencia pertenece a otro usuario, verifique su codigo del bar",
                                 "Error de licencias",
-                                "Esta licencia pertenece a otro usuario, verifique su codigo del bar"
+                                "warning"
                             );
                             this.sending = false;
                             return false;
                         }
 
                         if (licence.data().type !== this.form.licenceType) {
-                            dialog.showErrorBox(
+                            this.$alert(
+                                "Esta licencia no corresponde con el tipo de licencia seleccionado",
                                 "Error de licencias",
-                                "Esta licencia no corresponde con el tipo de licencia seleccionado"
+                                "warning"
                             );
                             this.sending = false;
                             return false;
@@ -428,27 +427,32 @@ export default {
                         if (
                             licence.data().expiration_date.seconds < this.timestamp().seconds
                         ) {
-                            dialog.showErrorBox(
+                            this.$alert(
+                                "Esta licencia ha expirado, por favor compre una nueva o cambie el tipo de licencia a básico",
                                 "Error de licencias",
-                                "Esta licencia ha expirado, por favor compre una nueva o cambie el tipo de licencia a básico"
+                                "warning"
                             );
+
                             this.openLicenceSite();
                             this.sending = false;
                             return false;
                         }
                     } else {
-                        dialog.showErrorBox(
+                        this.$alert(
+                            "Esta licencia no es valida. Puede comprar una licencia en nuestro sitio web.",
                             "Licencia inválida",
-                            "Esta licencia no es valida. Puede comprar una licencia en nuestro sitio web."
+                            "warning"
                         );
+
                         this.openLicenceSite();
                         this.sending = false;
                         return false;
                     }
                 } catch (error) {
-                    dialog.showErrorBox(
-                        "Error al obtener información de la licencia",
-                        "Verifica tu conexión a Internet"
+                    this.$alert(
+                        "Error al obtener información de la licencia" + error,
+                        "Verifica tu conexión a Internet",
+                        "error"
                     );
                     this.sending = false;
                     return false;
@@ -458,10 +462,12 @@ export default {
             try {
                 var customerFs = await this.getCustomerFs(this.form);
             } catch (error) {
-                dialog.showErrorBox(
-                    "Error al obtener información del cliente",
-                    "Verifica tu conexión a Internet"
+                this.$alert(
+                    "Verifica tu conexión a Internet",
+                    "Error al obtener información del cliente" + error,
+                    "error"
                 );
+
                 this.sending = false;
                 return false;
             }
@@ -473,7 +479,7 @@ export default {
                     this.verifyPassword(this.form.password, customerFs.data().password)
                 ) {
                     // save the configuration to the local settings
-                    settings.set("configuration", this.form);
+                    this.$settings.set("configuration", this.form);
 
                     // save the customer in the db
                     this.saveCustomerFs(this.form);
@@ -488,9 +494,10 @@ export default {
                     });
                 } else {
                     // Wrong password
-                    dialog.showErrorBox(
+                    this.$alert(
+                        "No se guardo la configuración, verifique su contraseña o utilice la función para restablecer su contraseña",
                         "Contraseña incorrecta",
-                        "No se guardo la configuración, verifique su contraseña o utilice la función para restablecer su contraseña"
+                        "error"
                     );
                     this.sending = false;
                     return false;
@@ -498,7 +505,7 @@ export default {
             } else {
                 // New costumer
                 // save the configuration to the local settings
-                settings.set("configuration", this.form);
+                this.$settings.set("configuration", this.form);
 
                 // save the customer in the db
                 this.saveCustomerFs(this.form);
@@ -519,9 +526,10 @@ export default {
                 var cachedMusicFiles = await this.indexFolder(this.form.musicFolder);
                 this.$store.commit("setMusicFiles", cachedMusicFiles);
                 if (this.musicFiles.length === 0) {
-                    dialog.showErrorBox(
+                    this.$alert(
+                        "Debes elegir una carpeta que tenga canciones en video .mp4 o .mp3",
                         "No se encontraron canciones",
-                        "Debes elegir una carpeta que tenga canciones en video .mp4 o .mp3"
+                        "warning"
                     );
                     this.form.musicFolder = "";
                     this.sending = false;
@@ -543,9 +551,10 @@ export default {
         validateForm() {
             this.$v.$touch();
             if (this.$v.$invalid) {
-                dialog.showErrorBox(
+                this.$alert(
+                     "Algunos campos son obligatorios, revisa los datos",
                     "No se pudo guardar la configuración",
-                    "Algunos campos son obligatorios, revisa los datos"
+                    "warning"
                 );
             } else {
                 this.saveConfiguration();
@@ -555,39 +564,27 @@ export default {
             this.form.barCode = String(this.form.barCode).toUpperCase();
         },
         selectFolder(type) {
-            dialog
-                .showOpenDialog({
-                    properties: ["openFile", "openDirectory"]
-                })
-                .then(result => {
-                    // //console.log(result.canceled);
-                    // //console.log(result.filePaths);
-
+            this.$ipcRenderer.invoke("openFolder").then(result => {
+                if (result) {
                     switch (type) {
                         case "music":
-                            this.form.musicFolder = result.filePaths[0];
+                            this.form.musicFolder = result;
                             break;
 
                         case "karaoke":
-                            this.form.karaokeFolder = result.filePaths[0];
+                            this.form.karaokeFolder = result;
                             break;
 
                         case "ads":
-                            this.form.adsFolder = result.filePaths[0];
+                            this.form.adsFolder = result;
 
                             break;
 
                         default:
                             break;
                     }
-                })
-                .catch(err => {
-                    dialog.showErrorBox(
-                        "No se pudo seleccionar un folder, verifica que el folder tenga pemisos de lectura ",
-                        "error " + err
-                    );
-                    // //console.log(err);
-                });
+                }
+            });
         },
         disableKeys: function (evt) {
             evt.preventDefault();

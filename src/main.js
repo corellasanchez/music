@@ -13,6 +13,7 @@ import Vue from 'vue'
 import VueMaterial from 'vue-material'
 import VueTimers from 'vue-timers'
 import { EmojiPickerPlugin } from 'vue-emoji-picker'
+import VueSimpleAlert from "vue-simple-alert";
 
 Vue.config.productionTip = false;
 
@@ -28,6 +29,7 @@ Vue.use(require('vue-moment'), {moment});
 Vue.use(VAnimateCss);
 Vue.use(VueAgile);
 Vue.use(VueMaterial);
+Vue.use(VueSimpleAlert);
 Vue.use(VueTimers);
 
 const config = {
@@ -44,6 +46,15 @@ Firebase.initializeApp(config);
 
 /* Bind firebase to your Vue instance */
 Vue.prototype.$firebase = Firebase;
+
+
+const {ipcRenderer} = require('electron');
+Vue.prototype.$ipcRenderer = ipcRenderer;
+
+const settings = require("electron-settings");
+Vue.prototype.$settings = settings;
+
+
 
 new Vue({
   router,

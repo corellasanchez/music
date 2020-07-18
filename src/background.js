@@ -4,6 +4,8 @@ import { app, protocol, BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
+const { ipcMain, dialog } = require('electron')
+
 
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -15,9 +17,11 @@ protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
 
+
+
 async function createWindow() {
 
-  
+
 
   // Create the browser window.
   win = new BrowserWindow({
@@ -27,8 +31,8 @@ async function createWindow() {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
+      nodeIntegrationInWorker: true,
       webSecurity: false,
-      enableRemoteModule: true
     }
   })
 
@@ -47,6 +51,13 @@ async function createWindow() {
     win = null
   })
 }
+
+// Main process
+ipcMain.handle('openFolder', async (event) => {
+  const selectedFolder = await dialog.showOpenDialog({ properties: ["openFile", "openDirectory"] });
+  return selectedFolder.filePaths[0];
+})
+
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
@@ -79,6 +90,17 @@ app.on('ready', async () => {
   }
   createWindow()
 })
+
+app.whenReady().then(() => {
+  
+  protocol.registerFileProtocol('file', (request, callback) => {
+    
+    const pathname = decodeURI(request.url.replace('file:///', ''));
+    console.log('entra', pathname);
+    callback(pathname);
+  });
+});
+
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {

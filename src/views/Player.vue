@@ -2,7 +2,11 @@
 <div class="container">
     <div class="super">
         <h1 class="song-name" v-if="currentSongName && showSuper" v-animate-css="superTransition">
-            <strong class="user-name" v-show="currentUserName"> {{currentUserName}}: <br></strong> {{currentSongName}}
+            <strong class="user-name" v-show="currentUserName">
+                {{currentUserName}}:
+                <br />
+            </strong>
+            {{currentSongName}}
         </h1>
     </div>
 
@@ -32,7 +36,6 @@
     <!-- <text-ads-component :duration="Number(duration)" :showDemo="false" v-if="configuration && configuration.licenceType != '0'"></text-ads-component> -->
 
     <image-ads-component :duration="Number(duration)" :showDemo="false"></image-ads-component>
-
 </div>
 </template>
 
@@ -52,11 +55,7 @@ import {
     // TextAdsComponent,
     ImageAdsComponent
 } from "../components";
-const {
-    dialog
-} = require("electron").remote;
 
-const settings = require("electron-settings");
 
 export default {
     name: "app",
@@ -85,13 +84,11 @@ export default {
             messageTest: 0
         };
     },
-    created() {
-
-    },
+    created() {},
     mounted() {
-        this.configuration = settings.get("configuration");
-        if (settings.has("configuration.markeeDuration")) {
-            this.duration = settings.get("configuration.markeeDuration");
+        this.configuration = this.$settings.get("configuration");
+        if (this.$settings.has("configuration.markeeDuration")) {
+            this.duration = this.$settings.get("configuration.markeeDuration");
         } else {
             this.duration = 15;
         }
@@ -175,6 +172,7 @@ export default {
                 this.showSongInfo();
                 ////console.log("random", nextVideoFile);
             }
+            console.log(this.fileProtocol , this.configuration.musicFolder , nextVideoFile);
             return this.fileProtocol + this.configuration.musicFolder + nextVideoFile;
         },
         moveToNext(nextSong) {
@@ -201,9 +199,9 @@ export default {
                 })
                 .catch(function (error) {
                     //console.error("Error removing document: ", error);
-                    dialog.showErrorBox(
-                        "Error eliminando la cancion",
-                        " " + error
+                    this.$alert(
+                        "Error al eliminar la cancion de la lista " + error,
+                        "error"
                     );
                 });
         },
@@ -262,7 +260,8 @@ export default {
             return this.musicQueue[0];
         },
         sendTestMessages() {
-            var names = ["Hellen Brooks",
+            var names = [
+                "Hellen Brooks",
                 "Rachel Varquero",
                 "Edwards Ramirez",
                 "Christopher Sanchez",

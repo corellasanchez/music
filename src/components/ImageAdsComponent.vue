@@ -11,12 +11,9 @@ import {
     mapState
 } from "vuex";
 
-// YourComponent.vue
 import {
     VueAgile
 } from "vue-agile";
-
-const settings = require("electron-settings");
 
 export default {
     name: "image-ads-component",
@@ -38,8 +35,8 @@ export default {
     },
     methods: {
         getConfig() {
-            if (settings.has("configuration")) {
-                this.configuration = settings.get("configuration");
+            if (this.$settings.has("configuration")) {
+                this.configuration = this.$settings.get("configuration");
             }
         },
     },

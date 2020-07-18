@@ -15,7 +15,6 @@
 <script>
 import { mapState } from "vuex";
 
-const settings = require("electron-settings");
 
 export default {
     name: "text-ads-component",
@@ -25,8 +24,8 @@ export default {
     },
     methods: {
         getConfig() {
-            if (settings.has("localTextAds")) {
-                this.$store.commit("setLocalTextAds", settings.get("localTextAds"));
+            if (this.$settings.has("localTextAds")) {
+                this.$store.commit("setLocalTextAds", this.$settings.get("localTextAds"));
             }
         }
     },

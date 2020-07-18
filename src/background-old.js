@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, Menu, remote } from 'electron'
+import { app, protocol, BrowserWindow, Menu } from 'electron'
 
 
 import { app, protocol, BrowserWindow } from 'electron'

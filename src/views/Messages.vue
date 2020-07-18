@@ -158,11 +158,6 @@ import {
     TextAdsComponent
 } from "../components";
 
-const {
-    dialog
-} = require("electron").remote;
-const settings = require("electron-settings");
-
 export default {
     name: "Messages",
     mixins: [validationMixin],
@@ -219,12 +214,12 @@ export default {
             }
         },
         getConfiguration() {
-            if (settings.has("localTextAds")) {
-                this.$store.commit("setLocalTextAds", settings.get("localTextAds"));
+            if (this.$settings.has("localTextAds")) {
+                this.$store.commit("setLocalTextAds", this.$settings.get("localTextAds"));
             }
 
-            if (settings.has("configuration")) {
-                this.configuration = settings.get("configuration");
+            if (this.$settings.has("configuration")) {
+                this.configuration = this.$settings.get("configuration");
                 if (this.configuration.markeeDuration) {
                     this.duration = this.configuration.markeeDuration;
                 } else {
@@ -236,10 +231,11 @@ export default {
         validateForm() {
             this.$v.$touch();
             if (this.$v.$invalid) {
-                dialog.showErrorBox(
-                    "No se pudo agregar el mensaje",
-                    "Algunos campos son obligatorios, revisa los datos"
-                );
+                 this.$alert(
+                        "Algunos campos son obligatorios, revisa los datos",
+                        "No se pudo agregar el mensaje",
+                        "error"
+                    );
             } else {
                 this.addMessage();
                 this.form.message = null;
@@ -251,15 +247,15 @@ export default {
             message.color = this.selectedColor;
             message.index = this.localTextAds ? this.localTextAds.length + 1 : 1;
             this.$store.commit("addLocalTextAd", message);
-            settings.set("localTextAds", this.localTextAds);
+            this.$settings.set("localTextAds", this.localTextAds);
         },
         removeMessage(textAd) {
             this.$store.commit("removeLocalTextAd", textAd);
-            settings.set("localTextAds", this.localTextAds);
+            this.$settings.set("localTextAds", this.localTextAds);
         },
         durationChange(event) {
             if (event) {
-                settings.set("configuration.markeeDuration", this.duration);
+                this.$settings.set("configuration.markeeDuration", this.duration);
             }
         }
     },

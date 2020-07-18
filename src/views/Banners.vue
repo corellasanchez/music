@@ -23,7 +23,7 @@
                             <br />Para los videos se recomienda el formato .mp4
                         </p>
                         <p> banners {{banners}}</p>
-<p> video ads {{videoAds}}</p>
+                        <p> video ads {{videoAds}}</p>
                     </div>
                 </div>
 
@@ -89,10 +89,6 @@ import {
 import {
     mixinsFb
 } from "../helpers/firebaseMixins";
-const {
-    dialog
-} = require("electron").remote;
-const settings = require("electron-settings");
 
 export default {
     name: "",
@@ -125,7 +121,7 @@ export default {
         ImageAdsComponent
     },
     computed: {
-        ...mapState(["banners","videoAds"]),
+        ...mapState(["banners", "videoAds"]),
         ...mapMutations(["setBanners", "setVideoAds"])
     },
     methods: {
@@ -143,8 +139,8 @@ export default {
             }
         },
         getConfiguration() {
-            if (settings.has("configuration")) {
-                this.configuration = settings.get("configuration");
+            if (this.$settings.has("configuration")) {
+                this.configuration = this.$settings.get("configuration");
                 this.form.adsEach = this.configuration.adsEach;
                 this.form.adsFolder = this.configuration.adsFolder;
             }
@@ -153,9 +149,10 @@ export default {
         validateForm() {
             this.$v.$touch();
             if (this.$v.$invalid) {
-                dialog.showErrorBox(
+                this.$alert(
+                    "Algunos campos son obligatorios, revisa los datos",
                     "No se pudo guardar la configuracion",
-                    "Algunos campos son obligatorios, revisa los datos"
+                    "error"
                 );
             } else {
                 this.saveConfiguration();
@@ -172,9 +169,9 @@ export default {
 
             try {
                 this.saveCustomerFs(newConfiguration);
-                settings.set("configuration", newConfiguration);
-              
-              if (this.form.adsFolder && this.form.licenceType === "2") {
+                this.$settings.set("configuration", newConfiguration);
+
+                if (this.form.adsFolder && this.form.licenceType === "2") {
                     this.savedMessage = "Actualizando anuncios...";
                     var cachedBannerFiles = await this.indexFolder(
                         this.configuration.adsFolder,
@@ -190,34 +187,24 @@ export default {
 
                     this.savedMessage = "Anuncios actualizados";
                 }
-              
+
                 this.savedMessage = "Configuración guardada";
                 this.sending = false;
                 this.configurationSaved = true;
             } catch (error) {
-                dialog.showErrorBox(
+                this.$alert(
+                    "Verifica tu conexión a Internet " + error,
                     "Error al guardar la configuracion",
-                    "Verifica tu conexión a Internet " + error
+                    "error"
                 );
                 this.sending = false;
                 return false;
             }
         },
         selectFolder() {
-            dialog
-                .showOpenDialog({
-                    properties: ["openFile", "openDirectory"]
-                })
-                .then(result => {
-                    this.form.adsFolder = result.filePaths[0];
-                })
-                .catch(err => {
-                    dialog.showErrorBox(
-                        "No se pudo seleccionar un folder, verifica que el folder tenga pemisos de lectura ",
-                        "error " + err
-                    );
-                    // //console.log(err);
-                });
+            this.$ipcRenderer.invoke("openFolder").then(result => {
+                this.form.adsFolder = result;
+            });
         },
         disableKeys: function (evt) {
             evt.preventDefault();

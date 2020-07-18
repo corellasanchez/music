@@ -29,4 +29,7 @@
 .upper{
     text-transform: uppercase;
 }
+.swal2-title {
+    font-size: 1.1em !important;
+}
 </style>
