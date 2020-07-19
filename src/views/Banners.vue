@@ -65,7 +65,7 @@
         <md-snackbar :md-active.sync="configurationSaved">"Configuración guardada correctamente"</md-snackbar>
     </form>
 
-    <image-ads-component :duration="Number(duration)" :showDemo="false"></image-ads-component>
+    <image-ads-component :duration="Number(duration)" :showDemo="false" :banners="banners"></image-ads-component>
     <md-dialog :md-active.sync="sending" :md-close-on-esc="false" :md-click-outside-to-close="false">
         <md-dialog-title>{{savedMessage}}</md-dialog-title>
     </md-dialog>
@@ -145,7 +145,6 @@ export default {
                 this.form.adsFolder = this.configuration.adsFolder;
             }
         },
-
         validateForm() {
             this.$v.$touch();
             if (this.$v.$invalid) {
@@ -173,6 +172,7 @@ export default {
 
                 if (this.form.adsFolder && this.form.licenceType === "2") {
                     this.savedMessage = "Actualizando anuncios...";
+
                     var cachedBannerFiles = await this.indexFolder(
                         this.configuration.adsFolder,
                         "images"
@@ -203,7 +203,10 @@ export default {
         },
         selectFolder() {
             this.$ipcRenderer.invoke("openFolder").then(result => {
-                this.form.adsFolder = result;
+                if (result) {
+                    this.form.adsFolder = result;
+                    this.saveConfiguration()
+                }
             });
         },
         disableKeys: function (evt) {

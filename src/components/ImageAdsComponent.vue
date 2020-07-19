@@ -1,5 +1,5 @@
 <template>
-<agile class="footer" :dots="false" :navButtons="false" :autoplay="true" :autoplay-speed="5000" v-if="configuration.licenceType == '2' && banners.lenght > 0 " >
+<agile class="footer" :dots="false" :navButtons="false" :autoplay="true" :autoplay-speed="5000" v-if="configuration.licenceType == '2' && banners" >
     <div class="slide" v-for="(banner, index) in banners" :key="index">
         <img :src="'file:///' + configuration.adsFolder + banner" class="image-banner" alt="NO SE ENCONTRO LA IMAGEN" />
     </div>
@@ -7,9 +7,6 @@
 </template>
 
 <script>
-import {
-    mapState
-} from "vuex";
 
 import {
     VueAgile
@@ -19,18 +16,15 @@ export default {
     name: "image-ads-component",
     props: {
         duration: Number,
-        showDemo: Boolean
-    },
-    computed: {
-        ...mapState(["banners"])
+        showDemo: Boolean,
+        banners: {}
     },
     mounted() {
         this.getConfig();
     },
     data: function () {
         return {
-            configuration: {},
-            images: []
+            configuration: {}
         };
     },
     methods: {

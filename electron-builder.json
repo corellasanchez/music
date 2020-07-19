@@ -2,6 +2,7 @@
     "productName": "Pongala_Music",
     "appId": "com.pongalamusic",
     "asar": true,
+
     "protocols": {
         "name": "PongalaMusic",
         "schemes": [
@@ -15,17 +16,17 @@
     },
     "win": {
         "target": [
-            "portable"
-        ]
-    },
-    "portable": {
-        "artifactName": "PongalaMusic.exe"
-    },
-    "files": [
-        "dist/**/*",
-        "package.json",
-        "background.js"
-      ],
-    "extends": null 
-
+          "nsis"
+        ],
+        "icon": "src/icon.ico"
+      },
+      "nsis": {
+        "installerIcon": "src/icon.ico",
+        "uninstallerIcon": "src/icon.ico",
+        "uninstallDisplayName": "Pongala Music",
+        "license": "src/license.txt",
+        "oneClick": false,
+        "allowToChangeInstallationDirectory": true
+      },
+    "extends": null
 }

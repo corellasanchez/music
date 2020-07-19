@@ -1,10 +1,12 @@
 {
   "name": "pongalamusic",
+  "productName": "Pongala Music",
   "description": "A social music jukebox",
   "author": {
     "name": "Roy Corella",
     "email": "corellasanchez@gmail.com",
-    "url": "http://pongalamusic.com"
+    "url": "http://pongalamusic.com",
+    "type":  "module"
   },
   "version": "2.0.0",
   "private": true,
