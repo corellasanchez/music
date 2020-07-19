@@ -172,7 +172,6 @@ export default {
                 this.showSongInfo();
                 ////console.log("random", nextVideoFile);
             }
-            console.log(this.fileProtocol , this.configuration.musicFolder , nextVideoFile);
             return this.fileProtocol + this.configuration.musicFolder + nextVideoFile;
         },
         moveToNext(nextSong) {

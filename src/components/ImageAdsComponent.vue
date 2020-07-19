@@ -1,5 +1,5 @@
 <template>
-<agile class="footer" :dots="false" :navButtons="false" :autoplay="true" :autoplay-speed="5000">
+<agile class="footer" :dots="false" :navButtons="false" :autoplay="true" :autoplay-speed="5000" v-if="configuration.licenceType == '2' && banners.lenght > 0 " >
     <div class="slide" v-for="(banner, index) in banners" :key="index">
         <img :src="'file:///' + configuration.adsFolder + banner" class="image-banner" alt="NO SE ENCONTRO LA IMAGEN" />
     </div>

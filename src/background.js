@@ -1,12 +1,11 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, Menu } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const { ipcMain, dialog } = require('electron')
-
-
+import { buildMenu } from './menu'
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -18,12 +17,9 @@ protocol.registerSchemesAsPrivileged([
 ])
 
 
-
 async function createWindow() {
-
-
-
   // Create the browser window.
+
   win = new BrowserWindow({
     width: 800,
     height: 600,
@@ -32,10 +28,11 @@ async function createWindow() {
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       nodeIntegrationInWorker: true,
-      webSecurity: false,
+      webSecurity: false
     }
   })
 
+  buildMenu(app, win);
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -56,6 +53,10 @@ async function createWindow() {
 ipcMain.handle('openFolder', async (event) => {
   const selectedFolder = await dialog.showOpenDialog({ properties: ["openFile", "openDirectory"] });
   return selectedFolder.filePaths[0];
+})
+
+ipcMain.handle('hideMenu', async (event, hide) => {
+  win.setMenuBarVisibility(hide);
 })
 
 
@@ -92,11 +93,8 @@ app.on('ready', async () => {
 })
 
 app.whenReady().then(() => {
-  
   protocol.registerFileProtocol('file', (request, callback) => {
-    
     const pathname = decodeURI(request.url.replace('file:///', ''));
-    console.log('entra', pathname);
     callback(pathname);
   });
 });
