@@ -65,7 +65,7 @@
         <md-snackbar :md-active.sync="configurationSaved">"Configuración guardada correctamente"</md-snackbar>
     </form>
 
-    <image-ads-component :duration="Number(duration)" :showDemo="false" :banners="banners"></image-ads-component>
+    <image-ads-component :duration="Number(duration)" :showDemo="false" v-bind:banners="banners" v-bind:folder="form.adsFolder"></image-ads-component>
     <md-dialog :md-active.sync="sending" :md-close-on-esc="false" :md-click-outside-to-close="false">
         <md-dialog-title>{{savedMessage}}</md-dialog-title>
     </md-dialog>
@@ -89,10 +89,13 @@ import {
 import {
     mixinsFb
 } from "../helpers/firebaseMixins";
+import {
+    mixins
+} from "../helpers/mixins";
 
 export default {
     name: "",
-    mixins: [validationMixin, mixinsFb],
+    mixins: [validationMixin, mixinsFb, mixins],
     data: () => ({
         form: {
             adsFolder: null,
@@ -170,19 +173,22 @@ export default {
                 this.saveCustomerFs(newConfiguration);
                 this.$settings.set("configuration", newConfiguration);
 
-                if (this.form.adsFolder && this.form.licenceType === "2") {
+                if (this.form.adsFolder && this.configuration.licenceType === "2") {
+
                     this.savedMessage = "Actualizando anuncios...";
 
                     var cachedBannerFiles = await this.indexFolder(
-                        this.configuration.adsFolder,
+                        newConfiguration.adsFolder,
                         "images"
                     );
+
                     this.$store.commit("setBanners", cachedBannerFiles);
 
                     var cachedVideoAdsFiles = await this.indexFolder(
-                        this.configuration.adsFolder,
+                        newConfiguration.adsFolder,
                         "videos"
                     );
+
                     this.$store.commit("setVideoAds", cachedVideoAdsFiles);
 
                     this.savedMessage = "Anuncios actualizados";
@@ -205,10 +211,10 @@ export default {
             this.$ipcRenderer.invoke("openFolder").then(result => {
                 if (result) {
                     this.form.adsFolder = result;
-                    this.saveConfiguration()
                 }
             });
         },
+
         disableKeys: function (evt) {
             evt.preventDefault();
         }

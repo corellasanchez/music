@@ -1,13 +1,12 @@
 <template>
-<agile class="footer" :dots="false" :navButtons="false" :autoplay="true" :autoplay-speed="5000" v-if="configuration.licenceType == '2' && banners" >
+<agile class="footer" :dots="false" :navButtons="false" :autoplay="true" :autoplay-speed="5000" v-if="configuration.licenceType == '2' && banners">
     <div class="slide" v-for="(banner, index) in banners" :key="index">
-        <img :src="'file:///' + configuration.adsFolder + banner" class="image-banner" alt="NO SE ENCONTRO LA IMAGEN" />
+        <img :src="'file:///' + folder + banner" class="image-banner" alt="NO SE ENCONTRO LA IMAGEN" />
     </div>
 </agile>
 </template>
 
 <script>
-
 import {
     VueAgile
 } from "vue-agile";
@@ -17,6 +16,7 @@ export default {
     props: {
         duration: Number,
         showDemo: Boolean,
+        folder: String,
         banners: {}
     },
     mounted() {
