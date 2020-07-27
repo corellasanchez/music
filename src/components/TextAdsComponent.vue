@@ -1,5 +1,5 @@
 <template>
-    <div class="footer" v-if="localTextAds.length > 0 || showDemo">
+    <div class="text-footer" v-if="localTextAds.length > 0 || showDemo">
         <marquee-text :key="0" :duration="duration">
             <span class="marqueeSpan" v-for="textAd in localTextAds" :key="textAd.index + 2000" :style="{color: textAd.color}"> {{textAd.text}}</span>
             <span class="marqueeSpan" v-if="localTextAds.length == 0 && showDemo" :key="3001"> No hay mensajes que mostrar 🙇🙇🙇🙇🙇🙇</span>
@@ -41,7 +41,7 @@ export default {
 </script>
 
 <style>
-.footer {
+.text-footer {
     position: absolute;
     bottom: 10px;
     z-index: 3;
@@ -52,7 +52,7 @@ export default {
     line-height: normal;
     text-transform: uppercase;
     background: rgba(0,0,0,0.8);
-    padding: 9px 0;
+    padding: 5px 0;
 }
 
 .marqueeSpan {

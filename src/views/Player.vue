@@ -28,12 +28,12 @@
             </h1>
         </div>
     </div>
-    <!-- :controls="true" -->
-    <Media id="player" :kind="'video'" :isMuted="true" :src="currentVideo" :autoplay="true" :loop="false" :ref="'player'" @pause="pause()" @ended="ended()" @waiting="waiting()" @emptied="empitied()" @stalled="stalled()" @suspend="suspend()" @playing="playing()"></Media>
+
+    <Media id="player" :controls="true" :kind="'video'" :isMuted="true" :src="currentVideo" :autoplay="true" :loop="false" :ref="'player'" @pause="pause()" @ended="ended()" @waiting="waiting()" @emptied="empitied()" @stalled="stalled()" @suspend="suspend()" @playing="playing()"></Media>
 
     <notifications group="user-messages" position="bottom left" :duration="Number(15000)" :max="Number(9)" />
 
-    <!-- <text-ads-component :duration="Number(duration)" :showDemo="false" v-if="configuration && configuration.licenceType != '0'"></text-ads-component> -->
+    <text-ads-component :duration="Number(duration)" :showDemo="false" v-if="configuration && configuration.licenceType != '0'"></text-ads-component>
 
     <image-ads-component :showDemo="false" v-bind:banners="banners"></image-ads-component>
 </div>
@@ -52,7 +52,7 @@ import {
     mixinsFb
 } from "../helpers/firebaseMixins";
 import {
-    // TextAdsComponent,
+    TextAdsComponent,
     ImageAdsComponent
 } from "../components";
 
@@ -60,15 +60,17 @@ export default {
     name: "app",
     components: {
         Media,
-        //  TextAdsComponent,
+        TextAdsComponent,
         ImageAdsComponent
     },
     mixins: [mixins, mixinsFb],
     data: function () {
         return {
+            videoCount: 0,
             fileProtocol: "file:///",
             configuration: null,
             currentVideo: [],
+            currentVideoAd: 0,
             videoQueue: [],
             showSuper: false,
             superAppInfo: true,
@@ -151,6 +153,7 @@ export default {
         nextVideo() {
             var nextVideoFile = "";
             var nextSong = {};
+            var nextVideoAd = '';
 
             if (this.musicQueue.length > 0) {
                 if (this.configuration.songsOrder == 1) {
@@ -173,6 +176,25 @@ export default {
                 this.showSongInfo();
                 ////console.log("random", nextVideoFile);
             }
+
+            //// Show ads each..
+            if (this.configuration.licenceType === '2' && this.videoAds.length && this.configuration.adsEach) {
+                if (this.videoCount < this.configuration.adsEach) {
+                    this.videoCount++;
+                } else {
+                    this.videoCount = 0;
+                }
+                if (!this.videoCount) {
+                    nextVideoAd = this.fileProtocol + this.configuration.adsFolder + this.videoAds[this.currentVideoAd];
+                    if (this.currentVideoAd < this.videoAds.length - 1) {
+                        this.currentVideoAd++;
+                    } else {
+                        this.currentVideoAd = 0;
+                    }
+                    return nextVideoAd;
+                }
+            }
+
             return this.fileProtocol + this.configuration.musicFolder + nextVideoFile;
         },
         moveToNext(nextSong) {

@@ -58,5 +58,6 @@ export default {
 
 .agile {
     position: absolute;
+    margin-bottom: 20px;
 }
 </style>
