@@ -1,5 +1,5 @@
 'use strict'
-import { app, protocol, BrowserWindow, Menu } from 'electron'
+import { app, protocol, getCurrentWindow, BrowserWindow, Menu } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -58,6 +58,12 @@ ipcMain.handle('hideMenu', async (event, hide) => {
   win.setMenuBarVisibility(hide);
 })
 
+ipcMain.handle('reloadApp', async () => {
+ console.log('Hello');
+ app.relaunch();
+app.exit();
+  // getCurrentWindow().reload();
+})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {

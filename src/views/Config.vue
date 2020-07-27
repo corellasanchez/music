@@ -298,6 +298,7 @@ export default {
             address: null,
             badWordsFilter: false,
             barCode: null,
+            bannerDuration: 5,
             chatActive: false,
             creditSale: false,
             country_code: null,

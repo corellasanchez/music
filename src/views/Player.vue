@@ -35,7 +35,7 @@
 
     <!-- <text-ads-component :duration="Number(duration)" :showDemo="false" v-if="configuration && configuration.licenceType != '0'"></text-ads-component> -->
 
-    <image-ads-component :duration="Number(duration)" :showDemo="false"></image-ads-component>
+    <image-ads-component :showDemo="false" v-bind:banners="banners"></image-ads-component>
 </div>
 </template>
 
@@ -55,7 +55,6 @@ import {
     // TextAdsComponent,
     ImageAdsComponent
 } from "../components";
-
 
 export default {
     name: "app",
@@ -116,7 +115,9 @@ export default {
             "karaokeFiles",
             "musicQueue",
             "messageQueue",
-            "localTextAds"
+            "localTextAds",
+            "banners",
+            "videoAds"
         ]),
         ...mapMutations(["addLocalTextAd", "addMessageToQueue"])
     },

@@ -1,7 +1,7 @@
 <template>
-<agile class="footer" :dots="false" :navButtons="false" :autoplay="true" :autoplay-speed="5000" v-if="configuration.licenceType == '2' && banners">
+<agile class="footer" :dots="false" :navButtons="false" :autoplay="true" :autoplay-speed="5000" v-if="banners">
     <div class="slide" v-for="(banner, index) in banners" :key="index">
-        <img :src="'file:///' + folder + banner" class="image-banner" alt="NO SE ENCONTRO LA IMAGEN" />
+        <img :src="'file:///' + configuration.adsFolder + banner" class="image-banner" alt="NO SE ENCONTRO LA IMAGEN" />
     </div>
 </agile>
 </template>
@@ -10,22 +10,22 @@
 import {
     VueAgile
 } from "vue-agile";
-
+import {
+    mapState
+} from "vuex";
 export default {
     name: "image-ads-component",
     props: {
-        duration: Number,
         showDemo: Boolean,
-        folder: String,
-        banners: {}
     },
     mounted() {
         this.getConfig();
     },
-    data: function () {
-        return {
-            configuration: {}
-        };
+    data: () => ({
+        configuration: {}
+    }),
+    computed: {
+        ...mapState(["banners", "videoAds"]),
     },
     methods: {
         getConfig() {
@@ -35,8 +35,8 @@ export default {
         },
     },
     components: {
-        agile: VueAgile
-    }
+        agile: VueAgile,
+    },
 };
 </script>
 

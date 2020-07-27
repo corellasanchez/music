@@ -22,8 +22,6 @@
                             Para las imágenes se recomienda el un tamaño de 150 pixeles de alto y de 1024 a 2000 pixeles de largo en formato .jpg .png o .gif
                             <br />Para los videos se recomienda el formato .mp4
                         </p>
-                        <p> banners {{banners}}</p>
-                        <p> video ads {{videoAds}}</p>
                     </div>
                 </div>
 
@@ -57,7 +55,7 @@
                 </div>
             </md-card-content>
             <md-card-actions class="action">
-                <md-button class="md-raised md-primary" @click="regresar()">&lt; Regresar</md-button>
+                <md-button class="md-raised md-primary" @click="back()">&lt; Regresar</md-button>
                 <md-button class="md-raised md-primary" @click="validateForm()" :disabled="sending || configuration.licenceType !== '2' || !form.adsFolder">Guardar directorio de anucios</md-button>
             </md-card-actions>
         </md-card>
@@ -65,7 +63,6 @@
         <md-snackbar :md-active.sync="configurationSaved">"Configuración guardada correctamente"</md-snackbar>
     </form>
 
-    <image-ads-component :duration="Number(duration)" :showDemo="false" v-bind:banners="banners" v-bind:folder="form.adsFolder"></image-ads-component>
     <md-dialog :md-active.sync="sending" :md-close-on-esc="false" :md-click-outside-to-close="false">
         <md-dialog-title>{{savedMessage}}</md-dialog-title>
     </md-dialog>
@@ -83,9 +80,6 @@ import {
     mapState,
     mapMutations
 } from "vuex";
-import {
-    ImageAdsComponent
-} from "../components";
 import {
     mixinsFb
 } from "../helpers/firebaseMixins";
@@ -120,15 +114,18 @@ export default {
         this.getConfiguration();
         this.selectedColor = "#ffffff";
     },
-    components: {
-        ImageAdsComponent
-    },
     computed: {
         ...mapState(["banners", "videoAds"]),
         ...mapMutations(["setBanners", "setVideoAds"])
     },
     methods: {
-        regresar() {
+        back() {
+            this.$router.replace({
+                path: "player"
+            });
+        },
+        reload() {
+            //  this.$ipcRenderer.invoke("reloadApp");
             this.$router.replace({
                 path: "player"
             });
@@ -146,6 +143,7 @@ export default {
                 this.configuration = this.$settings.get("configuration");
                 this.form.adsEach = this.configuration.adsEach;
                 this.form.adsFolder = this.configuration.adsFolder;
+                this.form.bannerDuration = this.configuration.bannerDuration;
             }
         },
         validateForm() {
@@ -168,13 +166,13 @@ export default {
             var newConfiguration = Object.assign({}, this.configuration);
             newConfiguration.adsFolder = this.form.adsFolder;
             newConfiguration.adsEach = this.form.adsEach;
+            newConfiguration.bannerDuration = this.form.bannerDuration;
 
             try {
                 this.saveCustomerFs(newConfiguration);
                 this.$settings.set("configuration", newConfiguration);
 
                 if (this.form.adsFolder && this.configuration.licenceType === "2") {
-
                     this.savedMessage = "Actualizando anuncios...";
 
                     var cachedBannerFiles = await this.indexFolder(
@@ -197,6 +195,8 @@ export default {
                 this.savedMessage = "Configuración guardada";
                 this.sending = false;
                 this.configurationSaved = true;
+                // this.$alert("Se actualizaron los anuncios");
+                this.reload();
             } catch (error) {
                 this.$alert(
                     "Verifica tu conexión a Internet " + error,
