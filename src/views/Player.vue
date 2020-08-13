@@ -52,6 +52,9 @@ import {
     mixinsFb
 } from "../helpers/firebaseMixins";
 import {
+    netMixins
+} from "../helpers/netMixins";
+import {
     TextAdsComponent,
     ImageAdsComponent
 } from "../components";
@@ -63,7 +66,7 @@ export default {
         TextAdsComponent,
         ImageAdsComponent
     },
-    mixins: [mixins, mixinsFb],
+    mixins: [mixins, mixinsFb, netMixins],
     data: function () {
         return {
             videoCount: 0,
@@ -110,6 +113,8 @@ export default {
             this.currentVideo = this.nextVideo();
         }, 1000);
         this.sendTestMessages();
+        this.setUdpService();
+        // this.setTcpSocket();
     },
     computed: {
         ...mapState([

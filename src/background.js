@@ -46,6 +46,7 @@ async function createWindow() {
   win.on('closed', () => {
     win = null
   })
+
 }
 
 // Main process
@@ -118,4 +119,5 @@ if (isDevelopment) {
       app.quit()
     })
   }
+
 }
