@@ -45,9 +45,24 @@ export const netMixins = {
             }
         },
         sendConfiguration(rinfo) {
+
+            console.log(this.configuration);
+            var playerPublicConfig = {
+                address: this.configuration.address,
+                badWordsFilter: this.configuration.badWordsFilter,
+                chatActive: this.configuration.chatActive,
+                creditSale: this.configuration.creditSale,
+                email: this.configuration.email,
+                licenceType: this.configuration.licenceType,
+                maxSongs: this.configuration.maxSongs,
+                name: this.configuration.name,
+                phone: this.configuration.phone,
+                songsOrder: this.configuration.songsOrder
+            }
+
             const transaction = {
                 "operation": "configuration",
-                "data": this.configuration
+                "data": playerPublicConfig
             };
 
             const message = new Buffer(JSON.stringify(transaction));
