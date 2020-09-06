@@ -48,9 +48,9 @@ import Media from "@dongido/vue-viaudio";
 import {
     mixins
 } from "../helpers/mixins";
-import {
-    mixinsFb
-} from "../helpers/firebaseMixins";
+// import {
+//     mixinsFb
+// } from "../helpers/firebaseMixins";
 import {
     netMixins
 } from "../helpers/netMixins";
@@ -66,7 +66,7 @@ export default {
         TextAdsComponent,
         ImageAdsComponent
     },
-    mixins: [mixins, mixinsFb, netMixins],
+    mixins: [mixins, netMixins],
     data: function () {
         return {
             videoCount: 0,
@@ -106,9 +106,9 @@ export default {
             );
         }
 
-        this.getSearchQueries(this.configuration);
-        this.getSongsQueue(this.configuration);
-        this.getMessageQueue(this.configuration);
+        // this.getSearchQueries(this.configuration);
+        // this.getSongsQueue(this.configuration);
+        // this.getMessageQueue(this.configuration);
         setTimeout(() => {
             this.currentVideo = this.nextVideo();
         }, 1000);

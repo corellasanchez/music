@@ -4,8 +4,12 @@ const dgram = require('dgram');
 const socket = dgram.createSocket('udp4');
 const MULTICAST_ADDR = "230.185.192.108";
 const PORT = "41848";
+import {
+    mixinsRequest
+} from "./requestMixins";
 
 export const netMixins = {
+    mixins: [mixinsRequest],
     data: function () {
         return {
             configuration: null
@@ -34,39 +38,18 @@ export const netMixins = {
             });
         },
         processMessage(operation, rinfo, data) {
-            console.log(data);
+            console.log('prosessing ', operation);
             switch (operation) {
                 case 'hello':
-                   this.sendConfiguration(rinfo); 
+                    this.sendConfiguration(socket, rinfo);
                     break;
-            
+                case 'search_song':
+                    this.searchSongs(socket, rinfo, data);
+                    break;
+
                 default:
                     break;
             }
-        },
-        sendConfiguration(rinfo) {
-
-            console.log(this.configuration);
-            var playerPublicConfig = {
-                address: this.configuration.address,
-                badWordsFilter: this.configuration.badWordsFilter,
-                chatActive: this.configuration.chatActive,
-                creditSale: this.configuration.creditSale,
-                email: this.configuration.email,
-                licenceType: this.configuration.licenceType,
-                maxSongs: this.configuration.maxSongs,
-                name: this.configuration.name,
-                phone: this.configuration.phone,
-                songsOrder: this.configuration.songsOrder
-            }
-
-            const transaction = {
-                "operation": "configuration",
-                "data": playerPublicConfig
-            };
-
-            const message = new Buffer(JSON.stringify(transaction));
-            socket.send(message, 0, message.length, rinfo.port, rinfo.address);
         }
     }
 }
