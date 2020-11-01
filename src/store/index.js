@@ -49,7 +49,8 @@ export default new Vuex.Store({
       state.localTextAds = result;
     },
     addSongToQueue(state, song) {
-      const result = state.musicQueue.filter(x => x.fid == song.fid);
+      const result = state.musicQueue.filter(x => x.s == song.s);
+      console.log(result.length);
       if (result.length === 0) {
         song.index = state.musicQueue.length + 1;
         state.musicQueue.push(song);

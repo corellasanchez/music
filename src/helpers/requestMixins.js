@@ -6,6 +6,9 @@ const fuzz = require('fuzzball');
 
 // var encryptor = require('simple-encryptor')(key);
 
+const MULTICAST_ADDR = "230.185.192.108";
+const PORT = "41848";
+
 export const mixinsRequest = {
   data: function () {
     return {
@@ -35,7 +38,6 @@ export const mixinsRequest = {
         }
       });
 
-       
       results.sort((a, b) => { return Number(b.r) - Number(a.r) });
 
       if (results.length > 100) {
@@ -76,6 +78,35 @@ export const mixinsRequest = {
 
       const message = new Buffer(JSON.stringify(transaction));
       socket.send(message, 0, message.length, rinfo.port, rinfo.address);
+    },
+
+    AddSongToQueue(socket, data) {
+      // c = customer id
+      // s = song index in musicFiles Array
+      // sn = song name
+      // u = user name
+      // v = votes
+      var song = data;
+      song.sn = this.clearSongName(this.musicFiles[data.s]);
+      song.v = 0;
+      this.$store.commit('addSongToQueue', song);
+      this.songListUpdated(socket);
+      console.log(song);
+    },
+    removeSongFromQueue(s) {
+       // s = song index in musicFiles Array
+      var updatedSongs = this.musicQueue.filter(function (song) {
+        return song.s !== s;
+      });
+      this.$store.commit('setMusicQueue', updatedSongs);
+    },
+    songListUpdated(socket){
+      const transaction = {
+        "operation": "list_updated",
+        "data": this.musicQueue
+      };
+      const message = new Buffer(JSON.stringify(transaction));
+      socket.send(message, 0, message.length, PORT, MULTICAST_ADDR); 
     }
     // FIREBASE OPERATIONS
     // timestamp() {

@@ -3,10 +3,10 @@
     <div class="super">
         <h1 class="song-name" v-if="currentSongName && showSuper" v-animate-css="superTransition">
             <strong class="user-name" v-show="currentUserName">
-                {{currentUserName}}:
+                {{ currentUserName }}:
                 <br />
             </strong>
-            {{currentSongName}}
+            {{ currentSongName }}
         </h1>
     </div>
 
@@ -15,7 +15,9 @@
             <img src="../assets/images/logo.svg" />
         </div>
         <div class="left-text">
-            <h1 class="left-logo-text" v-show="superAppInfo">{{configuration.name}}</h1>
+            <h1 class="left-logo-text" v-show="superAppInfo">
+                {{ configuration.name }}
+            </h1>
             <h1 class="left-logo-text" v-show="superAppInfo2">
                 Descarga Gratis
                 <span class="accent">Pongala Music</span>
@@ -24,7 +26,7 @@
             </h1>
             <h1 class="left-logo-text" v-show="superAppInfo3">
                 Ingrese el Código:
-                <span class="accent">{{configuration.barCode}}</span>
+                <span class="accent">{{ configuration.barCode }}</span>
             </h1>
         </div>
     </div>
@@ -64,7 +66,7 @@ export default {
     components: {
         Media,
         TextAdsComponent,
-        ImageAdsComponent
+        ImageAdsComponent,
     },
     mixins: [mixins, netMixins],
     data: function () {
@@ -85,7 +87,7 @@ export default {
             currentMessage: "",
             superTransition: "slideInLeft",
             duration: 15,
-            messageTest: 0
+            messageTest: 0,
         };
     },
     created() {},
@@ -124,9 +126,9 @@ export default {
             "messageQueue",
             "localTextAds",
             "banners",
-            "videoAds"
+            "videoAds",
         ]),
-        ...mapMutations(["addLocalTextAd", "addMessageToQueue"])
+        ...mapMutations(["addLocalTextAd", "addMessageToQueue"]),
     },
     methods: {
         pause() {
@@ -158,7 +160,7 @@ export default {
         nextVideo() {
             var nextVideoFile = "";
             var nextSong = {};
-            var nextVideoAd = '';
+            var nextVideoAd = "";
 
             if (this.musicQueue.length > 0) {
                 if (this.configuration.songsOrder == 1) {
@@ -183,14 +185,21 @@ export default {
             }
 
             //// Show ads each..
-            if (this.configuration.licenceType === '2' && this.videoAds.length && this.configuration.adsEach) {
+            if (
+                this.configuration.licenceType === "2" &&
+                this.videoAds.length &&
+                this.configuration.adsEach
+            ) {
                 if (this.videoCount < this.configuration.adsEach) {
                     this.videoCount++;
                 } else {
                     this.videoCount = 0;
                 }
                 if (!this.videoCount) {
-                    nextVideoAd = this.fileProtocol + this.configuration.adsFolder + this.videoAds[this.currentVideoAd];
+                    nextVideoAd =
+                        this.fileProtocol +
+                        this.configuration.adsFolder +
+                        this.videoAds[this.currentVideoAd];
                     if (this.currentVideoAd < this.videoAds.length - 1) {
                         this.currentVideoAd++;
                     } else {
@@ -203,7 +212,6 @@ export default {
             return this.fileProtocol + this.configuration.musicFolder + nextVideoFile;
         },
         moveToNext(nextSong) {
-            //fid = firbaseId
             // s = song index on musicFiles
             // u = user name
             // v = votes
@@ -215,22 +223,14 @@ export default {
             this.currentUserName = userName;
             this.currentSongName = songName;
 
-            this.removeSongFromQueue(nextSong.fid)
-                .then(() => {
-                    ////console.log("Document successfully deleted!");
-                    this.setNowPlaying(this.configuration, {
-                        n: songName,
-                        u: userName
-                    });
-                    this.showSongInfo();
-                })
-                .catch(function (error) {
-                    //console.error("Error removing document: ", error);
-                    this.$alert(
-                        "Error al eliminar la cancion de la lista " + error,
-                        "error"
-                    );
-                });
+            this.removeSongFromQueue(nextSong.s);
+
+            ////console.log("Document successfully deleted!");
+            // this.setNowPlaying(this.configuration, {
+            //     n: songName,
+            //     u: userName,
+            // });
+            this.showSongInfo();
         },
         appInfoTransition() {
             if (this.superAppInfo) {
@@ -275,7 +275,7 @@ export default {
                         this.messageQueue[0].u +
                         ": </strong> " +
                         this.messageQueue[0].m,
-                    position: "bottom left"
+                    position: "bottom left",
                 });
                 this.messageQueue.shift();
             }
@@ -314,7 +314,7 @@ export default {
                 "Dorothy Palacios",
                 "Murphy Loras",
                 "Alice Anderson",
-                "Howard Smith"
+                "Howard Smith",
             ];
             var messages = [
                 "What’s happening?! 😄😄☠✊ ",
@@ -335,31 +335,31 @@ export default {
                 "Silvana Flores, con una jugada de auténtica crack ⚽⚽",
                 "hola mutuals, recuerden que mañana no se usan redes sociales para nada 🙅‍♀️🙅‍♀️",
                 "¡FELIZ CUMPLEAÑOS MIN YOONGI! Cañón de serpentina 🥊 ",
-                "Gracias por ser un genio 🍄"
+                "Gracias por ser un genio 🍄",
             ];
 
             if (this.messageTest < 20 && this.configuration.chatActive) {
                 this.messageTest += 1;
                 this.$store.commit("addMessageToQueue", {
                     u: names[Math.floor(Math.random() * names.length)],
-                    m: messages[Math.floor(Math.random() * messages.length)]
+                    m: messages[Math.floor(Math.random() * messages.length)],
                 });
             }
-        }
+        },
     },
 
     timers: {
         appInfoTransition: {
             time: 6000,
             autostart: true,
-            repeat: true
+            repeat: true,
         },
         sendTestMessages: {
             time: 1000,
             autostart: true,
-            repeat: true
-        }
-    }
+            repeat: true,
+        },
+    },
 };
 </script>
 

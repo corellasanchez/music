@@ -46,7 +46,9 @@ export const netMixins = {
                 case 'search_song':
                     this.searchSongs(socket, rinfo, data);
                     break;
-
+                case 'add_song':
+                    this.AddSongToQueue(socket, data);
+                    break;
                 default:
                     break;
             }
