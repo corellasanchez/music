@@ -17,3 +17,6 @@ yarn electron:build
 # or with NPM:
 
 npm run electron:build
+
+# to create installer 
+npm run electron:build --config electron-builder.json
