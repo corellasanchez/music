@@ -12,6 +12,7 @@ export default new Vuex.Store({
     videoAds: {},
     messageQueue: [],
     localTextAds: [],
+    onlineUsers: [],
     queueSubscription: false,
     searchSubscription: false,
     messageQueueSubscription: false,
@@ -34,6 +35,24 @@ export default new Vuex.Store({
     },
     setMessageQueue(state, messageQueue) {
       state.messageQueue = messageQueue;
+    },
+    onlineUsers(state, onlineUsers) {
+      state.onlineUsers = onlineUsers;
+    },
+    addOnlineUser(state, user) {
+      if (!state.onlineUsers) {
+        state.onlineUsers = [];
+      }
+      const result = state.onlineUsers.filter(x => x.c == user.c);
+      
+      if (result.length === 0) {
+        state.onlineUsers.push(user);
+      }
+      console.log("Users", JSON.parse(state.onlineUsers));
+    },
+    removeOnlineUser(state, user) {
+      const result = state.onlineUsers.filter(x => x.id != user.id);
+      state.onlineUsers = result;
     },
     setLocalTextAds(state, localTextAds) {
       state.localTextAds = localTextAds;
