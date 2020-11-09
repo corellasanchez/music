@@ -18,8 +18,8 @@ export const mixinsRequest = {
     }
   },
   computed: {
-    ...mapState(["musicFiles", "karaokeFiles", "ads", "musicQueue", "messageQueue", "queueSubscription", "searchSubscription", "messageQueueSubscription"]),
-    ...mapMutations(['addSongToQueue', 'setMusicQueue', 'subscribeMessages']),
+    ...mapState(["musicFiles", "karaokeFiles", "ads", "musicQueue", "messageQueue", "queueSubscription", "searchSubscription", "messageQueueSubscription", 'onlineUsers']),
+    ...mapMutations(['addSongToQueue', 'setMusicQueue', 'subscribeMessages', "addOnlineUser", "removeOnlineUser"]),
   },
   methods: {
     clearSongName(name) {
@@ -94,19 +94,46 @@ export const mixinsRequest = {
       console.log(song);
     },
     removeSongFromQueue(s) {
-       // s = song index in musicFiles Array
+      // s = song index in musicFiles Array
       var updatedSongs = this.musicQueue.filter(function (song) {
         return song.s !== s;
       });
       this.$store.commit('setMusicQueue', updatedSongs);
     },
-    songListUpdated(socket){
+    songListUpdated(socket) {
       const transaction = {
         "operation": "list_updated",
         "data": this.musicQueue
       };
       const message = new Buffer(JSON.stringify(transaction));
-      socket.send(message, 0, message.length, PORT, MULTICAST_ADDR); 
+      socket.send(message, 0, message.length, PORT, MULTICAST_ADDR);
+    },
+    loginUser(rinfo, data) {
+      // c = customer id
+      // u = user name
+      // p = port
+      // a = address
+      var user = {
+        'c': data.c,
+        'u': data.u,
+        'p': rinfo.port,
+        'a': rinfo.address
+      };
+      this.$store.commit('addOnlineUser', user);
+    },
+    sendPing(socket) {
+      const transaction = {
+        "operation": "ping",
+        "data": ""
+      };
+      const message = new Buffer(JSON.stringify(transaction));
+      console.log('onlineUsers', this.onlineUsers);
+      if (this.onlineUsers) {
+        this.onlineUsers.forEach((user) => {
+          console.log(`Sending ping to: ${user.a} ${user.p}`);
+          socket.send(message, 0, message.length, user.p, user.address);
+        });
+      }
     }
     // FIREBASE OPERATIONS
     // timestamp() {
