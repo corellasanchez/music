@@ -121,18 +121,21 @@ export const mixinsRequest = {
       };
       this.$store.commit('addOnlineUser', user);
     },
-    sendPing(socket) {
+    async sendPing(socket) {
       const transaction = {
         "operation": "ping",
         "data": ""
       };
       const message = new Buffer(JSON.stringify(transaction));
-      console.log('onlineUsers', this.onlineUsers);
-      if (this.onlineUsers) {
-        this.onlineUsers.forEach((user) => {
-          console.log(`Sending ping to: ${user.a} ${user.p}`);
-          socket.send(message, 0, message.length, user.p, user.address);
-        });
+
+      var users = await this.$store.state.onlineUsers;
+
+      if (users.length > 0) {
+        for (let i = 0; i < users.length; i++) {
+          const user = users[i];
+          console.log(user.a, user.p, socket);
+          socket.send(message, 0, message.length, user.p, user.a);
+        }
       }
     }
     // FIREBASE OPERATIONS
