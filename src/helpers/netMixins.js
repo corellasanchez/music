@@ -37,7 +37,7 @@ export const netMixins = {
                 socket.addMembership(MULTICAST_ADDR);
             });
 
-            setInterval(this.ping, 10000);
+            setInterval(this.ping, 60000);
         },
         ping(){
             this.sendPing(socket);
