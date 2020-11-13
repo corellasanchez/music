@@ -57,6 +57,9 @@ export const netMixins = {
                 case 'login_user':
                     this.loginUser(rinfo, data); 
                 break;
+                case 'pong':
+                    this.pong(rinfo.address); 
+                break;
                 default:
                     break;
             }

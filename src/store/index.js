@@ -54,9 +54,26 @@ export default new Vuex.Store({
 
       console.log("User added", JSON.stringify(state.onlineUsers));
     },
+    updateLastPong(state, address) {
+
+      if (!state.onlineUsers) {
+        state.onlineUsers = [];
+      }
+
+      var now =  new Date();
+     
+      const i = state.onlineUsers.findIndex(_item => _item.a === address);
+     
+      if (i > -1) {
+        state.onlineUsers[i].lp = now;
+      }
+    
+      console.log("State last pong ", JSON.stringify(state.onlineUsers));
+    },
     removeOnlineUser(state, user) {
-      const result = state.onlineUsers.filter(x => x.id != user.id);
+      const result = state.onlineUsers.filter(x => x.a != user.a);
       state.onlineUsers = result;
+      console.log("User Remvoed ",  JSON.stringify(user), JSON.stringify(state.onlineUsers));
     },
     setLocalTextAds(state, localTextAds) {
       state.localTextAds = localTextAds;

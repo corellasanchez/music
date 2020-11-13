@@ -19,7 +19,7 @@ export const mixinsRequest = {
   },
   computed: {
     ...mapState(["musicFiles", "karaokeFiles", "ads", "musicQueue", "messageQueue", "queueSubscription", "searchSubscription", "messageQueueSubscription", 'onlineUsers']),
-    ...mapMutations(['addSongToQueue', 'setMusicQueue', 'subscribeMessages', "addOnlineUser", "removeOnlineUser"]),
+    ...mapMutations(['addSongToQueue', 'setMusicQueue', 'subscribeMessages', "addOnlineUser", "removeOnlineUser","updateLastPong"]),
   },
   methods: {
     clearSongName(name) {
@@ -136,7 +136,28 @@ export const mixinsRequest = {
           console.log(user.a, user.p, socket);
           socket.send(message, 0, message.length, user.p, user.a);
         }
+        this.checkDisconectedUsers();
       }
+    },
+    pong(address){
+      this.$store.commit('updateLastPong', address);
+    }, 
+    async checkDisconectedUsers(){
+      var now = new Date;
+      var difference;
+      var users = await this.$store.state.onlineUsers;
+      setTimeout( () => {
+        for (let i = 0; i < users.length; i++) {
+          const user = users[i];
+          if(user.lp){
+            difference = Math.round((now - user.lp) / 1000);
+            console.log('Difference ', difference);
+            if(difference >= 120){
+              this.$store.commit('removeOnlineUser', user);
+            }
+          }
+        } 
+      }, 5000);
     }
     // FIREBASE OPERATIONS
     // timestamp() {
