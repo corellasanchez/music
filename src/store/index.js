@@ -10,6 +10,7 @@ export default new Vuex.Store({
     karaokeFiles: {},
     banners: {},
     videoAds: {},
+    nowPlaying: {},
     messageQueue: [],
     localTextAds: [],
     onlineUsers: [],
@@ -18,6 +19,9 @@ export default new Vuex.Store({
     messageQueueSubscription: false,
   },
   mutations: {
+    setNowPlaying(state, nowPlaying) {
+      state.nowPlaying = nowPlaying;
+    },
     setMusicFiles(state, musicFiles) {
       state.musicFiles = musicFiles;
     },

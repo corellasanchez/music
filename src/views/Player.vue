@@ -128,7 +128,11 @@ export default {
             "banners",
             "videoAds",
         ]),
-        ...mapMutations(["addLocalTextAd", "addMessageToQueue"]),
+        ...mapMutations([
+            "addLocalTextAd",
+            "addMessageToQueue",
+            "setNowPlaying"
+        ]),
     },
     methods: {
         pause() {
@@ -224,12 +228,8 @@ export default {
             this.currentSongName = songName;
 
             this.removeSongFromQueue(nextSong.s);
-
-            ////console.log("Document successfully deleted!");
-            // this.setNowPlaying(this.configuration, {
-            //     n: songName,
-            //     u: userName,
-            // });
+            this.$store.commit("setNowPlaying", nextSong);
+            this.getNowPlaying();
             this.showSongInfo();
         },
         appInfoTransition() {

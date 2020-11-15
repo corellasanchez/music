@@ -28,6 +28,7 @@ export const netMixins = {
 
             socket.on('listening', () => {
                 const address = socket.address();
+                this.setSocket(socket);
                 console.log(`server listening ${address.address}:${address.port}`);
             });
 
@@ -46,13 +47,13 @@ export const netMixins = {
             console.log('prosessing ', operation);
             switch (operation) {
                 case 'hello':
-                    this.sendConfiguration(socket, rinfo);
+                    this.sendConfiguration(rinfo);
                     break;
                 case 'search_song':
-                    this.searchSongs(socket, rinfo, data);
+                    this.searchSongs(rinfo, data);
                     break;
                 case 'add_song':
-                    this.AddSongToQueue(socket, data);
+                    this.AddSongToQueue(data);
                     break;
                 case 'login_user':
                     this.loginUser(rinfo, data); 
