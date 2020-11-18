@@ -228,8 +228,6 @@ export default {
             this.currentSongName = songName;
 
             this.removeSongFromQueue(nextSong.s);
-            this.$store.commit("setNowPlaying", nextSong);
-            this.getNowPlaying();
             this.showSongInfo();
         },
         appInfoTransition() {
@@ -254,6 +252,8 @@ export default {
         },
         showSongInfo() {
             this.showSuper = true;
+            this.$store.commit("setNowPlaying", {'u':this.currentUserName, 'sn': this.currentSongName});
+            this.getNowPlaying();
             setTimeout(() => {
                 this.showSuper = false;
             }, 20000);
