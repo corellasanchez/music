@@ -54,7 +54,7 @@ export const mixinsRequest = {
       }
 
     },
-    sendConfiguration(rinfo) {
+    async sendConfiguration(rinfo) {
 
       console.log(this.configuration);
       var playerPublicConfig = {
@@ -70,12 +70,33 @@ export const mixinsRequest = {
         songsOrder: this.configuration.songsOrder
       }
 
-      const transaction = {
+      // Send configuration
+      var transaction = {
         "operation": "configuration",
         "data": playerPublicConfig
       };
 
-      const message = new Buffer(JSON.stringify(transaction));
+      var message = new Buffer(JSON.stringify(transaction));
+      socket.send(message, 0, message.length, rinfo.port, rinfo.address);
+
+      // Send current song list
+      transaction = {
+        "operation": "list_updated",
+        "data": this.musicQueue
+      };
+      
+      message = new Buffer(JSON.stringify(transaction));
+      socket.send(message, 0, message.length, rinfo.port, rinfo.address);
+
+      // Send now playing
+      var nowPlaying = await this.$store.state.nowPlaying;
+
+      transaction = {
+        "operation": "now_playing",
+        "data": nowPlaying
+      };
+
+      message = new Buffer(JSON.stringify(transaction));
       socket.send(message, 0, message.length, rinfo.port, rinfo.address);
     },
 
@@ -91,6 +112,7 @@ export const mixinsRequest = {
       this.$store.commit('addSongToQueue', song);
       this.songListUpdated();
     },
+
     removeSongFromQueue(s) {
       // s = song index in musicFiles Array
       var updatedSongs = this.musicQueue.filter(function (song) {
