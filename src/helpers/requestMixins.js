@@ -20,6 +20,7 @@ export const mixinsRequest = {
   methods: {
     setSocket(newSocket) {
       socket = newSocket;
+    
     },
     clearSongName(name) {
       var clearedName = name.substring(name.lastIndexOf('\\') + 1);
@@ -55,7 +56,7 @@ export const mixinsRequest = {
 
     },
     async sendConfiguration(rinfo) {
-
+      this.addCredits();
       console.log(this.configuration);
       var playerPublicConfig = {
         address: this.configuration.address,
@@ -84,7 +85,7 @@ export const mixinsRequest = {
         "operation": "list_updated",
         "data": this.musicQueue
       };
-      
+
       message = new Buffer(JSON.stringify(transaction));
       socket.send(message, 0, message.length, rinfo.port, rinfo.address);
 
@@ -195,6 +196,7 @@ export const mixinsRequest = {
       var difference;
       var users = await this.$store.state.onlineUsers;
       setTimeout(() => {
+       
         for (let i = 0; i < users.length; i++) {
           const user = users[i];
           if (user.lp) {
@@ -206,6 +208,14 @@ export const mixinsRequest = {
           }
         }
       }, 5000);
+    },
+    addCredits() {
+      this.$ipcRenderer.invoke("asynchronous-message", 'Select * from creditos').then(result => {
+        if (result) {
+          console.log('result', result);
+        }
+      });
     }
+
   }
 }

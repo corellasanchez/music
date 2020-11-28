@@ -6,7 +6,7 @@
     "name": "Roy Corella",
     "email": "corellasanchez@gmail.com",
     "url": "http://pongalamusic.com",
-    "type":  "module"
+    "type": "module"
   },
   "version": "2.0.0",
   "private": true,
@@ -30,6 +30,7 @@
     "fuzzball": "^1.3.0",
     "google-auth-library": "^6.0.5",
     "simple-encryptor": "^3.0.0",
+    "sqlite3": "^5.0.0",
     "v-animate-css": "0.0.3",
     "vue": "^2.6.11",
     "vue-agile": "^1.1.3",
