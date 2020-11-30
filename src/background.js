@@ -66,19 +66,6 @@ ipcMain.handle('reloadApp', async () => {
   // getCurrentWindow().reload();
 })
 
-ipcMain.handle('asynchronous-message', async (event, arg) => {
-  console.log('ARG', arg);
-  const sql = arg;
-  database.all(sql, (err, rows) => {
-    console.log('rows ', rows, err);
-  });
-});
-
-
-
-
-
-
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
