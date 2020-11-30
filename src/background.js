@@ -5,11 +5,6 @@ import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const { ipcMain, dialog } = require('electron')
 import { buildMenu } from './menu'
-const sqlite3 = require('sqlite3');
-
-const database = new sqlite3.Database('pongala.sqlite3', (err) => {
-    if (err) console.error('Database opening error: ', err);
-});
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -65,19 +60,24 @@ ipcMain.handle('hideMenu', async (event, hide) => {
 })
 
 ipcMain.handle('reloadApp', async () => {
- console.log('Hello');
- app.relaunch();
-app.exit();
+  console.log('Hello');
+  app.relaunch();
+  app.exit();
   // getCurrentWindow().reload();
 })
 
 ipcMain.handle('asynchronous-message', async (event, arg) => {
- console.log('ARG', arg);
+  console.log('ARG', arg);
   const sql = arg;
   database.all(sql, (err, rows) => {
-     console.log ('rows ',rows);
-    });
+    console.log('rows ', rows, err);
+  });
 });
+
+
+
+
+
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {

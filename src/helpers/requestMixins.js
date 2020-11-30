@@ -5,6 +5,12 @@ var socket = {};
 // const key = '4vPmH5s3KomcZH4A90Gm7vPHk7sDTYQl';
 // var encryptor = require('simple-encryptor')(key);
 
+const sqlite3 = require('sqlite3');
+
+const database = new sqlite3.Database('./pongala.sqlite3', (err) => {
+  if (err) console.error('Database opening error: ', err);
+});
+
 export const mixinsRequest = {
   data: function () {
     return {
@@ -20,7 +26,7 @@ export const mixinsRequest = {
   methods: {
     setSocket(newSocket) {
       socket = newSocket;
-    
+
     },
     clearSongName(name) {
       var clearedName = name.substring(name.lastIndexOf('\\') + 1);
@@ -196,7 +202,7 @@ export const mixinsRequest = {
       var difference;
       var users = await this.$store.state.onlineUsers;
       setTimeout(() => {
-       
+
         for (let i = 0; i < users.length; i++) {
           const user = users[i];
           if (user.lp) {
@@ -210,11 +216,21 @@ export const mixinsRequest = {
       }, 5000);
     },
     addCredits() {
-      this.$ipcRenderer.invoke("asynchronous-message", 'Select * from creditos').then(result => {
-        if (result) {
-          console.log('result', result);
-        }
-      });
+      var parameters = {
+        "uid": "SDFF-SDFASD-WERQWESF-SDFAS-DSFASF",
+        "name": "Pato aparato",
+        "credits": 10
+      }
+
+
+      database.run(`INSERT INTO credits (uid, name, date, credits)
+      VALUES (?,?, datetime('now', 'localtime'), ?)`, [parameters.uid, parameters.name, parameters.credits], (err) => {
+          if (err) {
+            console.log(err.message);
+          }
+        });
+
+    
     }
 
   }
