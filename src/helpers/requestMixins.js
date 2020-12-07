@@ -176,6 +176,16 @@ export const mixinsRequest = {
       };
       this.$store.commit('addOnlineUser', user);
     },
+    loginAdmin(rinfo, data) {
+      console.log(data.p, this.$settings.get("configuration").password );
+      // p = pass
+      const transaction = {
+        "operation": "login_result",
+        "data": data.p === this.$settings.get("configuration").password
+      };
+      const message = new Buffer(JSON.stringify(transaction));
+      socket.send(message, 0, message.length, rinfo.port, rinfo.address);
+    },
     async sendPing(socket) {
       const transaction = {
         "operation": "ping",
