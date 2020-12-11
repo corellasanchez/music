@@ -132,7 +132,7 @@ export default {
                     "error"
                 );
             } else {
-                const i = this.adminUsers.findIndex(x => x.name === this.user.toLowerCase().replace(/ /g,''));
+                const i = this.adminUsers.findIndex(x => x.name === this.user.toLowerCase());
                 if (i > -1) {
                     this.$alert(
                         "Ya existe un usuario con ese nombre, revisa los datos",
@@ -148,7 +148,7 @@ export default {
         },
         addUser() {
             var user = {};
-            user.name = this.user.toLowerCase().replace(/ /g,'');
+            user.name = this.user.toLowerCase();
             user.password = this.password;
             this.$store.commit("addAdminUser", user);
             this.$settings.set("adminUsers", this.adminUsers);

@@ -167,25 +167,33 @@ export const mixinsRequest = {
       // u = user name
       // p = port
       // a = address
+      // ia = is admin
       var user = {
         'c': data.c,
         'u': data.u,
         'p': rinfo.port,
-        'a': rinfo.address
+        'a': rinfo.address,
+        'ia': data.ia
       };
       this.$store.commit('addOnlineUser', user);
       this.updateOnlineUsers();
     },
     loginAdmin(rinfo, data) {
       var adminUsers = this.$settings.get("adminUsers");
-      const i = adminUsers.findIndex(x => (x.name === data.u && x.password === data.p) );
-      loginResult =  i > -1;
+      const i = adminUsers.findIndex(x => (x.name === data.u.toLowerCase() && x.password === data.p));
+      const loginResult = i > -1;
       const transaction = {
         "operation": "login_result",
         "data": loginResult
       };
       const message = new Buffer(JSON.stringify(transaction));
       socket.send(message, 0, message.length, rinfo.port, rinfo.address);
+
+      if (loginResult) {
+        data.ia = true;
+        this.loginUser(rinfo, data);
+      }
+
     },
     async updateOnlineUsers() {
       var users = await this.$store.state.onlineUsers;

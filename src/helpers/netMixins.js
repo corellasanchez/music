@@ -32,13 +32,15 @@ export const netMixins = {
                 console.log(`server listening ${address.address}:${address.port}`);
             });
 
-            if (!socket) {
-                socket.bind(PORT, function () {
-                    socket.setBroadcast(true);
-                    socket.setMulticastTTL(128);
-                    socket.addMembership(MULTICAST_ADDR);
-                });
-            }
+            // if (!socket) {
+
+           
+            socket.bind(PORT, function () {
+                socket.setBroadcast(true);
+                socket.setMulticastTTL(128);
+                socket.addMembership(MULTICAST_ADDR);
+            });
+            //  }
 
             setInterval(this.ping, 60000);
         },

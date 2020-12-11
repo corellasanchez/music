@@ -18,6 +18,7 @@ export default new Vuex.Store({
     queueSubscription: false,
     searchSubscription: false,
     messageQueueSubscription: false,
+    socketInit: false
   },
   mutations: {
     setNowPlaying(state, nowPlaying) {
@@ -51,7 +52,7 @@ export default new Vuex.Store({
       if (!state.onlineUsers) {
         state.onlineUsers = [];
       }
-      
+
       const i = state.onlineUsers.findIndex(_item => _item.a === user.a);
       if (i > -1) {
         state.onlineUsers[i] = user;
@@ -59,15 +60,16 @@ export default new Vuex.Store({
       else {
         state.onlineUsers.push(user);
       }
-
+      state.onlineUsers = state.onlineUsers.sort((a, b) => a.u.localeCompare(b.u));
+      
       console.log("User added", JSON.stringify(state.onlineUsers));
     },
     addAdminUser(state, user) {
       if (!state.adminUsers) {
         state.adminUsers = [];
       }
-      
-      const i = state.adminUsers.findIndex(_item => (_item.name === user.name && _item.password === user.password) );
+
+      const i = state.adminUsers.findIndex(_item => (_item.name === user.name && _item.password === user.password));
       if (i > -1) {
         state.adminUsers[i] = user;
       }
@@ -81,20 +83,20 @@ export default new Vuex.Store({
         state.onlineUsers = [];
       }
 
-      var now =  new Date();
-     
+      var now = new Date();
+
       const i = state.onlineUsers.findIndex(_item => _item.a === address);
-     
+
       if (i > -1) {
         state.onlineUsers[i].lp = now;
       }
-    
+
       console.log("State last pong ", JSON.stringify(state.onlineUsers));
     },
     removeOnlineUser(state, user) {
       const result = state.onlineUsers.filter(x => x.a != user.a);
-      state.onlineUsers = result;
-      console.log("User Removed ",  JSON.stringify(user), JSON.stringify(state.onlineUsers));
+      state.onlineUsers = result.sort((a, b) => a.u.localeCompare(b.u));
+      console.log("User Removed ", JSON.stringify(user), JSON.stringify(state.onlineUsers));
     },
     removeAdminUser(state, user) {
       const i = state.adminUsers.findIndex(x => x.name === user.name);
@@ -104,6 +106,9 @@ export default new Vuex.Store({
     },
     setLocalTextAds(state, localTextAds) {
       state.localTextAds = localTextAds;
+    },
+    setSocketInit(state, socketInit) {
+      state.socketInit = socketInit;
     },
     addLocalTextAd(state, localTextAd) {
       if (!state.localTextAds) {

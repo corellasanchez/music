@@ -115,7 +115,11 @@ export default {
             this.currentVideo = this.nextVideo();
         }, 1000);
         this.sendTestMessages();
-        this.setUdpService();
+       
+       if (!this.socketInit) {
+            this.setUdpService();
+            this.$store.commit("setSocketInit", true);
+        }
         // this.setTcpSocket();
     },
     computed: {
@@ -127,11 +131,13 @@ export default {
             "localTextAds",
             "banners",
             "videoAds",
+            "socketInit"
         ]),
         ...mapMutations([
             "addLocalTextAd",
             "addMessageToQueue",
-            "setNowPlaying"
+            "setNowPlaying",
+            "setSocketInit"
         ]),
     },
     methods: {
@@ -252,7 +258,10 @@ export default {
         },
         showSongInfo() {
             this.showSuper = true;
-            this.$store.commit("setNowPlaying", {'u':this.currentUserName, 'sn': this.currentSongName});
+            this.$store.commit("setNowPlaying", {
+                'u': this.currentUserName,
+                'sn': this.currentSongName
+            });
             this.getNowPlaying();
             setTimeout(() => {
                 this.showSuper = false;
