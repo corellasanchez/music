@@ -38,6 +38,13 @@ const routes = [
     name: 'banners',
     component: () => import('../views/Banners.vue')
   }
+  ,
+  {
+    path: '/admin_users',
+    name: 'admin_users',
+    component: () => import('../views/AdminUsers.vue')
+  }
+  
 ]
 
 const router = new VueRouter({

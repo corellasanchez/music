@@ -159,7 +159,6 @@ export const mixinsRequest = {
         for (let i = 0; i < users.length; i++) {
           const user = users[i];
           socket.send(message, 0, message.length, user.p, user.a);
-          console.log(user.a, user.p, socket);
         }
       }
     },
@@ -175,16 +174,34 @@ export const mixinsRequest = {
         'a': rinfo.address
       };
       this.$store.commit('addOnlineUser', user);
+      this.updateOnlineUsers();
     },
     loginAdmin(rinfo, data) {
-      console.log(data.p, this.$settings.get("configuration").password );
-      // p = pass
+      var adminUsers = this.$settings.get("adminUsers");
+      const i = adminUsers.findIndex(x => (x.name === data.u && x.password === data.p) );
+      loginResult =  i > -1;
       const transaction = {
         "operation": "login_result",
-        "data": data.p === this.$settings.get("configuration").password
+        "data": loginResult
       };
       const message = new Buffer(JSON.stringify(transaction));
       socket.send(message, 0, message.length, rinfo.port, rinfo.address);
+    },
+    async updateOnlineUsers() {
+      var users = await this.$store.state.onlineUsers;
+
+      const transaction = {
+        "operation": "list_users",
+        "data": users
+      };
+      const message = new Buffer(JSON.stringify(transaction));
+
+      if (users.length > 0) {
+        for (let i = 0; i < users.length; i++) {
+          const user = users[i];
+          socket.send(message, 0, message.length, user.p, user.a);
+        }
+      }
     },
     async sendPing(socket) {
       const transaction = {
@@ -220,6 +237,7 @@ export const mixinsRequest = {
             console.log('Difference ', difference);
             if (difference >= 120) {
               this.$store.commit('removeOnlineUser', user);
+              this.updateOnlineUsers();
             }
           }
         }
@@ -231,17 +249,12 @@ export const mixinsRequest = {
         "name": "Pato aparato",
         "credits": 10
       }
-
-
       database.run(`INSERT INTO credits (uid, name, date, credits)
       VALUES (?,?, datetime('now', 'localtime'), ?)`, [parameters.uid, parameters.name, parameters.credits], (err) => {
-          if (err) {
-            console.log(err.message);
-          }
-        });
-
-    
+        if (err) {
+          console.log(err.message);
+        }
+      });
     }
-
   }
 }

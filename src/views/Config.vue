@@ -123,14 +123,6 @@
                             <span class="md-error" v-else-if="!$v.form.name.minlength">Indique la calle o la dirección exacta del establecimiento</span>
                         </md-field>
                     </div>
-                    <div class="md-layout-item md-small-size-100">
-                        <md-field :class="getValidationClass('password')">
-                            <label>*Contraseña administrativa</label>
-                            <md-input v-model="form.password" type="password"></md-input>
-                            <span class="md-error" v-if="!$v.form.password.required">La contraseña es requerida</span>
-                        </md-field>
-                        <md-button style="float:right">Olvide la contraseña</md-button>
-                    </div>
                 </div>
 
                 <md-divider></md-divider>
@@ -312,7 +304,6 @@ export default {
             maxSongs: 3,
             musicFolder: "",
             name: null,
-            password: null,
             phone: null,
             region_name: null,
             songsOrder: 1
@@ -345,9 +336,6 @@ export default {
                 required
             },
             licence: {
-                required
-            },
-            password: {
                 required
             }
         }

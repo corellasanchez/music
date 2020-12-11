@@ -32,15 +32,17 @@ export const netMixins = {
                 console.log(`server listening ${address.address}:${address.port}`);
             });
 
-            socket.bind(PORT, function () {
-                socket.setBroadcast(true);
-                socket.setMulticastTTL(128);
-                socket.addMembership(MULTICAST_ADDR);
-            });
+            if (!socket) {
+                socket.bind(PORT, function () {
+                    socket.setBroadcast(true);
+                    socket.setMulticastTTL(128);
+                    socket.addMembership(MULTICAST_ADDR);
+                });
+            }
 
             setInterval(this.ping, 60000);
         },
-        ping(){
+        ping() {
             this.sendPing(socket);
         },
         processMessage(operation, rinfo, data) {
@@ -56,14 +58,14 @@ export const netMixins = {
                     this.AddSongToQueue(data);
                     break;
                 case 'login_user':
-                    this.loginUser(rinfo, data); 
-                break;
+                    this.loginUser(rinfo, data);
+                    break;
                 case 'login_admin':
-                    this.loginAdmin(rinfo, data); 
-                break;
+                    this.loginAdmin(rinfo, data);
+                    break;
                 case 'pong':
-                    this.pong(rinfo.address); 
-                break;
+                    this.pong(rinfo.address);
+                    break;
                 default:
                     break;
             }

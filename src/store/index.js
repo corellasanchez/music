@@ -14,6 +14,7 @@ export default new Vuex.Store({
     messageQueue: [],
     localTextAds: [],
     onlineUsers: [],
+    adminUsers: [],
     queueSubscription: false,
     searchSubscription: false,
     messageQueueSubscription: false,
@@ -43,6 +44,9 @@ export default new Vuex.Store({
     setOnlineUsers(state, onlineUsers) {
       state.onlineUsers = onlineUsers;
     },
+    setAdminUsers(state, adminUsers) {
+      state.adminUsers = adminUsers;
+    },
     addOnlineUser(state, user) {
       if (!state.onlineUsers) {
         state.onlineUsers = [];
@@ -57,6 +61,19 @@ export default new Vuex.Store({
       }
 
       console.log("User added", JSON.stringify(state.onlineUsers));
+    },
+    addAdminUser(state, user) {
+      if (!state.adminUsers) {
+        state.adminUsers = [];
+      }
+      
+      const i = state.adminUsers.findIndex(_item => (_item.name === user.name && _item.password === user.password) );
+      if (i > -1) {
+        state.adminUsers[i] = user;
+      }
+      else {
+        state.adminUsers.push(user);
+      }
     },
     updateLastPong(state, address) {
 
@@ -77,7 +94,13 @@ export default new Vuex.Store({
     removeOnlineUser(state, user) {
       const result = state.onlineUsers.filter(x => x.a != user.a);
       state.onlineUsers = result;
-      console.log("User Remvoed ",  JSON.stringify(user), JSON.stringify(state.onlineUsers));
+      console.log("User Removed ",  JSON.stringify(user), JSON.stringify(state.onlineUsers));
+    },
+    removeAdminUser(state, user) {
+      const i = state.adminUsers.findIndex(x => x.name === user.name);
+      if (i > -1) {
+        state.adminUsers.splice(i, 1);
+      }
     },
     setLocalTextAds(state, localTextAds) {
       state.localTextAds = localTextAds;

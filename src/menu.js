@@ -32,6 +32,12 @@ const menu = Menu.buildFromTemplate([
           }
         },
         {
+          label: 'Usuarios Administrativos',
+          click() {
+            win.webContents.send('navigate', '/admin_users');
+          }
+        },
+        {
           label: 'Salir',
           click() {
             app.quit()
