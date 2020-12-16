@@ -49,7 +49,7 @@ export const mixinsRequest = {
       if (results.length > 100) {
         results.length = 100;
       }
-      console.log(results);
+      //console.log(results);
       const transaction = {
         "operation": "search_result",
         "data": results
@@ -62,8 +62,6 @@ export const mixinsRequest = {
 
     },
     async sendConfiguration(rinfo) {
-      this.addCredits();
-      console.log(this.configuration);
       var playerPublicConfig = {
         address: this.configuration.address,
         badWordsFilter: this.configuration.badWordsFilter,
@@ -223,7 +221,7 @@ export const mixinsRequest = {
       if (users.length > 0) {
         for (let i = 0; i < users.length; i++) {
           const user = users[i];
-          console.log(user.a, user.p, socket);
+          //console.log(user.a, user.p, socket);
           socket.send(message, 0, message.length, user.p, user.a);
         }
         this.checkDisconectedUsers();
@@ -251,18 +249,37 @@ export const mixinsRequest = {
         }
       }, 5000);
     },
-    addCredits() {
+    addCredits(rinfo, data) {
+      console.log(data);
+
       var parameters = {
-        "uid": "SDFF-SDFASD-WERQWESF-SDFAS-DSFASF",
-        "name": "Pato aparato",
-        "credits": 10
+        "uid": data.user.c,
+        "name": data.user.u,
+        "credits": data.credits,
+        "seller": data.seller
       }
-      database.run(`INSERT INTO credits (uid, name, date, credits)
-      VALUES (?,?, datetime('now', 'localtime'), ?)`, [parameters.uid, parameters.name, parameters.credits], (err) => {
+      database.run(`INSERT INTO credits (uid, name, date, credits, seller)
+      VALUES (?,?, datetime('now', 'localtime'), ?, ?)`, [parameters.uid, parameters.name, parameters.credits, parameters.seller], (err) => {
         if (err) {
           console.log(err.message);
         }
       });
+
+      // send confirmation for the user
+      var transaction = {
+        "operation": "credits_added",
+        "data": data.credits
+      };
+      var message = new Buffer(JSON.stringify(transaction));
+      socket.send(message, 0, message.length, data.user.p, data.user.a);
+
+      // send confirmation for the seller
+      transaction = {
+        "operation": "credits_confirmation",
+        "data": { user: data.user.u, credits: data.credits }
+      };
+      message = new Buffer(JSON.stringify(transaction));
+      socket.send(message, 0, message.length, data.user.p, data.user.a);
     }
   }
 }

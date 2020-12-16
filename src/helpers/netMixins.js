@@ -34,7 +34,7 @@ export const netMixins = {
 
             // if (!socket) {
 
-           
+
             socket.bind(PORT, function () {
                 socket.setBroadcast(true);
                 socket.setMulticastTTL(128);
@@ -67,6 +67,9 @@ export const netMixins = {
                     break;
                 case 'pong':
                     this.pong(rinfo.address);
+                    break;
+                case 'add_credits':
+                    this.addCredits(rinfo, data);
                     break;
                 default:
                     break;
