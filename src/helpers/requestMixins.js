@@ -65,6 +65,7 @@ export const mixinsRequest = {
       var playerPublicConfig = {
         address: this.configuration.address,
         badWordsFilter: this.configuration.badWordsFilter,
+        barCode: this.configuration.barCode,
         chatActive: this.configuration.chatActive,
         creditSale: this.configuration.creditSale,
         email: this.configuration.email,

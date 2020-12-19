@@ -21,50 +21,103 @@
 
                     <div class="md-layout-item md-small-size-100 licence-desc" v-if="form.licenceType == 0">
                         <p class="md-subheading success">- Gratis</p>
-                        <p class="md-subheading success">- Los clientes pueden poner canciones de su biblioteca</p>
-                        <p class="md-subheading success">- Los clientes pueden enviarse mensajes con el chat</p>
-                        <p class="md-subheading fail">- Aparecerá publicidad de nuestros anunciantes</p>
+                        <p class="md-subheading success">
+                            - Los clientes pueden poner canciones de su biblioteca
+                        </p>
+                        <p class="md-subheading success">
+                            - Los clientes pueden enviarse mensajes con el chat
+                        </p>
+                        <p class="md-subheading fail">
+                            - Aparecerá publicidad de nuestros anunciantes
+                        </p>
                         <p class="md-subheading fail">- Modo Karaoke desactivado</p>
-                        <p class="md-subheading fail">- No puedes poner publicidad de texto pantallas</p>
-                        <p class="md-subheading fail">- No puedes poner imagenes publicitarias en pantallas</p>
-                        <p class="md-subheading fail">- No puedes publicidad en video las pantallas</p>
-                        <p class="md-subheading fail">- No puedes vender créditos a los clientes</p>
-                        <p class="md-subheading fail">- No puedes enviar mensajes a tus clientes</p>
+                        <p class="md-subheading fail">
+                            - No puedes poner publicidad de texto pantallas
+                        </p>
+                        <p class="md-subheading fail">
+                            - No puedes poner imagenes publicitarias en pantallas
+                        </p>
+                        <p class="md-subheading fail">
+                            - No puedes publicidad en video las pantallas
+                        </p>
+                        <p class="md-subheading fail">
+                            - No puedes vender créditos a los clientes
+                        </p>
+                        <p class="md-subheading fail">
+                            - No puedes enviar mensajes a tus clientes
+                        </p>
                     </div>
 
                     <div class="md-layout-item md-small-size-100 licence-desc" v-if="form.licenceType == 1">
-                        <p class="md-subheading success">- Los clientes pueden poner canciones de su biblioteca</p>
-                        <p class="md-subheading success">- Los clientes pueden enviarse mensajes con el chat</p>
-                        <p class="md-subheading success">- Libre de publicidad de terceros</p>
-                        <p class="md-subheading success">- Se puede activar el modo KARAOKE</p>
-                        <p class="md-subheading success">- Puedes poner publicidad de texto en las pantallas</p>
-                        <p class="md-subheading fail">- No puedes poner imagenes publicitarias en pantallas</p>
-                        <p class="md-subheading fail">- No puedes publicidad en video las pantallas</p>
-                        <p class="md-subheading fail">- No puedes vender créditos a los clientes</p>
-                        <p class="md-subheading fail">- No puedes enviar mensajes a tus clientes</p>
+                        <p class="md-subheading success">
+                            - Los clientes pueden poner canciones de su biblioteca
+                        </p>
+                        <p class="md-subheading success">
+                            - Los clientes pueden enviarse mensajes con el chat
+                        </p>
+                        <p class="md-subheading success">
+                            - Libre de publicidad de terceros
+                        </p>
+                        <p class="md-subheading success">
+                            - Se puede activar el modo KARAOKE
+                        </p>
+                        <p class="md-subheading success">
+                            - Puedes poner publicidad de texto en las pantallas
+                        </p>
+                        <p class="md-subheading fail">
+                            - No puedes poner imagenes publicitarias en pantallas
+                        </p>
+                        <p class="md-subheading fail">
+                            - No puedes publicidad en video las pantallas
+                        </p>
+                        <p class="md-subheading fail">
+                            - No puedes vender créditos a los clientes
+                        </p>
+                        <p class="md-subheading fail">
+                            - No puedes enviar mensajes a tus clientes
+                        </p>
                         <md-button v-if="!form.licence" @click="openLicenceSite()" class="md-raised md-primary">Comprar una licencia ahora</md-button>
                     </div>
 
                     <div class="md-layout-item md-small-size-100 licence-desc" v-if="form.licenceType == 2">
-                        <p class="md-subheading success">- Los clientes pueden poner canciones de su biblioteca</p>
-                        <p class="md-subheading success">- Los clientes pueden enviarse mensajes con el chat</p>
-                        <p class="md-subheading success">- Libre de publicidad de terceros</p>
-                        <p class="md-subheading success">- Se puede activar el modo KARAOKE</p>
-                        <p class="md-subheading success">- Puedes poner publicidad de texto en las pantallas</p>
-                        <p class="md-subheading success">- Puedes poner imagenes publicitarias en pantallas</p>
-                        <p class="md-subheading success">- Puedes publicidad en video las pantallas</p>
-                        <p class="md-subheading success">- Puedes vender créditos a los clientes</p>
-                        <p class="md-subheading success">- Puedes enviar mensajes a tus clientes una vez por semana</p>
+                        <p class="md-subheading success">
+                            - Los clientes pueden poner canciones de su biblioteca
+                        </p>
+                        <p class="md-subheading success">
+                            - Los clientes pueden enviarse mensajes con el chat
+                        </p>
+                        <p class="md-subheading success">
+                            - Libre de publicidad de terceros
+                        </p>
+                        <p class="md-subheading success">
+                            - Se puede activar el modo KARAOKE
+                        </p>
+                        <p class="md-subheading success">
+                            - Puedes poner publicidad de texto en las pantallas
+                        </p>
+                        <p class="md-subheading success">
+                            - Puedes poner imagenes publicitarias en pantallas
+                        </p>
+                        <p class="md-subheading success">
+                            - Puedes publicidad en video las pantallas
+                        </p>
+                        <p class="md-subheading success">
+                            - Puedes vender créditos a los clientes
+                        </p>
+                        <p class="md-subheading success">
+                            - Puedes enviar mensajes a tus clientes una vez por semana
+                        </p>
                         <md-button v-if="!form.licence" @click="openLicenceSite()" class="md-raised md-primary">Comprar una licencia ahora</md-button>
                     </div>
                 </div>
 
-                <div class="md-layout md-gutter" v-if="form.licenceType == 1 || form.licenceType == 2  ">
+                <div class="md-layout md-gutter" v-if="form.licenceType == 1 || form.licenceType == 2">
                     <div class="md-layout-item md-size-50 md-small-size-100">
                         <md-field :class="getValidationClass('licence')">
                             <label for="folder">Licencia del programa</label>
                             <md-input name="licence" id="licence" v-model="form.licence" />
-                            <span class="md-helper-text">*La licencia es necesaria para que el programa cuente con todas sus funcionalidades.</span>
+                            <span class="md-helper-text">*La licencia es necesaria para que el programa cuente con
+                                todas sus funcionalidades.</span>
                             <span class="md-error">La licencia debe ser válida</span>
                         </md-field>
                     </div>
@@ -76,17 +129,6 @@
                 </md-card-header>
 
                 <div class="md-layout md-gutter">
-                    <div class="md-layout-item md-small-size-100">
-                        <md-field :class="getValidationClass('barCode')">
-                            <label for="bar-code">*Código del Bar</label>
-                            <md-input name="bar-code" id="bar-code upper" autocomplete="given-name" v-model="form.barCode" :disabled="sending" @input="barCodeChanged" />
-                            <span class="md-helper-text">*Este código será solicitado para que los usuarios puedan poner música en el local.</span>
-                            <span class="md-error" v-if="!$v.form.barCode.required">Este código será solicitado para que los usuarios puedan poner música, aparecerá en las pantallas, es requerido.</span>
-                            <span class="md-error" v-else-if="!$v.form.barCode.alphaNum">El código contener solo números o letras sin espacios</span>
-                            <span class="md-error" v-else-if="!$v.form.barCode.minlength">El código debe tener al menos 3 carácteres</span>
-                        </md-field>
-                    </div>
-
                     <div class="md-layout-item md-small-size-100">
                         <md-field :class="getValidationClass('name')">
                             <label for="last-name">*Nombre del Bar o establecimiento</label>
@@ -120,7 +162,8 @@
                             <label for="last-name">*Dirección</label>
                             <md-input name="address" id="address" v-model="form.address" :disabled="sending" />
                             <span class="md-error" v-if="!$v.form.name.required">La dirección es requerida</span>
-                            <span class="md-error" v-else-if="!$v.form.name.minlength">Indique la calle o la dirección exacta del establecimiento</span>
+                            <span class="md-error" v-else-if="!$v.form.name.minlength">Indique la calle o la dirección exacta del
+                                establecimiento</span>
                         </md-field>
                     </div>
                 </div>
@@ -136,17 +179,19 @@
                         <md-field :class="getValidationClass('musicFolder')" md-clearable>
                             <label for="musicFolder">*Directorio donde se guarda la MUSICA</label>
                             <md-input name="musicFolder" id="musicFolder" v-model="form.musicFolder" @keydown="disableKeys($event)" @click="selectFolder('music')" />
-                            <span class="md-helper-text">*El directorio debe tener permisos de lectura y escritura.</span>
+                            <span class="md-helper-text">*El directorio debe tener permisos de lectura y
+                                escritura.</span>
                             <span class="md-error" @click="selectFolder('music')">Click aquí para seleccionar el directorio</span>
                         </md-field>
                     </div>
                 </div>
-                <div class="md-layout md-gutter" v-if="form.licenceType !=='0'">
+                <div class="md-layout md-gutter" v-if="form.licenceType !== '0'">
                     <div class="md-layout-item md-small-size-100">
                         <md-field md-clearable>
                             <label for="karaoke">Directorio donde se guarda el KARAOKE</label>
                             <md-input name="karaoke" id="karaoke" v-model="form.karaokeFolder" @keydown="disableKeys($event)" @click="selectFolder('karaoke')" />
-                            <span class="md-helper-text">*El directorio debe tener permisos de lectura y escritura.</span>
+                            <span class="md-helper-text">*El directorio debe tener permisos de lectura y
+                                escritura.</span>
                             <span class="md-error" @click="selectFolder('karaoke')">Click aquí para seleccionar el directorio</span>
                         </md-field>
                     </div>
@@ -191,11 +236,12 @@
                                 <md-option value="1">La primera en entrar primera en sonar</md-option>
                                 <md-option value="2">Según los votos de los clientes</md-option>
                             </md-select>
-                            <span class="md-error">En el modo votación la cancion mas votada sonará primero</span>
+                            <span class="md-error">En el modo votación la cancion mas votada sonará
+                                primero</span>
                         </md-field>
                     </div>
 
-                    <div class="md-layout-item md-small-size-100" v-if="form.licenceType !=='0'">
+                    <div class="md-layout-item md-small-size-100" v-if="form.licenceType !== '0'">
                         <md-field>
                             <label for="karaokeTime">Tiempo de espera entre canciones de Karaoke</label>
                             <md-select name="karaokeTime" id="karaokeTime" v-model="form.karaokeTime" md-dense :disabled="sending">
@@ -223,18 +269,20 @@
                     </div>
                 </div>
                 <div class="md-layout md-gutter md-size-100">
-                    <div class="md-layout-item md-small-size-100 left" v-if="form.licenceType !=='0'">
+                    <div class="md-layout-item md-small-size-100 left" v-if="form.licenceType !== '0'">
                         <md-checkbox v-model="form.karaokeMode">Activar modo KARAOKE</md-checkbox>
                         <br />
-                        <span class="md-helper-text">*Los usuarios solo pueden poner canciones del folder de KARAOKE se desactivará el chat.</span>
+                        <span class="md-helper-text">*Los usuarios solo pueden poner canciones del folder de KARAOKE
+                            se desactivará el chat.</span>
                     </div>
                     <div class="md-layout-item md-small-size-100 left">
-                        <md-checkbox v-model="form.chatActive">Los usuarios pueden usar el CHAT (Los mensajes aparecerán en las pantallas)</md-checkbox>
+                        <md-checkbox v-model="form.chatActive">Los usuarios pueden usar el CHAT (Los mensajes aparecerán en
+                            las pantallas)</md-checkbox>
                     </div>
                     <div class="md-layout-item md-small-size-100 left">
                         <md-checkbox v-model="form.badWordsFilter">Activar filtro de malas palabras en el chat</md-checkbox>
                     </div>
-                    <div class="md-layout-item md-small-size-100 left" v-if="form.licenceType ==='2'">
+                    <div class="md-layout-item md-small-size-100 left" v-if="form.licenceType === '2'">
                         <md-checkbox v-model="form.creditSale">Activar venta de créditos</md-checkbox>
                     </div>
                 </div>
@@ -253,7 +301,7 @@
         <!-- <pre>{{form}}</pre> -->
     </form>
     <md-dialog :md-active.sync="sending" :md-close-on-esc="false" :md-click-outside-to-close="false">
-        <md-dialog-title>{{savedMessage}}</md-dialog-title>
+        <md-dialog-title>{{ savedMessage }}</md-dialog-title>
     </md-dialog>
 </md-content>
 </template>
@@ -273,12 +321,13 @@ import {
     email,
     minLength,
     maxLength,
-    alphaNum
 } from "vuelidate/lib/validators";
 import {
     mapState
 } from "vuex";
-
+import {
+    v4 as uuidv4
+} from "uuid";
 
 export default {
     name: "FormValidation",
@@ -306,57 +355,52 @@ export default {
             name: null,
             phone: null,
             region_name: null,
-            songsOrder: 1
+            songsOrder: 1,
         },
         configurationSaved: false,
         sending: false,
-        savedMessage: "."
+        savedMessage: ".",
     }),
     validations: {
         form: {
-            barCode: {
-                required,
-                minLength: minLength(3),
-                alphaNum
-            },
             name: {
                 required,
-                minLength: minLength(3)
+                minLength: minLength(3),
             },
             address: {
                 required,
                 minLength: minLength(3),
-                maxLength: maxLength(500)
+                maxLength: maxLength(500),
             },
             email: {
                 required,
-                email
+                email,
             },
             musicFolder: {
-                required
+                required,
             },
             licence: {
-                required
-            }
-        }
+                required,
+            },
+        },
     },
     mounted() {
         this.getConfiguration();
     },
     computed: {
-        ...mapState(["musicFiles", "karaokeFiles", "ads"])
+        ...mapState(["musicFiles", "karaokeFiles", "ads"]),
     },
     methods: {
         regresar() {
             this.$router.replace({
-                path: "player"
+                path: "player",
             });
         },
         getValidationClass(fieldName) {
             const field = this.$v.form[fieldName];
             if (field) {
                 return {
-                    "md-invalid": field.$invalid && field.$dirty
+                    "md-invalid": field.$invalid && field.$dirty,
                 };
             }
         },
@@ -366,12 +410,12 @@ export default {
 
                 if (!this.form.ip) {
                     this.getIpInfo()
-                        .then(response => {
+                        .then((response) => {
                             this.form.ip = response.data.ip;
                             this.form.country_code = response.data.country_code;
                             this.form.region_name = response.data.region_name;
                         })
-                        .catch(error => {
+                        .catch((error) => {
                             this.$alert(
                                 "Error localizacion",
                                 "No se pudo obtener su localizacion" + error,
@@ -385,6 +429,12 @@ export default {
             this.sending = true;
             this.configurationSaved = false;
             this.savedMessage = "Guardando la configuracíon";
+
+            if (!this.form.barCode) {
+                this.form.barCode = uuidv4();
+            }
+
+           // console.log(this.form);
 
             var verifiedLicence = this.form.licenceType === "0" ? true : false;
 
@@ -479,7 +529,7 @@ export default {
                     this.sending = false;
                     this.configurationSaved = true;
                     this.$router.replace({
-                        path: "player"
+                        path: "player",
                     });
                 } else {
                     // Wrong password
@@ -505,7 +555,7 @@ export default {
                 this.sending = false;
                 this.configurationSaved = true;
                 this.$router.replace({
-                    path: "player"
+                    path: "player",
                 });
             }
         },
@@ -541,7 +591,7 @@ export default {
             this.$v.$touch();
             if (this.$v.$invalid) {
                 this.$alert(
-                     "Algunos campos son obligatorios, revisa los datos",
+                    "Algunos campos son obligatorios, revisa los datos",
                     "No se pudo guardar la configuración",
                     "warning"
                 );
@@ -549,11 +599,8 @@ export default {
                 this.saveConfiguration();
             }
         },
-        barCodeChanged() {
-            this.form.barCode = String(this.form.barCode).toUpperCase();
-        },
         selectFolder(type) {
-            this.$ipcRenderer.invoke("openFolder").then(result => {
+            this.$ipcRenderer.invoke("openFolder").then((result) => {
                 if (result) {
                     switch (type) {
                         case "music":
@@ -589,8 +636,8 @@ export default {
             if (event !== "0" && this.form.licence == "NO-LICENCE") {
                 this.form.licence = "";
             }
-        }
-    }
+        },
+    },
 };
 </script>
 
