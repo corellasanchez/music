@@ -251,7 +251,8 @@ export const mixinsRequest = {
       }, 5000);
     },
     addCredits(rinfo, data) {
-      console.log(data);
+      var result = {};
+      var current_credits = 0;
 
       var parameters = {
         "uid": data.user.c,
@@ -259,28 +260,50 @@ export const mixinsRequest = {
         "credits": data.credits,
         "seller": data.seller
       }
-      database.run(`INSERT INTO credits (uid, name, date, credits, seller)
-      VALUES (?,?, datetime('now', 'localtime'), ?, ?)`, [parameters.uid, parameters.name, parameters.credits, parameters.seller], (err) => {
+
+      // get current available_credits
+      database.get(`SELECT * FROM available_credits WHERE uid = ?`, [parameters.uid], (err, rows) => {
         if (err) {
-          console.log(err.message);
+          console.log(err);
         }
+        result = rows;
+        console.log(result);
+
+        if (result) {
+          // update available_credits
+          current_credits = Number(data.credits) + Number(result.credits);
+          database.run(`UPDATE available_credits set credits = ? WHERE uid = ?`, [current_credits, parameters.uid], (err) => {
+            if (err) {
+              console.log('Error updating', err.message);
+            }
+          });
+        } else {
+          // add available_credits
+          current_credits = parameters.credits;
+          database.run(`INSERT INTO available_credits (uid, name, credits) VALUES (?,?,?)`, [parameters.uid, parameters.name, parameters.credits], (err) => {
+            if (err) {
+              console.log('Error adding', err.message);
+            }
+          });
+        }
+
+        // send confirmation for the user
+        var transaction = {
+          "operation": "current_credits",
+          "data": current_credits
+        };
+        var message = new Buffer(JSON.stringify(transaction));
+        socket.send(message, 0, message.length, data.user.p, data.user.a);
+
+        // send confirmation for the seller
+        transaction = {
+          "operation": "credits_confirmation",
+          "data": { user: data.user.u, credits: data.credits }
+        };
+        message = new Buffer(JSON.stringify(transaction));
+        socket.send(message, 0, message.length, data.user.p, data.user.a);
       });
-
-      // send confirmation for the user
-      var transaction = {
-        "operation": "credits_added",
-        "data": data.credits
-      };
-      var message = new Buffer(JSON.stringify(transaction));
-      socket.send(message, 0, message.length, data.user.p, data.user.a);
-
-      // send confirmation for the seller
-      transaction = {
-        "operation": "credits_confirmation",
-        "data": { user: data.user.u, credits: data.credits }
-      };
-      message = new Buffer(JSON.stringify(transaction));
-      socket.send(message, 0, message.length, data.user.p, data.user.a);
     }
+
   }
 }
