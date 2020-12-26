@@ -32,9 +32,6 @@ export const netMixins = {
                 console.log(`server listening ${address.address}:${address.port}`);
             });
 
-            // if (!socket) {
-
-
             socket.bind(PORT, function () {
                 socket.setBroadcast(true);
                 socket.setMulticastTTL(128);
@@ -70,6 +67,9 @@ export const netMixins = {
                     break;
                 case 'add_credits':
                     this.addCredits(rinfo, data);
+                    break;
+                case 'get_credits':
+                    this.getCredits(rinfo, data);
                     break;
                 default:
                     break;

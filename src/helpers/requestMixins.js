@@ -34,9 +34,7 @@ export const mixinsRequest = {
       return clearedName;
     },
     searchSongs(rinfo, keyword) {
-      console.log('seaching for songs');
       var results = [];
-      // console.log( this.musicFiles);
       this.musicFiles.forEach((element, index) => {
         var ratio = fuzz.partial_ratio(element, keyword);
         if (ratio > 70) {
@@ -49,7 +47,6 @@ export const mixinsRequest = {
       if (results.length > 100) {
         results.length = 100;
       }
-      //console.log(results);
       const transaction = {
         "operation": "search_result",
         "data": results
@@ -222,7 +219,6 @@ export const mixinsRequest = {
       if (users.length > 0) {
         for (let i = 0; i < users.length; i++) {
           const user = users[i];
-          //console.log(user.a, user.p, socket);
           socket.send(message, 0, message.length, user.p, user.a);
         }
         this.checkDisconectedUsers();
@@ -241,7 +237,7 @@ export const mixinsRequest = {
           const user = users[i];
           if (user.lp) {
             difference = Math.round((now - user.lp) / 1000);
-            console.log('Difference ', difference);
+            //console.log('Difference ', difference);
             if (difference >= 120) {
               this.$store.commit('removeOnlineUser', user);
               this.updateOnlineUsers();
@@ -267,7 +263,6 @@ export const mixinsRequest = {
           console.log(err);
         }
         result = rows;
-        console.log(result);
 
         if (result) {
           // update available_credits
@@ -301,9 +296,23 @@ export const mixinsRequest = {
           "data": { user: data.user.u, credits: data.credits }
         };
         message = new Buffer(JSON.stringify(transaction));
-        socket.send(message, 0, message.length, data.user.p, data.user.a);
+        socket.send(message, 0, message.length, rinfo.port, rinfo.address);
+      });
+    },
+    getCredits(rinfo, data) {
+      var current_credits = 0;
+      // get current available_credits
+      database.get(`SELECT * FROM available_credits WHERE uid = ?`, [data], (err, result) => {
+        if (result) {
+          current_credits = Number(result.credits);
+        } 
+        const transaction = {
+          "operation": "current_credits",
+          "data": current_credits
+        };
+        const message = new Buffer(JSON.stringify(transaction));
+        socket.send(message, 0, message.length, rinfo.port, rinfo.address);
       });
     }
-
   }
 }
