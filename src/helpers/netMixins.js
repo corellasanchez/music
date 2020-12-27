@@ -37,7 +37,6 @@ export const netMixins = {
                 socket.setMulticastTTL(128);
                 socket.addMembership(MULTICAST_ADDR);
             });
-            //  }
 
             setInterval(this.ping, 60000);
         },
@@ -54,7 +53,7 @@ export const netMixins = {
                     this.searchSongs(rinfo, data);
                     break;
                 case 'add_song':
-                    this.AddSongToQueue(data);
+                    this.AddSongToQueue(rinfo, data);
                     break;
                 case 'login_user':
                     this.loginUser(rinfo, data);

@@ -103,7 +103,7 @@ export const mixinsRequest = {
       socket.send(message, 0, message.length, rinfo.port, rinfo.address);
     },
 
-    AddSongToQueue(data) {
+    AddSongToQueue(rinfo, data) {
       // c = customer id
       // s = song index in musicFiles Array
       // sn = song name
@@ -114,6 +114,29 @@ export const mixinsRequest = {
       song.v = 0;
       this.$store.commit('addSongToQueue', song);
       this.songListUpdated();
+
+      if (this.configuration.creditSale) {
+        database.run(`UPDATE available_credits set credits = credits - 1 WHERE uid = ?`, [data.c], (err) => {
+          if (err) {
+            console.log('Error updating', err.message);
+          }
+          // get current available_credits
+          database.get(`SELECT * FROM available_credits WHERE uid = ?`, [data.c], (err, rows) => {
+            if (err) {
+              console.log(err);
+            }
+            var result = rows;
+  
+           // send confirmation for the user
+            var transaction = {
+              "operation": "current_credits",
+              "data": {"credits": result.credits, "confirm": false}
+            };
+            var message = new Buffer(JSON.stringify(transaction));
+            socket.send(message, 0, message.length, rinfo.port, rinfo.address);
+          });
+        });
+      }
     },
 
     removeSongFromQueue(s) {
@@ -285,7 +308,7 @@ export const mixinsRequest = {
         // send confirmation for the user
         var transaction = {
           "operation": "current_credits",
-          "data": current_credits
+          "data": {"credits": current_credits, "confirm": true}
         };
         var message = new Buffer(JSON.stringify(transaction));
         socket.send(message, 0, message.length, data.user.p, data.user.a);
@@ -305,10 +328,10 @@ export const mixinsRequest = {
       database.get(`SELECT * FROM available_credits WHERE uid = ?`, [data], (err, result) => {
         if (result) {
           current_credits = Number(result.credits);
-        } 
+        }
         const transaction = {
           "operation": "current_credits",
-          "data": current_credits
+          "data": {"credits": current_credits, "confirm": false}
         };
         const message = new Buffer(JSON.stringify(transaction));
         socket.send(message, 0, message.length, rinfo.port, rinfo.address);
