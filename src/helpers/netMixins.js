@@ -70,6 +70,9 @@ export const netMixins = {
                 case 'get_credits':
                     this.getCredits(rinfo, data);
                     break;
+                case 'vote':
+                    this.vote(rinfo, data);
+                    break;
                 default:
                     break;
             }

@@ -21,7 +21,7 @@ export const mixinsRequest = {
   },
   computed: {
     ...mapState(["musicFiles", "karaokeFiles", "ads", "musicQueue", "messageQueue", "queueSubscription", "searchSubscription", "messageQueueSubscription", 'onlineUsers']),
-    ...mapMutations(['addSongToQueue', 'setMusicQueue', 'subscribeMessages', "addOnlineUser", "removeOnlineUser", "updateLastPong"]),
+    ...mapMutations(['addSongToQueue', 'setMusicQueue', 'subscribeMessages', "addOnlineUser", "removeOnlineUser", "updateLastPong","addVote"]),
   },
   methods: {
     setSocket(newSocket) {
@@ -109,9 +109,11 @@ export const mixinsRequest = {
       // sn = song name
       // u = user name
       // v = votes
+      // voters
       var song = data;
       song.sn = this.clearSongName(this.musicFiles[data.s]);
       song.v = 0;
+      song.voters = [];
       this.$store.commit('addSongToQueue', song);
       this.songListUpdated();
 
@@ -126,11 +128,11 @@ export const mixinsRequest = {
               console.log(err);
             }
             var result = rows;
-  
-           // send confirmation for the user
+
+            // send confirmation for the user
             var transaction = {
               "operation": "current_credits",
-              "data": {"credits": result.credits, "confirm": false}
+              "data": { "credits": result.credits, "confirm": false }
             };
             var message = new Buffer(JSON.stringify(transaction));
             socket.send(message, 0, message.length, rinfo.port, rinfo.address);
@@ -308,7 +310,7 @@ export const mixinsRequest = {
         // send confirmation for the user
         var transaction = {
           "operation": "current_credits",
-          "data": {"credits": current_credits, "confirm": true}
+          "data": { "credits": current_credits, "confirm": true }
         };
         var message = new Buffer(JSON.stringify(transaction));
         socket.send(message, 0, message.length, data.user.p, data.user.a);
@@ -331,11 +333,25 @@ export const mixinsRequest = {
         }
         const transaction = {
           "operation": "current_credits",
-          "data": {"credits": current_credits, "confirm": false}
+          "data": { "credits": current_credits, "confirm": false }
         };
         const message = new Buffer(JSON.stringify(transaction));
         socket.send(message, 0, message.length, rinfo.port, rinfo.address);
       });
+    },
+    vote(rinfo, data) {
+      console.log(rinfo, data);
+
+      this.$store.commit('addVote', data);
+      this.songListUpdated();
+      if (this.configuration.creditSale) {
+        database.run(`UPDATE available_credits set credits = credits - 1 WHERE uid = ?`, [data.c], (err) => {
+          if (err) {
+            console.log('Error updating', err.message);
+          }
+        });
+      }
     }
+
   }
 }

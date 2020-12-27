@@ -18,7 +18,8 @@ export default new Vuex.Store({
     queueSubscription: false,
     searchSubscription: false,
     messageQueueSubscription: false,
-    socketInit: false
+    socketInit: false,
+    songIndex: 0,
   },
   mutations: {
     setNowPlaying(state, nowPlaying) {
@@ -61,7 +62,7 @@ export default new Vuex.Store({
         state.onlineUsers.push(user);
       }
       state.onlineUsers = state.onlineUsers.sort((a, b) => a.u.localeCompare(b.u));
-      
+
       console.log("User added", JSON.stringify(state.onlineUsers));
     },
     addAdminUser(state, user) {
@@ -122,17 +123,26 @@ export default new Vuex.Store({
     },
     addSongToQueue(state, song) {
       const result = state.musicQueue.filter(x => x.s == song.s);
-      console.log(result.length);
+      state.songIndex++;
       if (result.length === 0) {
-        song.index = state.musicQueue.length + 1;
+        song.index = state.songIndex;
         state.musicQueue.push(song);
-        //console.log('song added', song)
+      }
+    },
+    addVote(state, data) {
+      const i = state.musicQueue.findIndex(x => x.sn == data.sn);
+      console.log('song', state.musicQueue[i]);
+      if (i > -1) {
+        state.musicQueue[i].v++;
+        console.log('Entra',state.musicQueue.length, state.musicQueue[i].voters.indexOf(data.c) === -1);
+        if (state.musicQueue.length && state.musicQueue[i].voters.indexOf(data.c) === -1) {
+          state.musicQueue[i].voters.push(data.c);
+        }
       }
     },
     addMessageToQueue(state, message) {
       message.index = state.musicQueue.length + 1;
       state.messageQueue.push(message);
-      // //console.log('message added', message)
     },
     subscribeQueue(state) {
       state.queueSubscription = true;
