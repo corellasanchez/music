@@ -92,12 +92,10 @@ export default new Vuex.Store({
         state.onlineUsers[i].lp = now;
       }
 
-      console.log("State last pong ", JSON.stringify(state.onlineUsers));
     },
     removeOnlineUser(state, user) {
       const result = state.onlineUsers.filter(x => x.a != user.a);
       state.onlineUsers = result.sort((a, b) => a.u.localeCompare(b.u));
-      console.log("User Removed ", JSON.stringify(user), JSON.stringify(state.onlineUsers));
     },
     removeAdminUser(state, user) {
       const i = state.adminUsers.findIndex(x => x.name === user.name);
@@ -128,16 +126,20 @@ export default new Vuex.Store({
         song.index = state.songIndex;
         state.musicQueue.push(song);
       }
+      if (song.songsOrder == "2") { // Order by votes
+        state.musicQueue = state.musicQueue.sort((a, b) => b.v - a.v);
+      }
     },
     addVote(state, data) {
-      const i = state.musicQueue.findIndex(x => x.sn == data.sn);
-      console.log('song', state.musicQueue[i]);
+      const i = state.musicQueue.findIndex(x => x.s == data.s);
       if (i > -1) {
         state.musicQueue[i].v++;
-        console.log('Entra',state.musicQueue.length, state.musicQueue[i].voters.indexOf(data.c) === -1);
         if (state.musicQueue.length && state.musicQueue[i].voters.indexOf(data.c) === -1) {
           state.musicQueue[i].voters.push(data.c);
         }
+      }
+      if (data.songsOrder == "2") { // Order by votes
+        state.musicQueue = state.musicQueue.sort((a, b) => b.v - a.v);
       }
     },
     addMessageToQueue(state, message) {

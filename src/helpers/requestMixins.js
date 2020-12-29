@@ -114,6 +114,7 @@ export const mixinsRequest = {
       song.sn = this.clearSongName(this.musicFiles[data.s]);
       song.v = 0;
       song.voters = [];
+      song.songsOrder =  this.configuration.songsOrder;
       this.$store.commit('addSongToQueue', song);
       this.songListUpdated();
 
@@ -340,14 +341,15 @@ export const mixinsRequest = {
       });
     },
     vote(rinfo, data) {
-      console.log(rinfo, data);
-
+      data.songsOrder = this.configuration.songsOrder;
       this.$store.commit('addVote', data);
       this.songListUpdated();
       if (this.configuration.creditSale) {
         database.run(`UPDATE available_credits set credits = credits - 1 WHERE uid = ?`, [data.c], (err) => {
           if (err) {
             console.log('Error updating', err.message);
+          }else{
+            this.getCredits(rinfo, data.c);
           }
         });
       }
