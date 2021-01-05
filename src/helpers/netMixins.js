@@ -73,6 +73,9 @@ export const netMixins = {
                 case 'vote':
                     this.vote(rinfo, data);
                     break;
+                case 'send_message':
+                    this.sendMessage(rinfo, data);
+                    break;
                 default:
                     break;
             }

@@ -353,7 +353,9 @@ export const mixinsRequest = {
           }
         });
       }
+    },
+    sendMessage(rinfo, data) {
+      console.log('send message', rinfo, data);
     }
-
   }
 }
