@@ -21,7 +21,7 @@ export const mixinsRequest = {
   },
   computed: {
     ...mapState(["musicFiles", "karaokeFiles", "ads", "musicQueue", "messageQueue", "queueSubscription", "searchSubscription", "messageQueueSubscription", 'onlineUsers']),
-    ...mapMutations(['addSongToQueue', 'setMusicQueue', 'subscribeMessages', "addOnlineUser", "removeOnlineUser", "updateLastPong","addVote"]),
+    ...mapMutations(['addSongToQueue', 'setMusicQueue', 'subscribeMessages', "addOnlineUser", "removeOnlineUser", "updateLastPong", "addVote"]),
   },
   methods: {
     setSocket(newSocket) {
@@ -114,7 +114,7 @@ export const mixinsRequest = {
       song.sn = this.clearSongName(this.musicFiles[data.s]);
       song.v = 0;
       song.voters = [];
-      song.songsOrder =  this.configuration.songsOrder;
+      song.songsOrder = this.configuration.songsOrder;
       this.$store.commit('addSongToQueue', song);
       this.songListUpdated();
 
@@ -348,7 +348,7 @@ export const mixinsRequest = {
         database.run(`UPDATE available_credits set credits = credits - 1 WHERE uid = ?`, [data.c], (err) => {
           if (err) {
             console.log('Error updating', err.message);
-          }else{
+          } else {
             this.getCredits(rinfo, data.c);
           }
         });
@@ -356,6 +356,10 @@ export const mixinsRequest = {
     },
     sendMessage(rinfo, data) {
       console.log('send message', rinfo, data);
+      this.$store.commit("addMessageToQueue", {
+        u: data.name,
+        m: decodeURIComponent(data.message)
+      });
     }
   }
 }

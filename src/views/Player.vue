@@ -114,7 +114,7 @@ export default {
         setTimeout(() => {
             this.currentVideo = this.nextVideo();
         }, 1000);
-        this.sendTestMessages();
+      //  this.sendTestMessages();
        
        if (!this.socketInit) {
             this.setUdpService();
@@ -363,11 +363,11 @@ export default {
             autostart: true,
             repeat: true,
         },
-        sendTestMessages: {
-            time: 1000,
-            autostart: true,
-            repeat: true,
-        },
+        // sendTestMessages: {
+        //     time: 1000,
+        //     autostart: true,
+        //     repeat: true,
+        // },
     },
 };
 </script>
