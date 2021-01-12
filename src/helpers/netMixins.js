@@ -76,6 +76,9 @@ export const netMixins = {
                 case 'send_message':
                     this.sendMessage(rinfo, data);
                     break;
+                case 'get_text_ads':
+                    this.sendTextAds(rinfo, data);
+                    break;
                 default:
                     break;
             }

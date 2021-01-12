@@ -216,6 +216,8 @@ export const mixinsRequest = {
         this.loginUser(rinfo, data);
       }
 
+      this.sendTextAds(rinfo, data)
+
     },
     async updateOnlineUsers() {
       var users = await this.$store.state.onlineUsers;
@@ -360,6 +362,32 @@ export const mixinsRequest = {
         u: data.name,
         m: decodeURIComponent(data.message)
       });
-    }
+    },
+    sendTextAds(rinfo, data) {
+      console.log('send markee', rinfo, data);
+      var ads = [];
+      var duration = 15;
+      
+      if (this.$settings.has("localTextAds")) {
+        ads = this.$settings.get("localTextAds");
+        ads.forEach(ad => {
+          ad.text = encodeURIComponent(ad.text);
+        });
+      }
+
+      if (this.configuration.markeeDuration) {
+        duration = this.configuration.markeeDuration;
+      } 
+
+      const transaction = {
+        "operation": "text_ads_updated",
+        "data": { "ads": ads, "duration": duration }
+      };
+
+      const message = new Buffer(JSON.stringify(transaction));
+      socket.send(message, 0, message.length, rinfo.port, rinfo.address);
+
+    },
+
   }
 }
