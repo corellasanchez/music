@@ -77,7 +77,10 @@ export const netMixins = {
                     this.sendMessage(rinfo, data);
                     break;
                 case 'get_text_ads':
-                    this.sendTextAds(rinfo, data);
+                    this.sendTextAds(rinfo);
+                    break;
+                case 'remove_text_ad':
+                    this.removeTextAd(rinfo, data);
                     break;
                 default:
                     break;

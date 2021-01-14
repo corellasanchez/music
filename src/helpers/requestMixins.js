@@ -20,8 +20,8 @@ export const mixinsRequest = {
     }
   },
   computed: {
-    ...mapState(["musicFiles", "karaokeFiles", "ads", "musicQueue", "messageQueue", "queueSubscription", "searchSubscription", "messageQueueSubscription", 'onlineUsers']),
-    ...mapMutations(['addSongToQueue', 'setMusicQueue', 'subscribeMessages', "addOnlineUser", "removeOnlineUser", "updateLastPong", "addVote"]),
+    ...mapState(["musicFiles", "karaokeFiles", "ads", "musicQueue", "messageQueue", "queueSubscription", "searchSubscription", "messageQueueSubscription", 'onlineUsers', "localTextAds"]),
+    ...mapMutations(['addSongToQueue', 'setMusicQueue', 'subscribeMessages', "addOnlineUser", "removeOnlineUser", "updateLastPong", "addVote", "addLocalTextAd", "removeLocalTextAd"]),
   },
   methods: {
     setSocket(newSocket) {
@@ -363,8 +363,7 @@ export const mixinsRequest = {
         m: decodeURIComponent(data.message)
       });
     },
-    sendTextAds(rinfo, data) {
-      console.log('send markee', rinfo, data);
+    sendTextAds(rinfo) {
       var ads = [];
       var duration = 15;
       
@@ -388,6 +387,11 @@ export const mixinsRequest = {
       socket.send(message, 0, message.length, rinfo.port, rinfo.address);
 
     },
+    removeTextAd(rinfo, data){
+      this.$store.commit("removeLocalTextAd", data);
+      this.$settings.set("localTextAds", this.localTextAds);
+      this.sendTextAds(rinfo);
+    }
 
   }
 }
