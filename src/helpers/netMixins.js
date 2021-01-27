@@ -82,6 +82,9 @@ export const netMixins = {
                 case 'remove_text_ad':
                     this.removeTextAd(rinfo, data);
                     break;
+                case 'add_text_ad':
+                    this.addTextAd(rinfo, data);
+                    break;
                 default:
                     break;
             }

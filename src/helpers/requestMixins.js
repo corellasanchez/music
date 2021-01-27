@@ -391,7 +391,15 @@ export const mixinsRequest = {
       this.$store.commit("removeLocalTextAd", data);
       this.$settings.set("localTextAds", this.localTextAds);
       this.sendTextAds(rinfo);
+    },
+    addTextAd(rinfo, data){
+      var message = {};
+      message.text = decodeURIComponent(data.text);
+      message.color = data.color;
+      message.index = this.localTextAds ? this.localTextAds.length + 1 : 1;
+      this.$store.commit("addLocalTextAd", message);
+      this.$settings.set("localTextAds", this.localTextAds);
+      this.sendTextAds(rinfo);
     }
-
   }
 }
