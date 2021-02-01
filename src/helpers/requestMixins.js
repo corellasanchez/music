@@ -20,8 +20,8 @@ export const mixinsRequest = {
     }
   },
   computed: {
-    ...mapState(["musicFiles", "karaokeFiles", "ads", "musicQueue", "messageQueue", "queueSubscription", "searchSubscription", "messageQueueSubscription", 'onlineUsers', "localTextAds"]),
-    ...mapMutations(['addSongToQueue', 'setMusicQueue', 'subscribeMessages', "addOnlineUser", "removeOnlineUser", "updateLastPong", "addVote", "addLocalTextAd", "removeLocalTextAd"]),
+    ...mapState(["musicFiles", "karaokeFiles", "ads", "musicQueue", "messageQueue", "queueSubscription", "searchSubscription", "messageQueueSubscription", 'onlineUsers', "localTextAds","adDuration"]),
+    ...mapMutations(['addSongToQueue', 'setMusicQueue', 'subscribeMessages', "addOnlineUser", "removeOnlineUser", "updateLastPong", "addVote", "addLocalTextAd", "removeLocalTextAd", "setAdDuration"]),
   },
   methods: {
     setSocket(newSocket) {
@@ -374,9 +374,9 @@ export const mixinsRequest = {
         });
       }
 
-      if (this.configuration.markeeDuration) {
-        duration = this.configuration.markeeDuration;
-      } 
+    
+        duration = this.adDuration;
+      
 
       const transaction = {
         "operation": "text_ads_updated",
@@ -400,6 +400,19 @@ export const mixinsRequest = {
       this.$store.commit("addLocalTextAd", message);
       this.$settings.set("localTextAds", this.localTextAds);
       this.sendTextAds(rinfo);
+    },
+    setAdsDuration(rinfo, data){
+      this.$store.commit("setAdDuration", data);
+      this.$settings.set("configuration.markeeDuration", data);
+      this.sendAdDuration(rinfo, data);
+    },
+    sendAdDuration(rinfo, data) {
+      const transaction = {
+        "operation": "ad_duration_updated",
+        "data": { "duration": data }
+      };
+      const message = new Buffer(JSON.stringify(transaction));
+      socket.send(message, 0, message.length, rinfo.port, rinfo.address);
     }
   }
 }

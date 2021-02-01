@@ -20,6 +20,7 @@ export default new Vuex.Store({
     messageQueueSubscription: false,
     socketInit: false,
     songIndex: 0,
+    adDuration: 0,
   },
   mutations: {
     setNowPlaying(state, nowPlaying) {
@@ -49,6 +50,10 @@ export default new Vuex.Store({
     setAdminUsers(state, adminUsers) {
       state.adminUsers = adminUsers;
     },
+    setAdDuration(state, duration){
+      state.adDuration = duration;
+    },
+
     addOnlineUser(state, user) {
       if (!state.onlineUsers) {
         state.onlineUsers = [];

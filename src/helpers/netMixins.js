@@ -85,6 +85,9 @@ export const netMixins = {
                 case 'add_text_ad':
                     this.addTextAd(rinfo, data);
                     break;
+                case 'set_ad_duration':
+                    this.setAdsDuration(rinfo, data);
+                    break;    
                 default:
                     break;
             }

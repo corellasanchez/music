@@ -35,7 +35,7 @@
 
     <notifications group="user-messages" position="bottom left" :duration="Number(15000)" :max="Number(9)" />
 
-    <text-ads-component :duration="Number(duration)" :showDemo="false" v-if="configuration && configuration.licenceType != '0'"></text-ads-component>
+    <text-ads-component :duration="Number(adDuration)" :showDemo="false" v-if="configuration && configuration.licenceType != '0'"></text-ads-component>
 
     <image-ads-component :showDemo="false" v-bind:banners="banners"></image-ads-component>
 </div>
@@ -98,6 +98,7 @@ export default {
         } else {
             this.duration = 15;
         }
+        this.$store.commit("setAdDuration", this.duration);
 
         if (this.configuration.chatActive) {
             this.$store.watch(
@@ -114,9 +115,9 @@ export default {
         setTimeout(() => {
             this.currentVideo = this.nextVideo();
         }, 1000);
-      //  this.sendTestMessages();
-       
-       if (!this.socketInit) {
+        //  this.sendTestMessages();
+
+        if (!this.socketInit) {
             this.setUdpService();
             this.$store.commit("setSocketInit", true);
         }
@@ -131,13 +132,14 @@ export default {
             "localTextAds",
             "banners",
             "videoAds",
-            "socketInit"
+            "socketInit",
+            "adDuration",
         ]),
         ...mapMutations([
             "addLocalTextAd",
             "addMessageToQueue",
             "setNowPlaying",
-            "setSocketInit"
+            "setSocketInit",
         ]),
     },
     methods: {
@@ -259,8 +261,8 @@ export default {
         showSongInfo() {
             this.showSuper = true;
             this.$store.commit("setNowPlaying", {
-                'u': this.currentUserName,
-                'sn': this.currentSongName
+                u: this.currentUserName,
+                sn: this.currentSongName,
             });
             this.getNowPlaying();
             setTimeout(() => {

@@ -87,7 +87,7 @@
                     <div class="md-layout-item md-size-40 md-small-size-100">
                         <md-field>
                             <label for="gender">Duración de los mensajes</label>
-                            <md-select name="duration" id="duration" v-model="duration" md-dense :disabled="sending" @md-selected="durationChange($event)">
+                            <!-- <md-select name="duration" id="duration" v-model="duration" md-dense :disabled="sending" @md-selected="durationChange($event)">
                                 <md-option value="15">15</md-option>
                                 <md-option value="20">20</md-option>
                                 <md-option value="30">30</md-option>
@@ -105,7 +105,12 @@
                                 <md-option value="400">400</md-option>
                                 <md-option value="500">500</md-option>
                                 <md-option value="1000">1000</md-option>
+                            </md-select> -->
+
+                            <md-select v-model="duration" md-dense :disabled="sending" @md-selected="durationChange($event)">
+                                <md-option v-for="item in durations" :key="item" :value="item">{{item}}</md-option>
                             </md-select>
+
                             <span class="md-helper-text">Hace que los mensajes vayan más rapido o mas lento.</span>
                         </md-field>
                     </div>
@@ -136,7 +141,7 @@
 
     </form>
 
-    <text-ads-component :duration="Number(duration)" :showDemo="true"></text-ads-component>
+    <text-ads-component :duration="Number(adDuration)" :showDemo="true"></text-ads-component>
     <md-dialog :md-active.sync="sending" :md-close-on-esc="false" :md-click-outside-to-close="false">
         <md-dialog-title>{{savedMessage}}</md-dialog-title>
     </md-dialog>
@@ -172,6 +177,7 @@ export default {
         savedMessage: ".",
         selectedColor: "",
         duration: 15,
+        durations: [],
         configuration: {}
     }),
     validations: {
@@ -184,13 +190,17 @@ export default {
     mounted() {
         this.getConfiguration();
         this.selectedColor = "#ffffff";
+        for (let index = 5; index < 505; index += 10) {
+            this.durations.push(index);
+        }
+        console.log(this.durations);
     },
     components: {
         TextAdsComponent
     },
     computed: {
-        ...mapState(["localTextAds"]),
-        ...mapMutations(["addLocalTextAd"])
+        ...mapState(["localTextAds", "adDuration"]),
+        ...mapMutations(["addLocalTextAd", "setAdDuration"])
     },
     methods: {
         regresar() {
@@ -225,17 +235,19 @@ export default {
                 } else {
                     this.duration = 15;
                 }
+
             }
+            this.$store.commit("setAdDuration", this.duration);
         },
 
         validateForm() {
             this.$v.$touch();
             if (this.$v.$invalid) {
-                 this.$alert(
-                        "Algunos campos son obligatorios, revisa los datos",
-                        "No se pudo agregar el mensaje",
-                        "error"
-                    );
+                this.$alert(
+                    "Algunos campos son obligatorios, revisa los datos",
+                    "No se pudo agregar el mensaje",
+                    "error"
+                );
             } else {
                 this.addMessage();
                 this.form.message = null;
@@ -255,6 +267,7 @@ export default {
         },
         durationChange(event) {
             if (event) {
+                this.$store.commit("setAdDuration", this.duration);
                 this.$settings.set("configuration.markeeDuration", this.duration);
             }
         }
