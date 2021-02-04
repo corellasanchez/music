@@ -314,6 +314,9 @@ import {
     mixins
 } from "../helpers/mixins";
 import {
+    mixinsRequest
+} from "../helpers/requestMixins";
+import {
     mixinsFb
 } from "../helpers/firebaseMixins";
 import {
@@ -331,7 +334,7 @@ import {
 
 export default {
     name: "FormValidation",
-    mixins: [validationMixin, mixins, mixinsFb],
+    mixins: [validationMixin, mixins, mixinsFb, mixinsRequest] ,
     data: () => ({
         form: {
             adsFolder: null,
@@ -528,6 +531,7 @@ export default {
                     this.savedMessage = "Configuración guardada";
                     this.sending = false;
                     this.configurationSaved = true;
+                    this.configurationUpdated(this.form);
                     this.$router.replace({
                         path: "player",
                     });
@@ -554,6 +558,7 @@ export default {
                 this.savedMessage = "Nuevo establecimiento registrado";
                 this.sending = false;
                 this.configurationSaved = true;
+                this.configurationUpdated(this.form);
                 this.$router.replace({
                     path: "player",
                 });

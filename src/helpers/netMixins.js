@@ -87,7 +87,10 @@ export const netMixins = {
                     break;
                 case 'set_ad_duration':
                     this.setAdsDuration(rinfo, data);
-                    break;    
+                    break;
+                case 'get_credit_report':
+                    this.getCreditReport(rinfo, data);
+                    break;
                 default:
                     break;
             }

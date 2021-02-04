@@ -20,7 +20,7 @@ export const mixinsRequest = {
     }
   },
   computed: {
-    ...mapState(["musicFiles", "karaokeFiles", "ads", "musicQueue", "messageQueue", "queueSubscription", "searchSubscription", "messageQueueSubscription", 'onlineUsers', "localTextAds","adDuration"]),
+    ...mapState(["musicFiles", "karaokeFiles", "ads", "musicQueue", "messageQueue", "queueSubscription", "searchSubscription", "messageQueueSubscription", 'onlineUsers', "localTextAds", "adDuration"]),
     ...mapMutations(['addSongToQueue', 'setMusicQueue', 'subscribeMessages', "addOnlineUser", "removeOnlineUser", "updateLastPong", "addVote", "addLocalTextAd", "removeLocalTextAd", "setAdDuration"]),
   },
   methods: {
@@ -101,6 +101,38 @@ export const mixinsRequest = {
 
       message = new Buffer(JSON.stringify(transaction));
       socket.send(message, 0, message.length, rinfo.port, rinfo.address);
+    },
+
+    async configurationUpdated(configuration) {
+      var users = await this.$store.state.onlineUsers;
+      console.log('cong', configuration);
+
+      var playerPublicConfig = {
+        address: configuration.address,
+        badWordsFilter: configuration.badWordsFilter,
+        barCode: configuration.barCode,
+        chatActive: configuration.chatActive,
+        creditSale: configuration.creditSale,
+        email: configuration.email,
+        licenceType: configuration.licenceType,
+        maxSongs: configuration.maxSongs,
+        name: configuration.name,
+        phone: configuration.phone,
+        songsOrder: configuration.songsOrder
+      }
+
+      const transaction = {
+        "operation": "configuration_updated",
+        "data": playerPublicConfig
+      };
+      const message = new Buffer(JSON.stringify(transaction));
+
+      if (users.length > 0) {
+        for (let i = 0; i < users.length; i++) {
+          const user = users[i];
+          socket.send(message, 0, message.length, user.p, user.a);
+        }
+      }
     },
 
     AddSongToQueue(rinfo, data) {
@@ -327,6 +359,31 @@ export const mixinsRequest = {
         socket.send(message, 0, message.length, rinfo.port, rinfo.address);
       });
     },
+    getCreditReport(rinfo, data) {
+      var result = {};
+
+      // get credit sales between two dates
+      database.get(`SELECT * FROM credits_sale_history WHERE credits_sale_history.date BETWEEN ? AND ?`, [data.from_date, data.to_date], (err, rows) => {
+        if (err) {
+          console.log(err);
+        }
+        result = rows;
+
+        if (result) {
+        console.log('credit report', result);
+        } else {
+          console.log('credit report no result', result);
+        }
+
+        // send confirmation for the seller
+        var transaction = {
+          "operation": "credits_report_result",
+          "data": { result: result }
+        };
+        var message = new Buffer(JSON.stringify(transaction));
+        socket.send(message, 0, message.length, rinfo.port, rinfo.address);
+      });
+    },
     getCredits(rinfo, data) {
       var current_credits = 0;
       // get current available_credits
@@ -366,7 +423,7 @@ export const mixinsRequest = {
     sendTextAds(rinfo) {
       var ads = [];
       var duration = 15;
-      
+
       if (this.$settings.has("localTextAds")) {
         ads = this.$settings.get("localTextAds");
         ads.forEach(ad => {
@@ -374,9 +431,9 @@ export const mixinsRequest = {
         });
       }
 
-    
-        duration = this.adDuration;
-      
+
+      duration = this.adDuration;
+
 
       const transaction = {
         "operation": "text_ads_updated",
@@ -387,12 +444,12 @@ export const mixinsRequest = {
       socket.send(message, 0, message.length, rinfo.port, rinfo.address);
 
     },
-    removeTextAd(rinfo, data){
+    removeTextAd(rinfo, data) {
       this.$store.commit("removeLocalTextAd", data);
       this.$settings.set("localTextAds", this.localTextAds);
       this.sendTextAds(rinfo);
     },
-    addTextAd(rinfo, data){
+    addTextAd(rinfo, data) {
       var message = {};
       message.text = decodeURIComponent(data.text);
       message.color = data.color;
@@ -401,7 +458,7 @@ export const mixinsRequest = {
       this.$settings.set("localTextAds", this.localTextAds);
       this.sendTextAds(rinfo);
     },
-    setAdsDuration(rinfo, data){
+    setAdsDuration(rinfo, data) {
       this.$store.commit("setAdDuration", data);
       this.$settings.set("configuration.markeeDuration", data);
       this.sendAdDuration(rinfo, data);
