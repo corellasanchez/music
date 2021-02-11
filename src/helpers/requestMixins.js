@@ -341,6 +341,13 @@ export const mixinsRequest = {
             }
           });
         }
+        
+      // save credit sale history
+      database.run(` INSERT INTO credits_sale_history (uid, name, seller, credits, date) VALUES (?,?,?,?,DATETIME('now','localtime'))`, [parameters.uid, parameters.name, parameters.seller, parameters.credits], (err) => {
+        if (err) {
+          console.log('Error adding', err.message);
+        }
+      });
 
         // send confirmation for the user
         var transaction = {
@@ -361,6 +368,8 @@ export const mixinsRequest = {
     },
     getCreditReport(rinfo, data) {
       var result = {};
+
+      console.log(data);
 
       // get credit sales between two dates
       database.get(`SELECT * FROM credits_sale_history WHERE credits_sale_history.date BETWEEN ? AND ?`, [data.from_date, data.to_date], (err, rows) => {
