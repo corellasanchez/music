@@ -372,38 +372,20 @@ export const mixinsRequest = {
       console.log(data);
 
       // get credit sales between two dates
-      database.get(`SELECT * FROM credits_sale_history WHERE credits_sale_history.date BETWEEN ? AND ?`, [data.from_date, data.to_date], (err, rows) => {
+      database.all(`SELECT * FROM credits_sale_history WHERE credits_sale_history.date BETWEEN ? AND ?`, [data.from_date, data.to_date], (err, rows) => {
         if (err) {
           console.log(err);
         }
-        result = rows;
+        result.details = rows;
+      });
 
-        if (result) {
-        console.log('credit report', result);
-        } else {
-          console.log('credit report no result', result);
+      // get total group by seller
+      database.all(`SELECT SUM(credits_sale_history.credits) as total,seller FROM credits_sale_history WHERE credits_sale_history.date BETWEEN ? AND ? GROUP BY seller`, [data.from_date, data.to_date], (err, rows) => {
+        if (err) {
+          console.log(err);
         }
+        result.totals = rows;
 
-        // var array = [
-        //   { Id: "001", qty: 1 }, 
-        //   { Id: "002", qty: 2 }, 
-        //   { Id: "001", qty: 2 }, 
-        //   { Id: "003", qty: 4 }
-        // ];
-        
-        // var result = [];
-        // array.reduce(function(res, value) {
-        //   if (!res[value.Id]) {
-        //     res[value.Id] = { Id: value.Id, qty: 0 };
-        //     result.push(res[value.Id])
-        //   }
-        //   res[value.Id].qty += value.qty;
-        //   return res;
-        // }, {});
-        
-        // console.log(result)
-
-        // send confirmation for the seller
         var transaction = {
           "operation": "credits_report_result",
           "data": { result: result }
