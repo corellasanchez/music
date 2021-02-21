@@ -385,6 +385,14 @@ export const mixinsRequest = {
           console.log(err);
         }
         result.totals = rows;
+      });
+
+      // get grand total
+      database.get(`SELECT SUM(credits_sale_history.credits) as total FROM credits_sale_history WHERE credits_sale_history.date BETWEEN ? AND ?`, [data.from_date, data.to_date], (err, res) => {
+        if (err) {
+          console.log(err);
+        }
+        result.grand_total = res.total;
 
         var transaction = {
           "operation": "credits_report_result",
@@ -441,18 +449,13 @@ export const mixinsRequest = {
         });
       }
 
-
       duration = this.adDuration;
-
-
       const transaction = {
         "operation": "text_ads_updated",
         "data": { "ads": ads, "duration": duration }
       };
-
       const message = new Buffer(JSON.stringify(transaction));
       socket.send(message, 0, message.length, rinfo.port, rinfo.address);
-
     },
     removeTextAd(rinfo, data) {
       this.$store.commit("removeLocalTextAd", data);
