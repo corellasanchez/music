@@ -59,18 +59,22 @@ export const mixinsRequest = {
 
     },
     async sendConfiguration(rinfo) {
+
+      var configuration = await this.$settings.get("configuration");
+     
       var playerPublicConfig = {
-        address: this.configuration.address,
-        badWordsFilter: this.configuration.badWordsFilter,
-        barCode: this.configuration.barCode,
-        chatActive: this.configuration.chatActive,
-        creditSale: this.configuration.creditSale,
-        email: this.configuration.email,
-        licenceType: this.configuration.licenceType,
-        maxSongs: this.configuration.maxSongs,
-        name: this.configuration.name,
-        phone: this.configuration.phone,
-        songsOrder: this.configuration.songsOrder
+        address: configuration.address,
+        badWordsFilter: configuration.badWordsFilter,
+        barCode: configuration.barCode,
+        chatActive: configuration.chatActive,
+        creditSale: configuration.creditSale,
+        email: configuration.email,
+        licenceType: configuration.licenceType,
+        maxSongs: configuration.maxSongs,
+        name: configuration.name,
+        phone: configuration.phone,
+        songsOrder: configuration.songsOrder,
+        karaokeMode: configuration.karaokeMode
       }
 
       // Send configuration
@@ -118,7 +122,8 @@ export const mixinsRequest = {
         maxSongs: configuration.maxSongs,
         name: configuration.name,
         phone: configuration.phone,
-        songsOrder: configuration.songsOrder
+        songsOrder: configuration.songsOrder,
+        karaokeMode: configuration.karaokeMode
       }
 
       const transaction = {
@@ -483,6 +488,12 @@ export const mixinsRequest = {
       };
       const message = new Buffer(JSON.stringify(transaction));
       socket.send(message, 0, message.length, rinfo.port, rinfo.address);
+    },
+    async setKaraokeMode(rinfo, data) {
+      var settings = await this.$settings.get("configuration");
+      settings.karaokeMode = Boolean(data);
+      await this.$settings.set("configuration", settings);
+      this.configurationUpdated(settings);
     }
   }
 }

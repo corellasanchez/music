@@ -91,6 +91,9 @@ export const netMixins = {
                 case 'get_credit_report':
                     this.getCreditReport(rinfo, data);
                     break;
+                case 'set_karaoke_mode':
+                    this.setKaraokeMode(rinfo, data);
+                    break;
                 default:
                     break;
             }
