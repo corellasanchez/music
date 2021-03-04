@@ -25,8 +25,10 @@
                 <img src="../assets/images/apple-logo.svg" />
             </h1>
             <h1 class="left-logo-text" v-show="superAppInfo3">
-                Ingrese el Código:
-                <span class="accent">{{ configuration.barCode }}</span>
+                Conectate al WiFi:
+                <span class="accent">{{ configuration.wifi }}</span>
+                con la contraseña :
+                <span class="accent">{{ configuration.wifi_password }}</span>
             </h1>
         </div>
     </div>
@@ -371,7 +373,7 @@ export default {
 
     timers: {
         appInfoTransition: {
-            time: 6000,
+            time: 10000,
             autostart: true,
             repeat: true,
         },

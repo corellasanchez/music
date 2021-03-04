@@ -158,6 +158,25 @@
 
                 <div class="md-layout md-gutter">
                     <div class="md-layout-item md-small-size-100">
+                        <md-field :class="getValidationClass('wifi')">
+                            <label for="wifi">*Nombre de la red WiFi</label>
+                            <md-input name="wifi" id="wifi" v-model="form.wifi" :disabled="sending" />
+                            <span class="md-helper-text">** Los usuarios deben estar conectados en la misma red para que se conecten al local.</span>
+                            <span class="md-error" v-if="!$v.form.wifi.required">El nombre de la red WiFi es requerido</span>
+                        </md-field>
+                    </div>
+                    <div class="md-layout-item md-small-size-100">
+                        <md-field :class="getValidationClass('wifi_password')">
+                            <label for="wifi_password">Contraseña de la red WiFi</label>
+                            <md-input name="wifi_password" id="wifi_password" v-model="form.wifi_password" :disabled="sending" />
+                             <span class="md-helper-text">** Esta contraseña aparecerá en las pantallas.</span>
+                            <span class="md-error" v-if="!$v.form.wifi_password.required">La Contraseña de la red WiFi es requerida</span>
+                        </md-field>
+                    </div>
+                </div>
+
+                <div class="md-layout md-gutter">
+                    <div class="md-layout-item md-small-size-100">
                         <md-field :class="getValidationClass('direccion')">
                             <label for="last-name">*Dirección</label>
                             <md-input name="address" id="address" v-model="form.address" :disabled="sending" />
@@ -334,7 +353,7 @@ import {
 
 export default {
     name: "FormValidation",
-    mixins: [validationMixin, mixins, mixinsFb, mixinsRequest] ,
+    mixins: [validationMixin, mixins, mixinsFb, mixinsRequest],
     data: () => ({
         form: {
             adsFolder: null,
@@ -359,6 +378,8 @@ export default {
             phone: null,
             region_name: null,
             songsOrder: 1,
+            wifi: null,
+            wifi_password: null
         },
         configurationSaved: false,
         sending: false,
@@ -385,6 +406,12 @@ export default {
             licence: {
                 required,
             },
+            wifi: {
+                required,
+            },
+            wifi_password: {
+                required,
+            }
         },
     },
     mounted() {
@@ -437,7 +464,7 @@ export default {
                 this.form.barCode = uuidv4();
             }
 
-           // console.log(this.form);
+            // console.log(this.form);
 
             var verifiedLicence = this.form.licenceType === "0" ? true : false;
 

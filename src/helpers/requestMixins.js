@@ -109,7 +109,6 @@ export const mixinsRequest = {
 
     async configurationUpdated(configuration) {
       var users = await this.$store.state.onlineUsers;
-      console.log('cong', configuration);
 
       var playerPublicConfig = {
         address: configuration.address,

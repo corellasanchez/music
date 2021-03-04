@@ -60,7 +60,6 @@ ipcMain.handle('hideMenu', async (event, hide) => {
 })
 
 ipcMain.handle('reloadApp', async () => {
-  console.log('Hello');
   app.relaunch();
   app.exit();
   // getCurrentWindow().reload();
