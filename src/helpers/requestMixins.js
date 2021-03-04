@@ -20,8 +20,8 @@ export const mixinsRequest = {
     }
   },
   computed: {
-    ...mapState(["musicFiles", "karaokeFiles", "ads", "musicQueue", "messageQueue", "queueSubscription", "searchSubscription", "messageQueueSubscription", 'onlineUsers', "localTextAds", "adDuration"]),
-    ...mapMutations(['addSongToQueue', 'setMusicQueue', 'subscribeMessages', "addOnlineUser", "removeOnlineUser", "updateLastPong", "addVote", "addLocalTextAd", "removeLocalTextAd", "setAdDuration"]),
+    ...mapState(["musicFiles", "karaokeFiles", "ads", "musicQueue", "messageQueue", "queueSubscription", "searchSubscription", "messageQueueSubscription", 'onlineUsers', "localTextAds", "adDuration", "goToNextSong"]),
+    ...mapMutations(['addSongToQueue', 'setMusicQueue', 'subscribeMessages', "addOnlineUser", "removeOnlineUser", "updateLastPong", "addVote", "addLocalTextAd", "removeLocalTextAd", "setAdDuration", "setGoToNextSong"]),
   },
   methods: {
     setSocket(newSocket) {
@@ -494,6 +494,15 @@ export const mixinsRequest = {
       settings.karaokeMode = Boolean(data);
       await this.$settings.set("configuration", settings);
       this.configurationUpdated(settings);
-    }
+    },
+    async setChatActive(rinfo, data) {
+      var settings = await this.$settings.get("configuration");
+      settings.chatActive = Boolean(data);
+      await this.$settings.set("configuration", settings);
+      this.configurationUpdated(settings);
+    },
+    skipSong(rinfo, data) {
+      this.$store.commit("setGoToNextSong", data);
+    },
   }
 }

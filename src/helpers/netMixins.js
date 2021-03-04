@@ -94,6 +94,12 @@ export const netMixins = {
                 case 'set_karaoke_mode':
                     this.setKaraokeMode(rinfo, data);
                     break;
+                case 'set_chat_active':
+                    this.setChatActive(rinfo, data);
+                    break;
+                case 'skip_song':
+                    this.skipSong(rinfo, data);
+                    break;
                 default:
                     break;
             }

@@ -21,6 +21,7 @@ export default new Vuex.Store({
     socketInit: false,
     songIndex: 0,
     adDuration: 0,
+    goToNextSong: false
   },
   mutations: {
     setNowPlaying(state, nowPlaying) {
@@ -53,7 +54,9 @@ export default new Vuex.Store({
     setAdDuration(state, duration){
       state.adDuration = duration;
     },
-
+    setGoToNextSong(state, goToNextSong){
+      state.goToNextSong = goToNextSong;
+    },
     addOnlineUser(state, user) {
       if (!state.onlineUsers) {
         state.onlineUsers = [];
@@ -163,6 +166,7 @@ export default new Vuex.Store({
   },
   getters: {
     messageQueue: state => state.messageQueue,
+    goToNextSong: state => state.goToNextSong
   },
   actions: {
   },

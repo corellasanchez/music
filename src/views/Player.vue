@@ -109,6 +109,14 @@ export default {
             );
         }
 
+        this.$store.watch(
+            (state, getters) => getters.goToNextSong,
+            () => {
+                this.currentVideo = this.nextVideo();
+                this.$store.commit("setGoToNextSong", false);
+            }
+        );
+
         // this.getSearchQueries(this.configuration);
         // this.getSongsQueue(this.configuration);
         // this.getMessageQueue(this.configuration);
@@ -134,13 +142,15 @@ export default {
             "videoAds",
             "socketInit",
             "adDuration",
+            "goToNextSong"
         ]),
         ...mapMutations([
             "addLocalTextAd",
             "addMessageToQueue",
             "setNowPlaying",
             "setSocketInit",
-        ]),
+            "setGoToNextSong"
+        ])
     },
     methods: {
         pause() {
