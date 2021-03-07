@@ -35,12 +35,25 @@ export const mixinsRequest = {
     },
     searchSongs(rinfo, keyword) {
       var results = [];
-      this.musicFiles.forEach((element, index) => {
-        var ratio = fuzz.partial_ratio(element, keyword);
-        if (ratio > 70) {
-          results.push({ i: index, n: this.clearSongName(element), r: ratio });
-        }
-      });
+      var configuration = this.$settings.get("configuration");
+
+      if (configuration.karaokeMode) {
+        this.karaokeFiles.forEach((element, index) => {
+          var ratio = fuzz.partial_ratio(element, keyword);
+          if (ratio > 70) {
+            results.push({ i: index, n: this.clearSongName(element), r: ratio });
+          }
+        });
+      } else {
+        this.musicFiles.forEach((element, index) => {
+          var ratio = fuzz.partial_ratio(element, keyword);
+          if (ratio > 70) {
+            results.push({ i: index, n: this.clearSongName(element), r: ratio });
+          }
+        });
+      }
+
+
 
       results.sort((a, b) => { return Number(b.r) - Number(a.r) });
 
@@ -61,7 +74,7 @@ export const mixinsRequest = {
     async sendConfiguration(rinfo) {
 
       var configuration = await this.$settings.get("configuration");
-     
+
       var playerPublicConfig = {
         address: configuration.address,
         badWordsFilter: configuration.badWordsFilter,
@@ -139,15 +152,25 @@ export const mixinsRequest = {
       }
     },
 
-    AddSongToQueue(rinfo, data) {
+   async AddSongToQueue(rinfo, data) {
       // c = customer id
       // s = song index in musicFiles Array
       // sn = song name
       // u = user name
       // v = votes
       // voters
+      // type
       var song = data;
-      song.sn = this.clearSongName(this.musicFiles[data.s]);
+      var configuration = await this.$settings.get("configuration");
+      if(configuration.karaokeMode){
+        song.sn = this.clearSongName(this.karaokeFiles[data.s]);
+        song.type = 'karaoke';
+      }else{
+        song.sn = this.clearSongName(this.musicFiles[data.s]); 
+        song.type = 'normal';
+      }
+     
+     
       song.v = 0;
       song.voters = [];
       song.songsOrder = this.configuration.songsOrder;
@@ -345,13 +368,13 @@ export const mixinsRequest = {
             }
           });
         }
-        
-      // save credit sale history
-      database.run(` INSERT INTO credits_sale_history (uid, name, seller, credits, date) VALUES (?,?,?,?,DATETIME('now','localtime'))`, [parameters.uid, parameters.name, parameters.seller, parameters.credits], (err) => {
-        if (err) {
-          console.log('Error adding', err.message);
-        }
-      });
+
+        // save credit sale history
+        database.run(` INSERT INTO credits_sale_history (uid, name, seller, credits, date) VALUES (?,?,?,?,DATETIME('now','localtime'))`, [parameters.uid, parameters.name, parameters.seller, parameters.credits], (err) => {
+          if (err) {
+            console.log('Error adding', err.message);
+          }
+        });
 
         // send confirmation for the user
         var transaction = {

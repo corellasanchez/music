@@ -1,6 +1,6 @@
 <template>
 <div class="container">
-    <div class="super">
+    <div class="super" v-if="!showWaitingScreen">
         <h1 class="song-name" v-if="currentSongName && showSuper" v-animate-css="superTransition">
             <strong class="user-name" v-show="currentUserName">
                 {{ currentUserName }}:
@@ -33,7 +33,18 @@
         </div>
     </div>
 
-    <Media id="player" :controls="true" :kind="'video'" :isMuted="true" :src="currentVideo" :autoplay="true" :loop="false" :ref="'player'" @pause="pause()" @ended="ended()" @waiting="waiting()" @emptied="empitied()" @stalled="stalled()" @suspend="suspend()" @playing="playing()"></Media>
+    <Media v-if="!showWaitingScreen" id="player" :controls="true" :kind="'video'" :isMuted="false" :src="currentVideo" :autoplay="true" :loop="false" :ref="'player'" @pause="pause()" @ended="ended()" @waiting="waiting()" @emptied="empitied()" @stalled="stalled()" @suspend="suspend()" @playing="playing()"></Media>
+
+    <div class="karaoke-waiting" v-if="showWaitingScreen">
+        <h1>
+            <strong class="user-name" v-show="currentUserName">
+                {{ currentUserName }}:
+                <br />
+            </strong>
+            {{ currentSongName }}
+            {{ waitTime }}
+        </h1>
+    </div>
 
     <notifications group="user-messages" position="bottom left" :duration="Number(15000)" :max="Number(9)" />
 
@@ -90,6 +101,8 @@ export default {
             superTransition: "slideInLeft",
             duration: 15,
             messageTest: 0,
+            showWaitingScreen: false,
+            waitTime: 0,
         };
     },
     created() {},
@@ -113,15 +126,21 @@ export default {
 
         this.$store.watch(
             (state, getters) => getters.goToNextSong,
-            () => {
-                this.currentVideo = this.nextVideo();
-                this.$store.commit("setGoToNextSong", false);
+            (value) => {
+                if (value) {
+                    this.$store.commit("setGoToNextSong", false);
+                    this.currentVideo = this.nextVideo();
+                    console.log('un',this.currentUserName);
+                    if (this.configuration.karaokeMode && this.currentUserName !== "Pongala Music") {
+                        
+                        this.waitingScreen();
+                    } else {
+                        this.currentVideo = this.nextVideo();
+                    }
+                }
             }
         );
 
-        // this.getSearchQueries(this.configuration);
-        // this.getSongsQueue(this.configuration);
-        // this.getMessageQueue(this.configuration);
         setTimeout(() => {
             this.currentVideo = this.nextVideo();
         }, 1000);
@@ -144,15 +163,15 @@ export default {
             "videoAds",
             "socketInit",
             "adDuration",
-            "goToNextSong"
+            "goToNextSong",
         ]),
         ...mapMutations([
             "addLocalTextAd",
             "addMessageToQueue",
             "setNowPlaying",
             "setSocketInit",
-            "setGoToNextSong"
-        ])
+            "setGoToNextSong",
+        ]),
     },
     methods: {
         pause() {
@@ -185,27 +204,30 @@ export default {
             var nextVideoFile = "";
             var nextSong = {};
             var nextVideoAd = "";
+            var folder = "";
 
             if (this.musicQueue.length > 0) {
                 if (this.configuration.songsOrder == 1) {
                     nextSong = this.getLowerIndexSong();
-                    nextVideoFile = this.musicFiles[nextSong.s];
-                    ////console.log("index ", nextVideoFile);
                 } else {
                     nextSong = this.getSongByVotes();
-                    nextVideoFile = this.musicFiles[nextSong.s];
-                    ////console.log("votes ", nextVideoFile);
                 }
+                nextVideoFile = this.configuration.karaokeMode ?
+                    this.karaokeFiles[nextSong.s] :
+                    this.musicFiles[nextSong.s];
+                folder =
+                    nextSong.type === "karaoke" ?
+                    this.configuration.karaokeFolder :
+                    this.configuration.musicFolder;
                 this.moveToNext(nextSong);
             } else {
                 nextVideoFile = this.musicFiles[
                     Math.floor(Math.random() * this.musicFiles.length)
                 ];
-
                 this.currentUserName = "Pongala Music";
                 this.currentSongName = this.clearSongName(nextVideoFile);
+                folder = this.configuration.musicFolder;
                 this.showSongInfo();
-                ////console.log("random", nextVideoFile);
             }
 
             //// Show ads each..
@@ -233,15 +255,36 @@ export default {
                 }
             }
 
-            return this.fileProtocol + this.configuration.musicFolder + nextVideoFile;
+            return this.fileProtocol + folder + nextVideoFile;
         },
+        delay(time) {
+            // time in seconds
+            return new Promise((resolve) => setTimeout(resolve, time * 1000));
+        },
+        async decreaseWaitTime() {
+            await this.delay(1);
+            this.waitTime--;
+        },
+        async waitingScreen() {
+            var seconds = 0;
+            this.showWaitingScreen = true;
+            seconds = parseInt(this.configuration.karaokeTime);
+            this.waitTime = seconds;
+            console.log(seconds);
+            for (let index = 0; index < seconds; index++) {
+                await this.decreaseWaitTime();
+            }
+            this.showWaitingScreen = false;
+        },
+
         moveToNext(nextSong) {
             // s = song index on musicFiles
             // u = user name
             // v = votes
             // index = order index
+            console.log(nextSong);
 
-            var songName = this.clearSongName(this.musicFiles[nextSong.s]);
+            var songName = nextSong.sn;
             var userName = nextSong.u;
 
             this.currentUserName = userName;
@@ -287,6 +330,12 @@ export default {
             });
             return this.musicQueue[0];
         },
+        getSongByVotes() {
+            this.musicQueue.sort((a, b) => {
+                return Number(b.v) - Number(a.v);
+            });
+            return this.musicQueue[0];
+        },
         getNextMessage() {
             if (this.messageQueue.length > 0) {
                 this.messageQueue.sort((a, b) => {
@@ -302,12 +351,6 @@ export default {
                 });
                 this.messageQueue.shift();
             }
-        },
-        getSongByVotes() {
-            this.musicQueue.sort((a, b) => {
-                return Number(b.v) - Number(a.v);
-            });
-            return this.musicQueue[0];
         },
         sendTestMessages() {
             var names = [
@@ -511,5 +554,17 @@ body {
     bottom: 200px !important;
     left: 50px !important;
     width: fit-content !important;
+}
+
+.karaoke-waiting {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-image: linear-gradient(135deg,
+            #ffff71 0,
+            #ffea4a 25%,
+            #f8d110 50%,
+            #f0b700 75%,
+            #e99e00 100%);
 }
 </style>

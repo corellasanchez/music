@@ -265,24 +265,16 @@
                             <label for="karaokeTime">Tiempo de espera entre canciones de Karaoke</label>
                             <md-select name="karaokeTime" id="karaokeTime" v-model="form.karaokeTime" md-dense :disabled="sending">
                                 <md-option value="0">Sin tiempo de espera</md-option>
-                                <md-option value="0.1">10 segundos</md-option>
-                                <md-option value="0.2">20 segundos</md-option>
-                                <md-option value="0.3">30 segundos</md-option>
-                                <md-option value="0.4">40 segundos</md-option>
-                                <md-option value="0.5">50 segundos</md-option>
-                                <md-option value="1">1 minuto</md-option>
-                                <md-option value="2">2 minutos</md-option>
-                                <md-option value="3">3 minutos</md-option>
-                                <md-option value="4">4 minutos</md-option>
-                                <md-option value="5">5 minutos</md-option>
-                                <md-option value="6">6 minutos</md-option>
-                                <md-option value="7">7 minutos</md-option>
-                                <md-option value="8">8 minutos</md-option>
-                                <md-option value="9">9 minutos</md-option>
-                                <md-option value="10">10 minutos</md-option>
-                                <md-option value="15">15 minutos</md-option>
-                                <md-option value="20">20 minutos</md-option>
-                                <md-option value="30">30 minutos</md-option>
+                                <md-option value="10">10 segundos</md-option>
+                                <md-option value="20">20 segundos</md-option>
+                                <md-option value="30">30 segundos</md-option>
+                                <md-option value="40">40 segundos</md-option>
+                                <md-option value="50">50 segundos</md-option>
+                                <md-option value="60">1 minuto</md-option>
+                                <md-option value="120">2 minutos</md-option>
+                                <md-option value="180">3 minutos</md-option>
+                                <md-option value="240">4 minutos</md-option>
+                                <md-option value="300">5 minutos</md-option>
                             </md-select>
                         </md-field>
                     </div>
