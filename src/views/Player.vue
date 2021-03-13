@@ -37,12 +37,14 @@
 
     <div class="karaoke-waiting" v-if="showWaitingScreen">
         <h1>
-            <strong class="user-name" v-show="currentUserName">
-                {{ currentUserName }}:
+            <strong class="waiting-user-name" v-show="currentUserName">
+                {{ currentUserName }}
                 <br />
             </strong>
-            {{ currentSongName }}
-            {{ waitTime }}
+            <span class="waiting-text"> {{ currentSongName }}</span>
+            <br />
+
+            <span class="waiting-time"> {{ waitTime }}</span>
         </h1>
     </div>
 
@@ -130,9 +132,9 @@ export default {
                 if (value) {
                     this.$store.commit("setGoToNextSong", false);
                     this.currentVideo = this.nextVideo();
-                    console.log('un',this.currentUserName);
+                    console.log('un', this.currentUserName);
                     if (this.configuration.karaokeMode && this.currentUserName !== "Pongala Music") {
-                        
+
                         this.waitingScreen();
                     } else {
                         this.currentVideo = this.nextVideo();
@@ -558,13 +560,91 @@ body {
 
 .karaoke-waiting {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     min-height: 100vh;
-    background-image: linear-gradient(135deg,
-            #ffff71 0,
-            #ffea4a 25%,
-            #f8d110 50%,
-            #f0b700 75%,
-            #e99e00 100%);
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+}
+
+.waiting-user-name {
+    font-size: 7vw;
+    line-height: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    text-transform: uppercase;
+    color: #fff;
+    font-family: "Avenir", Helvetica, Arial, sans-serif;
+    font-weight: bold;
+    text-shadow:
+        0 1px 0 #ccc,
+        0 2px 0 #c9c9c9,
+        0 3px 0 #bbb,
+        0 4px 0 #b9b9b9,
+        0 5px 0 #aaa,
+        0 6px 1px rgba(0, 0, 0, .1),
+        0 0 5px rgba(0, 0, 0, .1),
+        0 1px 3px rgba(0, 0, 0, .3),
+        0 3px 5px rgba(0, 0, 0, .2),
+        0 5px 10px rgba(0, 0, 0, .25),
+        0 10px 10px rgba(0, 0, 0, .2),
+        0 20px 20px rgba(0, 0, 0, .15);
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.waiting-text {
+    color: rgb(27, 21, 21);
+    font-size: 3vw;
+    line-height: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    text-transform: uppercase;
+    font-family: "Avenir", Helvetica, Arial, sans-serif;
+    text-align: center;
+    padding-left: 10%;
+    padding-right: 10%;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.waiting-time {
+    color: #fff;
+    font-size: 8vw;
+    font-family: "Avenir", Helvetica, Arial, sans-serif;
+    font-weight: bold;
+    line-height: normal;
+    text-shadow:
+        0 1px 0 #ccc,
+        0 2px 0 #c9c9c9,
+        0 3px 0 #bbb,
+        0 4px 0 #b9b9b9,
+        0 5px 0 #aaa,
+        0 6px 1px rgba(0, 0, 0, .1),
+        0 0 5px rgba(0, 0, 0, .1),
+        0 1px 3px rgba(0, 0, 0, .3),
+        0 3px 5px rgba(0, 0, 0, .2),
+        0 5px 10px rgba(0, 0, 0, .25),
+        0 10px 10px rgba(0, 0, 0, .2),
+        0 20px 20px rgba(0, 0, 0, .15);
+          justify-content: center;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
 }
 </style>
