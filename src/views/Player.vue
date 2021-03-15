@@ -132,9 +132,7 @@ export default {
                 if (value) {
                     this.$store.commit("setGoToNextSong", false);
                     this.currentVideo = this.nextVideo();
-                    console.log('un', this.currentUserName);
                     if (this.configuration.karaokeMode && this.currentUserName !== "Pongala Music") {
-
                         this.waitingScreen();
                     } else {
                         this.currentVideo = this.nextVideo();
@@ -145,6 +143,7 @@ export default {
 
         setTimeout(() => {
             this.currentVideo = this.nextVideo();
+            this.configurationUpdated(this.configuration);
         }, 1000);
         //  this.sendTestMessages();
 
@@ -186,6 +185,11 @@ export default {
             // ////console.log("Video ended!", this.$refs.player);
 
             this.currentVideo = this.nextVideo();
+            if (this.configuration.karaokeMode && this.currentUserName !== "Pongala Music") {
+                this.waitingScreen();
+            } else {
+                this.currentVideo = this.nextVideo();
+            }
         },
         waiting() {
             // ////console.log("Video waiting!");
@@ -272,7 +276,6 @@ export default {
             this.showWaitingScreen = true;
             seconds = parseInt(this.configuration.karaokeTime);
             this.waitTime = seconds;
-            console.log(seconds);
             for (let index = 0; index < seconds; index++) {
                 await this.decreaseWaitTime();
             }
@@ -284,7 +287,6 @@ export default {
             // u = user name
             // v = votes
             // index = order index
-            console.log(nextSong);
 
             var songName = nextSong.sn;
             var userName = nextSong.u;
@@ -631,7 +633,7 @@ body {
         0 5px 10px rgba(0, 0, 0, .25),
         0 10px 10px rgba(0, 0, 0, .2),
         0 20px 20px rgba(0, 0, 0, .15);
-          justify-content: center;
+    justify-content: center;
 }
 
 @keyframes gradient {
